@@ -1,0 +1,908 @@
+{
+  "category": {
+    "key": "COOLER_AIR",
+    "name": "CPU쿨러(공랭)",
+    "bigDivNo": "4",
+    "mediumDivNo": "1020",
+    "divNo": "2054",
+    "ourCategory": "COOLER"
+  },
+  "requestedAt": "2026-05-23T07:49:25.840Z",
+  "listPages": [
+    {
+      "scrollPage": 1,
+      "request": {
+        "actype": "getList",
+        "BigDivNo": "4",
+        "MediumDivNo": "1020",
+        "DivNo": "2054",
+        "PageCount": "20",
+        "StartNum": "0",
+        "PageNum": "1",
+        "PreOrder": "recommand",
+        "lvm": "L",
+        "ScrollPage": "1",
+        "ProductType": "list",
+        "setPricechk": "N"
+      },
+      "status": 200,
+      "htmlHash": "9a6b9f2c6bfcf6bbe48af79b29d696aaf11dcca4a6bcc757e27dace60012e28c",
+      "parsedCount": 20
+    }
+  ],
+  "products": [
+    {
+      "productNo": "1274544",
+      "idx": 0,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[에디] CY100A ARGB [CPU쿨러/120mm] [블랙]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1274544&BigDivNo=4&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0826/1274544/1274544_600.jpg",
+      "summarySpecText": "1851/1700/115x/1200/AM4/AM5/CPU-120mm/4핀/타워형/5V(3핀)/AURA-SYNC/MYSTIC-LIGHT/RGB-FUSION/싱글 공랭 쿨러/TDP : 230W/ A/S기간 : 5년 / CPU쿨러 최대높이 (약 148mm)",
+      "pricing": {
+        "listPrice": 23500,
+        "discountPrice": 23500,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 11,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "구매왕"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      },
+      "detailSample": {
+        "status": 200,
+        "htmlHash": "f9851edbbaeadcdacf5736fef15692ee77b02fc9adfb9ad50ce17ec412a94e05",
+        "parsed": {
+          "productNo": "1274544",
+          "detailTitle": "[에디] CY100A ARGB [CPU쿨러/120mm] [블랙] : 컴퓨존",
+          "metaKeywords": "1851/1700/115x/1200/AM4/AM5/CPU-120mm/4핀/타워형/5V(3핀)/AURA-SYNC/MYSTIC-LIGHT/RGB-FUSION/싱글 공랭 쿨러/TDP : 230W/ A/S기간 : 5년",
+          "metaDescription": "[에디] CY100A ARGB [CPU쿨러/120mm] [블랙]",
+          "priceCandidates": [
+            23500
+          ],
+          "hasOptionLayerRequest": true,
+          "hasGroupInfoRequest": true,
+          "rawSignals": {
+            "addOrderCount": 5,
+            "todayCookieCount": 2,
+            "productOptionLayerCount": 7
+          }
+        }
+      }
+    },
+    {
+      "productNo": "1270317",
+      "idx": 1,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[에디] CY100 [CPU쿨러] [블랙]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1270317&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0811/1270317/1270317_600.jpg",
+      "summarySpecText": "싱글타워형 /TDP:230 /A/S기간:5년 /인텔 소켓:LGA1851,LGA1700,LGA1200,LGA115x/AMD 소켓:AM5,AM4 팬 크기:120mm /가로:120mm/세로:73mm/높이:148mm /25T /베어링:Rifle(유체) /2000 RPM /최대 풍량:85.67 CFM/풍압(정압):2.47mmH₂O /최대 팬소음:35dBA/PWM 지원 / CPU쿨러 최대높이 (약 148mm)",
+      "pricing": {
+        "listPrice": 21000,
+        "discountPrice": 21000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 37,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "구매왕",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1155962",
+      "idx": 2,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[아인스시스템] 쿨컴 I-17X RGB [CPU쿨러] [실버]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1155962&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0625/1155962/1155962_600.jpg",
+      "summarySpecText": "70W/Hydraulic/95(L)*95(W)*63(H) mm/12 VDC/0.36A/2200RPM/38.21CFM/3PIN/247g/28.05dBA /",
+      "pricing": {
+        "listPrice": 5800,
+        "discountPrice": 4600,
+        "customPrice": 0,
+        "discountRate": 20
+      },
+      "review": {
+        "count": 14,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1317321",
+      "idx": 3,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[OH’S] CV-620 [CPU쿨러]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1317321&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0130/1317321/1317321_600.jpg",
+      "summarySpecText": "CPU 쿨러/공랭/듀얼타워형/팬 쿨러/TDP:260W/A/S기간:1년/[호환/크기]인텔 소켓:LGA1851,LGA1700,LGA1200,LGA115x/AMD 소켓:AM5,AM4/가로:120mm/세로:120mm/높이:151mm/무게:824g/[쿨링팬]팬 크기:120mm/팬 개수:2개/25T/4핀/베어링:Hydro(유체)/2400 RPM/최대 풍량:74.1 CFM/풍압(정압):2.57mmH₂O/최대 팬소음:40dBA/작동전압:팬 12V/PWM 지원/non-LED/[구성품/기타] 써멀구리스 : 주사기형 / CPU쿨러 최대높이 (약 151mm)",
+      "pricing": {
+        "listPrice": 36000,
+        "discountPrice": 35000,
+        "customPrice": 0,
+        "discountRate": 2
+      },
+      "review": {
+        "count": 9,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "특가",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1317321",
+          "originalProductNo": "1317321",
+          "requiredOption": false,
+          "variantName": "[블랙]",
+          "price": 35000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1229766",
+      "idx": 4,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[ID-COOLING] FROZN A620 PRO SE 데이븐 [CPU쿨러]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1229766&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0407/1229766/1229766_600.jpg",
+      "summarySpecText": "CPU 쿨러 / 공랭 / 듀얼타워형 / 팬 쿨러 / TDP: 260W / A/S기간: 3년 / [호환/크기] 인텔 소켓: LGA1851 , LGA1700 , LGA1200 , LGA115x / AMD 소켓: AM5, AM4 / 가로: 120mm / 세로: 142mm / 높이: 157mm / 무게: 1.19kg / 4핀 / PWM / CPU쿨러 최대높이 (약 157mm)",
+      "pricing": {
+        "listPrice": 39000,
+        "discountPrice": 39000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 158,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "기획전",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1270127",
+      "idx": 5,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[DEEPCOOL] AK620 DIGITAL SE [CPU쿨러] [블랙] ★단독 1만원 할인★",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1270127&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0811/1270127/1270127_600.jpg",
+      "summarySpecText": "CPU 쿨러/공랭/듀얼타워형/팬 쿨러/TDP:260W/A/S기간:3년/[호환/크기]인텔 소켓:LGA1851,LGA1700,LGA1200,LGA115x,LGA2011-V3/AMD 소켓:AM5,AM4/가로:129mm/세로:138mm/높이:161mm/무게:1400g/[쿨링팬]팬 크기:120mm/팬 개수:2개/25T/3-4핀/베어링:FDB(유체)/1850 RPM/최대 풍량:68.99 CFM/풍압(정압):2.19mmH₂O/최대 팬소음:28dBA/작동전압:팬 12V,LED 5V/[부가기능]LED 라이트/PWM 지원/인디케이터/RGB/LED시스템:AURA SYNC,MYSTIC LIGHT,RGB FUSION,RGB LED,VIVID/[구성품/기타]구성품:써멀컴파운드/써멀유형:주사기형 / CPU쿨러 최대높이 (약 161mm)",
+      "pricing": {
+        "listPrice": 69000,
+        "discountPrice": 59000,
+        "customPrice": 0,
+        "discountRate": 14
+      },
+      "review": {
+        "count": 149,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "구매왕",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1295995",
+      "idx": 6,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[DEEPCOOL] AK620 G2 DIGITAL NYX [CPU쿨러] [블랙] ★컴퓨존 단독특가★",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1295995&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/1111/1295995/1295995_600.jpg",
+      "summarySpecText": "1851/1700/115x/1200/AM4/AM5/CPU-120mm/4핀/타워형/PWM/구리심/LED포함/듀얼 공랭 쿨러 / CPU쿨러 최대높이 (약 159mm)",
+      "pricing": {
+        "listPrice": 96000,
+        "discountPrice": 79000,
+        "customPrice": 0,
+        "discountRate": 17
+      },
+      "review": {
+        "count": 9,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "구매왕",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1145008",
+      "idx": 7,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[3RSYS] Socoool RC1900N 솔더링 쌍철봉 [CPU쿨러]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1145008&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0516/1145008/1145008_600.jpg",
+      "summarySpecText": "CPU 쿨러 / 듀얼타워형 / 공랭 / 팬 쿨러 / TDP: 280W / A/S기간: 3년 / [호환/크기] 인텔 소켓: LGA 1851, LGA1700, LGA1200, LGA115x / AMD 소켓: AM5, AM4 / 가로: 132mm / 세로: 140mm / 높이: 157mm / [쿨링팬] 팬 크기: 130mm, 120mm / 팬 개수: 2개 / 25T, 28T / 4핀 / 베어링: FDB(유체) / 1600 RPM, 2200 RPM / 최대 풍량: 85 CFM, / 없음 / CPU쿨러 최대높이 (약 157mm)",
+      "pricing": {
+        "listPrice": 81000,
+        "discountPrice": 81000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1370,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "구매왕",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1145008",
+          "originalProductNo": "1145008",
+          "requiredOption": false,
+          "variantName": "[블랙]",
+          "price": 81000
+        },
+        {
+          "variantProductNo": "1145009",
+          "originalProductNo": "1145008",
+          "requiredOption": false,
+          "variantName": "[화이트]",
+          "price": 83000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "884978",
+      "idx": 8,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[Thermalright] Peerless Assassin 120 SE 서린 [CPU쿨러] [블랙]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=884978&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2022/0308/884978/884978_600.jpg",
+      "summarySpecText": "CPU 쿨러 / 듀얼타워형 / 공랭 / 팬 쿨러 / 팬 크기: 120mm / 인텔소켓 : LGA 1851, LGA1700, LGA1200, LGA115x / AMD소켓 : AM4, AM5 / 25T / 베어링: S-FDB / 4핀 / 최대 소음도: 최대 25.6dBA / 1550 RPM / 최대 풍량: 66.17 CFM / 최대 풍압: 1.53 mmH2O / 쿨러높이: 155mm / 무게: 850g / PWM 지원 / 3년 / CPU쿨러 최대높이 (약 155mm)",
+      "pricing": {
+        "listPrice": 37490,
+        "discountPrice": 37490,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 3510,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "기획전",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1216752",
+      "idx": 9,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[3RSYS] Socoool RC1900 ARGB 솔더링 쌍철봉 [CPU쿨러]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1216752&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0226/1216752/1216752_600.jpg",
+      "summarySpecText": "CPU 쿨러 / 듀얼타워형 / 공랭 / 팬 쿨러 / TDP: 280W / A/S기간: 3년 / [호환/크기] 인텔 소켓: LGA1700, LGA1200, LGA115x / AMD 소켓: AM5, AM4 / 가로: 132mm / 세로: 140mm / 높이: 157mm / [쿨링팬] 팬 크기: 130mm, 120mm / 팬 개수: 2개 / 25T, 28T / 3-4핀 / 베어링: FDB(유체) / 1600 RPM, 2200 RPM / 최대 풍량: 85 CF / LGA 1851 / 1700 / 115x/1200 / AM4 / AM5 / CPU-120mm / CPU-130mm / 4핀 / 타워형 / 5V(3핀) / AURA-SYNC / POLYCHROME-SYNC / MYSTIC-LIGHT / RGB-FUSION / PWM / 구리심 / LED포함 / 공랭쿨러 / 공랭쿨러 듀얼(2개) / CPU쿨러 최대높이 (약 157mm)",
+      "pricing": {
+        "listPrice": 83500,
+        "discountPrice": 83500,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1110,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "후기",
+        "구매왕",
+        "토요일출발",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1216751",
+          "originalProductNo": "1216752",
+          "requiredOption": false,
+          "variantName": "[화이트]",
+          "price": 86000
+        },
+        {
+          "variantProductNo": "1216752",
+          "originalProductNo": "1216752",
+          "requiredOption": false,
+          "variantName": "[블랙]",
+          "price": 83500
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1321902",
+      "idx": 10,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[DEEPCOOL] AG620 G2 [CPU쿨러] [블랙]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1321902&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0211/1321902/1321902_600.jpg",
+      "summarySpecText": "CPU 쿨러/공랭/듀얼타워형/팬 쿨러/TDP:260W/A/S기간:2년/[호환/크기]인텔 소켓:LGA1851,LGA1700/AMD 소켓:AM5,AM4/가로:129mm/세로:136mm/높이:159mm/무게:1.03kg/[쿨링팬]팬 크기:120mm/팬 개수:2개/25T/4핀/베어링:Hydro(유체)/2000 RPM, 2200 RPM/최대 풍량:67.88 CFM, 70.98 CFM/풍압(정압):1.98mmH₂O, 2.49mmH₂O/최대 팬소음:23.09dBA, 29.22dBA/작동전압:팬 12V/PWM 지원/non-LED / CPU쿨러 최대높이 (약 최대 159mm)",
+      "pricing": {
+        "listPrice": 39390,
+        "discountPrice": 39390,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 212,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "구매왕",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1198614",
+      "idx": 11,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[INTEL] 인텔 Laminar RM1 [CPU쿨러]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1198614&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1224/1198614/1198614_600.jpg",
+      "summarySpecText": "CPU 쿨러 / 동쿨러 /슬림형 / 공랭 / 팬 쿨러 / TDP: 65W / [호환/크기] 인텔 소켓: LGA1851, LGA1700 / 가로: 100mm / 세로: 100mm / 높이: 47mm / 무게: 350g / [쿨링팬] 팬 크기: 100mm / 팬 개수: 1개 / 4핀 / 3150 RPM / PWM 지원 / non-LED / CPU쿨러 최대높이 (약 47mm)",
+      "pricing": {
+        "listPrice": 13200,
+        "discountPrice": 13200,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 996,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1323980",
+      "idx": 12,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[DEEPCOOL] AG400 G2 [CPU쿨러] [블랙]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1323980&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0220/1323980/1323980_600.jpg",
+      "summarySpecText": "CPU 쿨러/공랭/싱글타워형/팬 쿨러/TDP:230W/A/S기간:2년/[호환/크기]인텔 소켓:LGA1851,LGA1700/AMD 소켓:AM5,AM4/가로:125mm/세로:92mm/높이:154.5mm/무게:631g/[쿨링팬]팬 크기:120mm/팬 개수:1개/25T/4핀/베어링:Hydro(유체)/2200 RPM/최대 풍량:70.98 CFM/풍압(정압):2.49mmH₂O/최대 팬소음:29.22dBA/PWM 지원/non-LED / CPU쿨러 최대높이 (약 최대 152mm)",
+      "pricing": {
+        "listPrice": 23000,
+        "discountPrice": 23000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 207,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "구매왕",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1303114",
+      "idx": 13,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[ABKO] 타이폰 ST120X4 [CPU쿨러] [블랙]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1303114&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/1208/1303114/1303114_600.jpg",
+      "summarySpecText": "CPU 쿨러/공랭/ 싱글타워형/팬 쿨러/TDP: 200W/A/S기간: 2년/[호환/크기] 인텔 소켓: LGA1851, LGA1700, LGA115x, LGA1366/ AMD 소켓: AM5, AM4/ 가로: 122mm/ 세로: 92mm/높이: 149mm/[쿨링팬] 팬 크기: 120mm/팬 개수: 1개/4핀/베어링: HDB(유체)/1800 RPM/최대 풍량: 75.09 CFM/풍압(정압): 1.76mmH₂O/ 최대 팬소음: 30.67dBA/ 작동전압: 팬 12V/[부가기능] PWM 지원/non-LED/[구성품/기타] 구성품: 써멀컴파운드/써멀유형: 주사기형 / CPU쿨러 최대높이 (약 149mm)",
+      "pricing": {
+        "listPrice": 17900,
+        "discountPrice": 17900,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 51,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1346454",
+      "idx": 14,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[DEEPCOOL] AG620 G2 [CPU쿨러] [블랙] [1BOX] [9PACK]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1346454&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0506/1346454/1346454_600.jpg",
+      "summarySpecText": "CPU 쿨러/공랭/듀얼타워형/팬 쿨러/TDP:260W/A/S기간:2년/[호환/크기]인텔 소켓:LGA1851,LGA1700/AMD 소켓:AM5,AM4/가로:129mm/세로:136mm/높이:159mm/무게:1.03kg/[쿨링팬]팬 크기:120mm/팬 개수:2개/25T/4핀/베어링:Hydro(유체)/2000 RPM, 2200 RPM/최대 풍량:67.88 CFM, 70.98 CFM/풍압(정압):1.98mmH₂O, 2.49mmH₂O/최대 팬소음:23.09dBA, 29.22dBA/작동전압:팬 12V/PWM 지원/non-LED",
+      "pricing": {
+        "listPrice": 355500,
+        "discountPrice": 355500,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "쿠폰",
+        "특가"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1336891",
+      "idx": 15,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[ID-COOLING] FROZN A620 PRO XE ARGB 데이븐 [CPU쿨러] [스노우] ▶ A620 PRO SE◀",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1336891&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0331/1336891/1336891_600.jpg",
+      "summarySpecText": "CPU 쿨러/공랭/듀얼타워형/팬 쿨러/TDP:260W/A/S기간:3년/[호환/크기]인텔 소켓:LGA1851,LGA1700,LGA1200,LGA115x/AMD 소켓:AM5,AM4/가로:129mm/세로:142mm/높이:157mm/무게:1.1kg/[쿨링팬]팬 크기:120mm/팬 개수:2개/25T/3-4핀/베어링:Hydraulic(유체)/2000 RPM/최대 풍량:58 CFM/풍압(정압):1.94mmH₂O/최대 팬소음:27.2dBA/작동전압:팬 12V,LED 5V/[부가기능]LED 라이트/PWM 지원/RGB/LED시스템:AURA SYNC,MYSTIC LIGHT,RGB FUSION,POLYCHROME/[구성품/기타]구성품:써멀컴파운드/써멀유형:주사기형/열전도율:15.2W/(m·K) / CPU쿨러 최대높이 (약 157mm)",
+      "pricing": {
+        "listPrice": 49000,
+        "discountPrice": 49000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 4,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1308946",
+      "idx": 16,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[3RSYS] Socoool RC1910N QUIET 쌍철봉 [CPU쿨러]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1308946&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/1230/1308946/1308946_600.jpg",
+      "summarySpecText": "CPU 쿨러 / 듀얼타워형 / 공랭 / 팬 쿨러 / TDP: 280W / A/S기간: 5년 / [호환/크기] 인텔 소켓: LGA1700, LGA1200, LGA115x / AMD 소켓: AM5, AM4 / 가로: 123mm / 세로: 137mm / 높이: 151mm / [쿨링팬] 팬 크기: 120mm / 팬 개수: 2개 / 25T / 4핀 / 베어링: Hydro / 2000 RPM / 최대 풍량: 50.02 CFM / 풍압(정압): 1.82mmH₂O / CPU쿨러 최대높이 (약 151mm)",
+      "pricing": {
+        "listPrice": 83000,
+        "discountPrice": 83000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 22,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "경품",
+        "후기",
+        "구매왕",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1308945",
+          "originalProductNo": "1308946",
+          "requiredOption": false,
+          "variantName": "[화이트]",
+          "price": 86500
+        },
+        {
+          "variantProductNo": "1308946",
+          "originalProductNo": "1308946",
+          "requiredOption": false,
+          "variantName": "[블랙]",
+          "price": 83000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "994787",
+      "idx": 17,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[PentaWave] Z06D [CPU쿨러]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=994787&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2023/0215/994787/994787_600.jpg",
+      "summarySpecText": "CPU 쿨러 / 타워형 / 공랭 / LGA1851 / LGA1700 / LGA1200 / LGA115x / LGA2066 / LGA2011-V3 / LGA2011 / AM5 / AM4 / TDP: 270W / 쿨러 높이: 158mm / 무게: 840g / 팬 쿨러 / 팬 크기: 120mm x2 / 25T / 4핀 / 베어링: MFDB / 1950 RPM / 최대 풍량: 86.5 CFM / 최대 풍압: 2.21 mmH2O / 최대 소음: 최대 32.6dBA / PWM 지원 / 공랭쿨러 듀얼(2개) / CPU쿨러 최대높이 (약 158mm)",
+      "pricing": {
+        "listPrice": 64900,
+        "discountPrice": 64900,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1177,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1038454",
+          "originalProductNo": "994787",
+          "requiredOption": false,
+          "variantName": "[화이트]",
+          "price": 64900
+        },
+        {
+          "variantProductNo": "994787",
+          "originalProductNo": "994787",
+          "requiredOption": false,
+          "variantName": "[블랙]",
+          "price": 64900
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1244648",
+      "idx": 18,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[3RSYS] Socoool RC1400N 쌍철봉 QUIET [CPU쿨러]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1244648&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0523/1244648/1244648_600.jpg",
+      "summarySpecText": "CPU 쿨러 / 듀얼타워형 / 공랭 / 팬 쿨러 / TDP: 253W / A/S기간: 5년 / [호환/크기] 인텔 소켓: LGA1700, LGA1200, LGA115x / AMD 소켓: AM5, AM4 / 가로: 123mm / 세로: 137mm / 높이: 151mm / [쿨링팬] 팬 크기: 120mm / 팬 개수: 2개 / 25T / 4핀 / 베어링: Hydro / 2000 RPM / 최대 풍량: 50.2 CFM / 풍압(정압): 1.82mmH₂O / CPU쿨러 최대높이 (약 151mm)",
+      "pricing": {
+        "listPrice": 36400,
+        "discountPrice": 36400,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 294,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "구매왕",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1244646",
+          "originalProductNo": "1244648",
+          "requiredOption": false,
+          "variantName": "[화이트]",
+          "price": 36500
+        },
+        {
+          "variantProductNo": "1244648",
+          "originalProductNo": "1244648",
+          "requiredOption": false,
+          "variantName": "[블랙]",
+          "price": 36400
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "793267",
+      "idx": 19,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1020",
+        "divNo": "2054",
+        "sourceDivNo": "2054"
+      },
+      "ourCategory": "COOLER",
+      "name": "[PCCOOLER] PALADIN 400 [CPU쿨러]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=793267&BigDivNo=&MediumDivNo=1020&DivNo=2054",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2021/0517/793267/793267_600.jpg",
+      "summarySpecText": "CPU 쿨러 / 싱글타워형 / 공랭 / 팬 쿨러 / TDP: 235W / A/S기간: 2년 /[호환/크기] 인텔 소켓: LGA1700, LGA1200, LGA115x / AMD 소켓: AM5, AM4 / 가로: 130mm / 세로: 76mm / 높이: 157mm / 무게: 700g /팬 크기: 130mm / 팬 개수: 1개 / 25T / 4핀 / 베어링: Hydraulic유체 / 1600 RPM / 최대 풍량: 81 CFM / 풍압정압: 2.18mmH₂O / 최대 팬소음: 28.6dBA / PWM 지원 / nonLED / CPU쿨러 최대높이 (약 157mm)",
+      "pricing": {
+        "listPrice": 29380,
+        "discountPrice": 29380,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 3116,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "기획전",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "968963",
+          "originalProductNo": "793267",
+          "requiredOption": false,
+          "variantName": "[화이트]",
+          "price": 32850
+        },
+        {
+          "variantProductNo": "793267",
+          "originalProductNo": "793267",
+          "requiredOption": false,
+          "variantName": "[블랙]",
+          "price": 29380
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    }
+  ],
+  "observations": {
+    "totalProducts": 20,
+    "buyableProducts": 20,
+    "groupOrVariantProducts": 7,
+    "priceMissingProducts": 0,
+    "detailPriceMismatches": []
+  }
+}

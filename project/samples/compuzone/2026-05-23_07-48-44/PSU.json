@@ -1,0 +1,1193 @@
+{
+  "category": {
+    "key": "PSU",
+    "name": "파워",
+    "bigDivNo": "4",
+    "mediumDivNo": "1148",
+    "divNo": "0",
+    "ourCategory": "PSU"
+  },
+  "requestedAt": "2026-05-23T07:49:20.598Z",
+  "listPages": [
+    {
+      "scrollPage": 1,
+      "request": {
+        "actype": "getList",
+        "BigDivNo": "4",
+        "MediumDivNo": "1148",
+        "DivNo": "0",
+        "PageCount": "20",
+        "StartNum": "0",
+        "PageNum": "1",
+        "PreOrder": "recommand",
+        "lvm": "L",
+        "ScrollPage": "1",
+        "ProductType": "list",
+        "setPricechk": "N"
+      },
+      "status": 200,
+      "htmlHash": "15d38e056c8b3b107ed08aab8c9d9f140bd0c6188464bc536a10d32de1937fb8",
+      "parsedCount": 20
+    }
+  ],
+  "products": [
+    {
+      "productNo": "1143770",
+      "idx": 0,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[마이크로닉스] Classic II 80PLUS GOLD 풀모듈러 ATX3.1 (PCIE5.1)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1143770&BigDivNo=4&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0513/1143770/1143770_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 850W / 80 PLUS 골드 / +12V 싱글레일 / 액티브PFC / PF(역률): 99% / 120mm 팬 / 깊이: 140mm / 무상 10년 / [커넥터] 풀모듈러 / 메인전원: 24핀(20+4) / 보조전원: 8+4+4핀 1개 / PCIe 16핀(12+4): 12V2x6 1개 / PCIe 8핀(6+2): 3개 / SATA: 8개 / IDE 4핀: 4개 / FDD: 1개 / [부가기능] 팬리스모드 / 자동 팬 조절 / 대기전력 1W 미만 / 플랫케이블 / 3개 /25.07.29 PCIe 8핀(6+2): 2개->3개로 변경",
+      "pricing": {
+        "listPrice": 141500,
+        "discountPrice": 141500,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 4216,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "경품",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1157333",
+          "originalProductNo": "1143770",
+          "requiredOption": false,
+          "variantName": "[750W] [블랙] 230V EU",
+          "price": 129000
+        },
+        {
+          "variantProductNo": "1143770",
+          "originalProductNo": "1143770",
+          "requiredOption": false,
+          "variantName": "[850W] [블랙] 230V EU",
+          "price": 141500
+        },
+        {
+          "variantProductNo": "1165129",
+          "originalProductNo": "1143770",
+          "requiredOption": false,
+          "variantName": "[1050W] [블랙] 230V EU",
+          "price": 176500
+        },
+        {
+          "variantProductNo": "1146255",
+          "originalProductNo": "1143770",
+          "requiredOption": false,
+          "variantName": "[750W] [화이트] 230V EU",
+          "price": 139000
+        },
+        {
+          "variantProductNo": "1133812",
+          "originalProductNo": "1143770",
+          "requiredOption": false,
+          "variantName": "[850W] [화이트] 230V EU",
+          "price": 151000
+        },
+        {
+          "variantProductNo": "1183563",
+          "originalProductNo": "1143770",
+          "requiredOption": false,
+          "variantName": "[1050W] [화이트] 230V EU",
+          "price": 199000
+        },
+        {
+          "variantProductNo": "1275433",
+          "originalProductNo": "1143770",
+          "requiredOption": false,
+          "variantName": "[1200W] [블랙]",
+          "price": 200900
+        },
+        {
+          "variantProductNo": "1282846",
+          "originalProductNo": "1143770",
+          "requiredOption": false,
+          "variantName": "[1200W] [화이트]",
+          "price": 219000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      },
+      "detailSample": {
+        "status": 200,
+        "htmlHash": "7a3571fddb9a6d89518d54af1d885deb520025992650cd5ae54ba31c3d55489f",
+        "parsed": {
+          "productNo": "1143770",
+          "detailTitle": "[마이크로닉스] Classic II 80PLUS GOLD 풀모듈러 ATX3.1 (PCIE5.1) [850W] [블랙] 230V EU : 컴퓨존",
+          "metaKeywords": "ATX 파워 / 정격출력: 850W / 80 PLUS 골드 / +12V 싱글레일 / 액티브PFC / PF(역률): 99% / 120mm 팬 / 깊이: 140mm / 무상 10년 / [커넥터] 풀모듈러 / 메인전원: 24핀(20+4) / 보조전원: 8+4+4핀 1개 / PCIe 16핀(12+4): 12V2x6 1개 / PCIe 8핀(6+2): 3개 / SATA: 8개 / IDE 4핀: 4개 / FDD: 1개 / [부가기능] 팬리스모드 / 자동 팬 조절 / 대기전력 1W 미만 / 플랫케이블 / 3개 /25.07.29 PCIe 8핀(6+2): 2개->3개로 변경",
+          "metaDescription": "[마이크로닉스] Classic II 80PLUS GOLD 풀모듈러 ATX3.1 (PCIE5.1) [850W] [블랙] 230V EU",
+          "priceCandidates": [
+            141500
+          ],
+          "hasOptionLayerRequest": true,
+          "hasGroupInfoRequest": true,
+          "rawSignals": {
+            "addOrderCount": 21,
+            "todayCookieCount": 2,
+            "productOptionLayerCount": 7
+          }
+        }
+      }
+    },
+    {
+      "productNo": "1142917",
+      "idx": 1,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[마이크로닉스] Classic II 풀체인지 80PLUS BRONZE ATX3.1 230V EU",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1142917&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0509/1142917/1142917_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 700W / 80 PLUS 브론즈 / ETA인증: BRONZE / LAMBDA인증: STANDARD / 전압변동: ±0.3% / +12V 싱글레일 / +12V 가용률: 100% / 액티브PFC / PF(역률): 99% / 120mm 팬 / 깊이: 140mm / 무상 7년 / [커넥터] 메인전원: 24핀(20+4) / 보조전원: 8+4+4핀 1개 / PCIe 16핀(12+4): 12V2x6 1개 / PCIe 8핀(6+2): 2개",
+      "pricing": {
+        "listPrice": 82360,
+        "discountPrice": 82360,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 24715,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "후기",
+        "경품",
+        "토요일출발",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "쿠폰"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1142919",
+          "originalProductNo": "1142917",
+          "requiredOption": false,
+          "variantName": "[500W] [블랙]",
+          "price": 56000
+        },
+        {
+          "variantProductNo": "1142915",
+          "originalProductNo": "1142917",
+          "requiredOption": false,
+          "variantName": "[500W] [블랙] 벌크형",
+          "price": 5650053680
+        },
+        {
+          "variantProductNo": "1142918",
+          "originalProductNo": "1142917",
+          "requiredOption": false,
+          "variantName": "(품절) [600W] [블랙]",
+          "price": null
+        },
+        {
+          "variantProductNo": "1142914",
+          "originalProductNo": "1142917",
+          "requiredOption": false,
+          "variantName": "[600W] [블랙] 벌크형",
+          "price": 61480
+        },
+        {
+          "variantProductNo": "1142917",
+          "originalProductNo": "1142917",
+          "requiredOption": false,
+          "variantName": "[700W] [블랙] (PCIE5.1)",
+          "price": 82360
+        },
+        {
+          "variantProductNo": "1156172",
+          "originalProductNo": "1142917",
+          "requiredOption": false,
+          "variantName": "[700W] [블랙] 벌크형 (PCIE5.1)",
+          "price": 82900
+        },
+        {
+          "variantProductNo": "1142916",
+          "originalProductNo": "1142917",
+          "requiredOption": false,
+          "variantName": "[800W] [블랙] (PCIE5.1)",
+          "price": 97900
+        },
+        {
+          "variantProductNo": "1132881",
+          "originalProductNo": "1142917",
+          "requiredOption": false,
+          "variantName": "[600W] [화이트]",
+          "price": 65500
+        },
+        {
+          "variantProductNo": "1130734",
+          "originalProductNo": "1142917",
+          "requiredOption": false,
+          "variantName": "[700W] [화이트] (PCIE5.1)",
+          "price": 87130
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1350162",
+      "idx": 2,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[마이크로닉스] Classic II 풀체인지 80PLUS BRONZE ATX3.1 230V EU [700W] [블랙] (PCIE5.1) 🚀800W 업그레이드 행사🚀",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1350162&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0521/1350162/1350162_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 700W / 80 PLUS 브론즈 / ETA인증: BRONZE / LAMBDA인증: STANDARD / 전압변동: ±0.3% / +12V 싱글레일 / +12V 가용률: 100% / 액티브PFC / PF(역률): 99% / 120mm 팬 / 깊이: 140mm / 무상 7년 / [커넥터] 메인전원: 24핀(20+4) / 보조전원: 8+4+4핀 1개 / PCIe 16핀(12+4): 12V2x6 1개 / PCIe 8핀(6+2): 2개",
+      "pricing": {
+        "listPrice": 86900,
+        "discountPrice": 86900,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1350164",
+      "idx": 3,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[마이크로닉스] Classic II 풀체인지 80PLUS BRONZE ATX3.1 230V EU [600W] [블랙] 🚀700W 업그레이드 행사🚀",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1350164&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0521/1350164/1350164_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 600W / 80 PLUS 브론즈 / ETA인증: BRONZE / LAMBDA인증: STANDARD+ / 전압변동: ±0.3% / +12V 싱글레일 / +12V 가용률: 100% / 액티브PFC / PF(역률): 99% / 120mm 팬 / 깊이: 140mm / 무상 7년 / [커넥터] 메인전원: 24핀(20+4) / 보조전원: 8+4핀 1개 / PCIe 8핀(6+2): 2개 / SATA: 6개 / IDE 4핀: 4개 / [부가기능] 팬리스모드 / 자동 팬 조절 / 대기전력 1W 미만 / 플랫케이블",
+      "pricing": {
+        "listPrice": 65500,
+        "discountPrice": 65500,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1202135",
+      "idx": 4,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[ABKO] 코어맥스 CM-700B ETA BRONZE ATX 블랙 [700W]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1202135&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0109/1202135/1202135_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 700W / ETA인증: BRONZE / LAMBDA인증: STANDARD+ / +12V 싱글레일 / +12V 가용률: 100% / 액티브PFC / PF(역률): 99% / 깊이: 140mm / 무상 6년 / [커넥터] 케이블일체형 / 메인전원: 24핀(20+4) / 보조전원: 8+4+4핀 1개 / PCIe 8핀(6+2): 3개 / SATA: 7개 / IDE 4핀: 3개 / [부가기능] 대기전력 1W 미만",
+      "pricing": {
+        "listPrice": 48900,
+        "discountPrice": 48900,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 153,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1181356",
+      "idx": 5,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[MSI] MAG A500N-H (ATX/500W)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1181356&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1015/1181356/1181356_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 500W / +12V 싱글레일 / 액티브PFC / 120mm 팬 / 깊이: 150mm / 무상 3년 / [커넥터] 케이블일체형 / 메인전원: 24핀 / 보조전원: 8핀(4+4) 2개 / PCIe 8핀(6+2): 1개 / SATA: 3개 / IDE 4핀: 2개 / FDD: 1개 / [부가기능] /벌크[ 표기출력 : 500W / 테스트 정격 : 500W ]",
+      "pricing": {
+        "listPrice": 37000,
+        "discountPrice": 37000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 218,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "기획전",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1181356",
+          "originalProductNo": "1181356",
+          "requiredOption": false,
+          "variantName": "[블랙] 벌크",
+          "price": 37000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1349366",
+      "idx": 6,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[SuperFlower] SF-650Z12DB Zillion DB ETA Sliver ATX3.1 650W [블랙] 🚀750W 업그레이드 행사🚀",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1349366&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0519/1349366/1349366_600.jpg",
+      "summarySpecText": "ATX 파워/650W/케이블연결: 케이블일체형/ETA인증: SILVER/LAMBDA인증: STANDARD++/+12V 싱글레일/+12V 가용률: 99%/액티브PFC/PF(역률): 99%/120mm 팬/깊이: 140mm/무상 6년/[커넥터] 메인전원: 24핀/보조전원: 8핀(4+4) 2개/PCIe 8핀(6+2): 3개/SATA: 6개/IDE 4핀: 2개/[부가기능] 플랫케이블",
+      "pricing": {
+        "listPrice": 65000,
+        "discountPrice": 65000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 0,
+        "rate": 0
+      },
+      "badges": [
+        "토스페이"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1347998",
+      "idx": 7,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[SuperFlower] SF-750Z12DB Zillion DB ETA Sliver ATX3.1 750W [블랙] 🚀850W 업그레이드 행사🚀",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1347998&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0513/1347998/1347998_600.jpg",
+      "summarySpecText": "ATX 파워 / 750W / 케이블연결: 플랫 케이블 / ETA인증: SILVER / LAMBDA인증: STANDARD+ / +12V 싱글레일 / +12V 가용률: 100% / 액티브PFC / PF(역률): 99% / 120mm 팬 / 깊이: 140mm / 무상 6년 / [커넥터] 메인전원: 24핀 / 보조전원: 8핀(4+4) 2개 / PCIe 16핀(12+4): 12V2x6 1개 / PCIe 8핀(6+2): 4개 / 기존: SATA 8개, IDE 4핀 4개 => 26.02.03 SATA 6개, IDE 4핀 2개로 변경 / [부가기능] 자동 팬 조절 / 플랫케이블",
+      "pricing": {
+        "listPrice": 79000,
+        "discountPrice": 79000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 3,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1349367",
+      "idx": 8,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[SuperFlower] SF-850F14XG LEADEX VII GOLD ATX3.1 (ATX/850W) [블랙] 🚀SF-850F14XP 플래티넘 업그레이드 행사🚀",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1349367&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0519/1349367/1349367_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 850W / 80 PLUS 골드 / ETA인증: PLATINUM / LAMBDA인증: A / +12V 싱글레일 / +12V 가용률: 99% / 액티브PFC / PF(역률): 99% / 140mm / 깊이: 150mm / 무상 10년 / [커넥터] 풀모듈러 / 메인전원: 24핀(20+4) / 보조전원: 8핀(4+4) 2개 / PCIe 16핀(12+4): 12V2x6 1개 / PCIe 8핀(6+2): 3개 / SATA: 12개 / ATX / 풀 모듈러 / 800~1199W / Gold(골드) / 보증10년↑ / 20핀+4핀 / 3개 / 12개 / 4개 / 8핀(4+4) 2개 / 135mm이상 / 박스 / 블랙 / ATX 3.1 / 프리볼트 / Platinum(플래티늄) /",
+      "pricing": {
+        "listPrice": 194000,
+        "discountPrice": 194000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 0,
+        "rate": 0
+      },
+      "badges": [
+        "토스페이"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1287101",
+      "idx": 9,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[마이크로닉스] COOLMAX ELITE II 85+ ATX",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1287101&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/1010/1287101/1287101_600.jpg",
+      "summarySpecText": "ATX 파워/500W/케이블연결: 케이블일체형/전압변동: ±0.3%/+12V 싱글레일/+12V 가용률: 100%/120mm 팬/깊이: 140mm/무상 5년/[커넥터] 메인전원: 24핀(20+4)/보조전원: (4+4)핀x1/PCIe 8핀(6+2): 2개/SATA: 4개/IDE 4핀: 3개/[부가기능] 대기전력 1W 미만",
+      "pricing": {
+        "listPrice": 38900,
+        "discountPrice": 38900,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 605,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "쿠폰",
+        "후기",
+        "경품",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1287101",
+          "originalProductNo": "1287101",
+          "requiredOption": false,
+          "variantName": "[500W] 벌크형",
+          "price": 3890035010
+        },
+        {
+          "variantProductNo": "1289396",
+          "originalProductNo": "1287101",
+          "requiredOption": false,
+          "variantName": "[500W] 박스형",
+          "price": 38900
+        },
+        {
+          "variantProductNo": "1287100",
+          "originalProductNo": "1287101",
+          "requiredOption": false,
+          "variantName": "[600W] 벌크형",
+          "price": 4207039970
+        },
+        {
+          "variantProductNo": "1289395",
+          "originalProductNo": "1287101",
+          "requiredOption": false,
+          "variantName": "[600W] 박스형",
+          "price": 45900
+        },
+        {
+          "variantProductNo": "1310856",
+          "originalProductNo": "1287101",
+          "requiredOption": false,
+          "variantName": "[700W] 벌크형",
+          "price": 5490049410
+        },
+        {
+          "variantProductNo": "1312056",
+          "originalProductNo": "1287101",
+          "requiredOption": false,
+          "variantName": "[700W] 박스형",
+          "price": 55900
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1237860",
+      "idx": 10,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[SuperFlower] SF-750Z12DB Zillion DB ETA Sliver ATX3.1 750W [블랙]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1237860&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0430/1237860/1237860_600.jpg",
+      "summarySpecText": "ATX 파워 / 750W / 케이블연결: 플랫 케이블 / ETA인증: SILVER / LAMBDA인증: STANDARD+ / +12V 싱글레일 / +12V 가용률: 100% / 액티브PFC / PF(역률): 99% / 120mm 팬 / 깊이: 140mm / 무상 6년 / [커넥터] 메인전원: 24핀 / 보조전원: 8핀(4+4) 2개 / PCIe 16핀(12+4): 12V2x6 1개 / PCIe 8핀(6+2): 4개 / 기존: SATA 8개, IDE 4핀 4개 => 26.02.03 SATA 6개, IDE 4핀 2개로 변경 / [부가기능] 자동 팬 조절 / 플랫케이블",
+      "pricing": {
+        "listPrice": 79000,
+        "discountPrice": 79000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 232,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "경품",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1293269",
+      "idx": 11,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[마이크로닉스] COOLMAX BASIC ATX [500W] 벌크 ★단독 특가★",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1293269&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/1103/1293269/1293269_600.jpg",
+      "summarySpecText": "ATX 파워/500W/전압변동: ±0.3%/+12V 싱글레일/+12V 가용률: 100%/120mm 팬/깊이: 140mm/무상 5년/[커넥터] 메인전원: 24핀(20+4)/보조전원: 8핀(4+4) 1개/PCIe 8핀(6+2): 1개/SATA: 2개/IDE 4핀: 2개/[부가기능] 대기전력 1W 미만/플랫케이블",
+      "pricing": {
+        "listPrice": 42900,
+        "discountPrice": 33900,
+        "customPrice": 0,
+        "discountRate": 20
+      },
+      "review": {
+        "count": 69,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "경품",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "471923",
+      "idx": 12,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[잘만] EcoMax 83+ ATX 블랙",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=471923&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2018/0619/471923/471923_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 500W / +12V 다중레일 / +12V 가용률: 91% / 120mm 팬 / 깊이: 140mm / 무상 3년 / [커넥터] 케이블일체형 / 메인전원: 24핀(20+4) / 보조전원: 8핀(4+4) 1개 / PCIe 8핀(6+2): 2개 / SATA: 4개 / IDE 4핀: 3개 / [부가기능] 대기전력 1W 미만/ 메인전원: 24핀204 / 보조전원: 8핀44 1개 / PCIe 8핀62: 2개 ||ATX 파워 / 12V 다중레일 / 12V 가용률: 91 / 메인전원: 24핀(204) / 보조전원: 8핀(44) 1개 / PCIe 8핀(62): 2개 / PCIe 8핀62: 2개 / 케이블 일체형",
+      "pricing": {
+        "listPrice": 39100,
+        "discountPrice": 39100,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 24323,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "경품",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "471923",
+          "originalProductNo": "471923",
+          "requiredOption": false,
+          "variantName": "[500W]",
+          "price": 39100
+        },
+        {
+          "variantProductNo": "471948",
+          "originalProductNo": "471923",
+          "requiredOption": false,
+          "variantName": "[600W]",
+          "price": 44000
+        },
+        {
+          "variantProductNo": "826850",
+          "originalProductNo": "471923",
+          "requiredOption": false,
+          "variantName": "[700W]",
+          "price": 48500
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1312957",
+      "idx": 13,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[AONE] 시그니처 80PLUS GOLD 풀모듈러 ATX3.1 (PCIE5.1) ★단독 특가★",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1312957&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0116/1312957/1312957_600.jpg",
+      "summarySpecText": "ATX 파워/750W/80 PLUS 골드/케이블연결: 풀모듈러/ +12V 싱글레일/+12V 가용률: 100%/ 액티브PFC/PF(역률): 99%/깊이: 135mm/무상 10년/[커넥터] 메인전원: 24핀(20+4)/ 보조전원: (4+4)핀x1/ PCIe 16핀(12+4): 12V2x6 1개/ PCIe 8핀(6+2): 3개/ SATA: 8개/ IDE 4핀: 4개/[부가기능] 팬리스모드/자동 팬 조절/플랫케이블",
+      "pricing": {
+        "listPrice": 87000,
+        "discountPrice": 87000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 51,
+        "rate": 4.8
+      },
+      "badges": [
+        "토스페이",
+        "기획전",
+        "후기",
+        "경품",
+        "특가",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1312957",
+          "originalProductNo": "1312957",
+          "requiredOption": false,
+          "variantName": "[750W] [블랙] 230V EU",
+          "price": 87000
+        },
+        {
+          "variantProductNo": "1312955",
+          "originalProductNo": "1312957",
+          "requiredOption": false,
+          "variantName": "[750W] [화이트] 230V EU",
+          "price": 93000
+        },
+        {
+          "variantProductNo": "1312954",
+          "originalProductNo": "1312957",
+          "requiredOption": false,
+          "variantName": "[850W] [블랙] 230V EU",
+          "price": 95000
+        },
+        {
+          "variantProductNo": "1312953",
+          "originalProductNo": "1312957",
+          "requiredOption": false,
+          "variantName": "[850W] [화이트] 230V EU",
+          "price": 101000
+        },
+        {
+          "variantProductNo": "1312952",
+          "originalProductNo": "1312957",
+          "requiredOption": false,
+          "variantName": "[1000W] [블랙] 230V EU",
+          "price": 108000
+        },
+        {
+          "variantProductNo": "1312951",
+          "originalProductNo": "1312957",
+          "requiredOption": false,
+          "variantName": "(품절) [1000W] [화이트] 230V EU",
+          "price": null
+        },
+        {
+          "variantProductNo": "1312950",
+          "originalProductNo": "1312957",
+          "requiredOption": false,
+          "variantName": "[1300W] [블랙]",
+          "price": 136000
+        },
+        {
+          "variantProductNo": "1312956",
+          "originalProductNo": "1312957",
+          "requiredOption": false,
+          "variantName": "[1300W] [화이트]",
+          "price": 142000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1131446",
+      "idx": 14,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[SuperFlower] SF-1200F14XP LEADEX VII PRO PLATINUM ATX 3.1 (PCIE5)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1131446&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0404/1131446/1131446_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 1200W / 80 PLUS 플레티넘 / ETA인증: PLATINUM / LAMBDA인증: STANDARD+ / 140mm / 깊이: 150mm / 무상 12년 / [커넥터] 풀모듈러 / 메인전원: 24핀(20+4) / 보조전원: 8핀(4+4) 2개 / PCIe 16핀(12+4): 12V2x6 2개 / PCIe 8핀(6+2): 4개 / SATA: 12개 / IDE 4핀: 4개 / [부가기능] 팬리스모드 / 프리볼트",
+      "pricing": {
+        "listPrice": 288340,
+        "discountPrice": 288340,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 428,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "경품",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1131446",
+          "originalProductNo": "1131446",
+          "requiredOption": false,
+          "variantName": "BLACK (ATX/1200W)",
+          "price": 288340
+        },
+        {
+          "variantProductNo": "1138248",
+          "originalProductNo": "1131446",
+          "requiredOption": false,
+          "variantName": "WHITE (ATX/1200W)",
+          "price": 287560
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1197867",
+      "idx": 15,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[마이크로닉스] Classic II 풀체인지 80PLUS STANDARD ATX3.1 블랙",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1197867&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1220/1197867/1197867_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 650W / 80 PLUS 스탠다드 / 전압변동: ±0.29% / +12V 싱글레일 / +12V 가용률: 100% / 액티브PFC / PF(역률): 99% / 120mm 팬 / 깊이: 140mm / 무상 7년 / [커넥터] 메인전원: 24핀(20+4) / 보조전원: 8핀(4+4) 1개 / PCIe 8핀(6+2): 2개 / SATA: 4개 / IDE 4핀: 2개 / [부가기능] 대기전력 1W 미만 / 플랫케이블 / ATX / 케이블 일체형 / 600~699W / Standard(스텐다드) / 보증5년~9년 / 20핀+4핀 / 2개 / 4개 / 120mm / 벌크 / 블랙 / ATX 3.1",
+      "pricing": {
+        "listPrice": 65500,
+        "discountPrice": 62500,
+        "customPrice": 0,
+        "discountRate": 4
+      },
+      "review": {
+        "count": 769,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "경품",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1197416",
+          "originalProductNo": "1197867",
+          "requiredOption": false,
+          "variantName": "[550W]",
+          "price": 57500
+        },
+        {
+          "variantProductNo": "1197868",
+          "originalProductNo": "1197867",
+          "requiredOption": false,
+          "variantName": "[550W] [벌크]",
+          "price": 53500
+        },
+        {
+          "variantProductNo": "1197415",
+          "originalProductNo": "1197867",
+          "requiredOption": false,
+          "variantName": "[650W]",
+          "price": 65500
+        },
+        {
+          "variantProductNo": "1197867",
+          "originalProductNo": "1197867",
+          "requiredOption": false,
+          "variantName": "[650W] [벌크]",
+          "price": 62500
+        },
+        {
+          "variantProductNo": "1197414",
+          "originalProductNo": "1197867",
+          "requiredOption": false,
+          "variantName": "[750W]",
+          "price": 86900
+        },
+        {
+          "variantProductNo": "1197872",
+          "originalProductNo": "1197867",
+          "requiredOption": false,
+          "variantName": "[750W] [벌크]",
+          "price": 82900
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1205337",
+      "idx": 16,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[마이크로닉스] WIZMAX 80PLUS SILVER ATX3.1 블랙",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1205337&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0120/1205337/1205337_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 750W / 80 PLUS 실버 / 전압변동: ±0.9% / +12V 싱글레일 / +12V 가용률: 100% / 액티브PFC / PF(역률): 99% / 120mm 팬 / 깊이: 140mm / 무상 6년 / [커넥터] 메인전원: 24핀(20+4) / 보조전원: 8+4+4핀 1개 / PCIe 16핀(12+4): 12V2x6 1개 / PCIe 8핀(6+2): 2개 / SATA: 6개 / IDE 4핀: 4개 / [부가기능] 자동 팬 / ATX / 케이블 일체형 / 700~799W / Silver(실버) / 보증5년~9년 / 20핀+4핀 / 2개 / 6개 / 4개 / 16핀(8+4+4) / 120mm / 박스 / 블랙 / ATX 3.0 / ATX 3.1 / 프리볼트",
+      "pricing": {
+        "listPrice": 89880,
+        "discountPrice": 89880,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 21,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "경품",
+        "후기",
+        "기타",
+        "특가"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1205337",
+          "originalProductNo": "1205337",
+          "requiredOption": false,
+          "variantName": "[750W]",
+          "price": 89880
+        },
+        {
+          "variantProductNo": "1205338",
+          "originalProductNo": "1205337",
+          "requiredOption": false,
+          "variantName": "[850W]",
+          "price": 109900
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1183894",
+      "idx": 17,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[SuperFlower] SF-1000F14GE LEADEX III GOLD UP ATX3.1 (ATX/1000W)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1183894&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1023/1183894/1183894_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 1000W / 80 PLUS 골드 / 전압변동: ±0.5% / +12V 싱글레일 / +12V 가용률: 99% / 액티브PFC / PF(역률): 99% / 140mm 팬 / 깊이: 150mm / 무상 10년 / [커넥터] 풀모듈러 / 메인전원: 24핀(20+4) / 보조전원: 8핀(4+4) 2개 / PCIe 16핀(12+4): 12V2x6 1개 / PCIe 8핀(6+2): 4개 / SATA: 8개 / IDE 4핀: 4개 / [부 / ATX / 풀 모듈러 / 800~1199W / Gold(골드) / 보증10년↑ / 20핀+4핀 / 4개 / 8개 / 8핀(4+4) 2개 / 135mm이상 / 박스 / 블랙 / ATX 3.1 / 프리볼트",
+      "pricing": {
+        "listPrice": 188980,
+        "discountPrice": 188980,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 329,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "경품",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1262180",
+          "originalProductNo": "1183894",
+          "requiredOption": false,
+          "variantName": "[화이트]",
+          "price": 199000
+        },
+        {
+          "variantProductNo": "1183894",
+          "originalProductNo": "1183894",
+          "requiredOption": false,
+          "variantName": "[블랙]",
+          "price": 188980
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1280067",
+      "idx": 18,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2756",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[마이크로닉스] MTFX400STE08S 80 PLUS 230V EU TFX [400W] 벌크",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1280067&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0911/1280067/1280067_600.jpg",
+      "summarySpecText": "TFX/서버용/400W/보증2년/메인전원 커넥터 24핀/8핀(4+4) 1개/SATA 커넥터 3개/4핀E-IDE: 1개/벌크/팬크기: 80mm/80PLUS Standard(스탠다드)",
+      "pricing": {
+        "listPrice": 49000,
+        "discountPrice": 49000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 67,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "경품",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1176780",
+      "idx": 19,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1148",
+        "divNo": "2754",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "PSU",
+      "name": "[시소닉] NEW FOCUS V4 GOLD 풀모듈러 ATX3.1",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1176780&BigDivNo=&MediumDivNo=1148&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0925/1176780/1176780_600.jpg",
+      "summarySpecText": "ATX 파워 / 정격출력: 850W / 80 PLUS 골드 / +12V 싱글레일 / +12V 가용률: 98% / 액티브PFC / PF(역률): 99% / 135mm 팬 / 깊이: 140mm / 무상 10년 / [커넥터] 풀모듈러 / 메인전원: 24핀(20+4) / 보조전원: 8핀(4+4) 2개 / PCIe 16핀(12+4): 12V2x6 1개 / PCIe 8핀(6+2): 3개 / SATA: 8개 / IDE 4핀: 3개 / [부가기능] 팬리스모드 / 자동 / ATX / 풀 모듈러 / 800~1199W / Gold(골드) / 보증10년↑ / 20핀+4핀 / 3개 / 8핀(4+4) / 135mm이상 / 박스 / 블랙 / ATX 3.1",
+      "pricing": {
+        "listPrice": 214950,
+        "discountPrice": 214950,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 816,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "기획전",
+        "구매왕",
+        "후기",
+        "토요일출발",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1176777",
+          "originalProductNo": "1176780",
+          "requiredOption": false,
+          "variantName": "GX-750 [750W] [블랙]",
+          "price": 189000
+        },
+        {
+          "variantProductNo": "1176780",
+          "originalProductNo": "1176780",
+          "requiredOption": false,
+          "variantName": "GX-850 [850W] [블랙]",
+          "price": 214950
+        },
+        {
+          "variantProductNo": "1176772",
+          "originalProductNo": "1176780",
+          "requiredOption": false,
+          "variantName": "GX-850 [850W] [화이트]",
+          "price": 235000
+        },
+        {
+          "variantProductNo": "1176778",
+          "originalProductNo": "1176780",
+          "requiredOption": false,
+          "variantName": "GX-1000 [1000W] [블랙]",
+          "price": 262500
+        },
+        {
+          "variantProductNo": "1176779",
+          "originalProductNo": "1176780",
+          "requiredOption": false,
+          "variantName": "GX-1000 [1000W] [화이트]",
+          "price": 274730
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    }
+  ],
+  "observations": {
+    "totalProducts": 20,
+    "buyableProducts": 20,
+    "groupOrVariantProducts": 11,
+    "priceMissingProducts": 0,
+    "detailPriceMismatches": []
+  }
+}

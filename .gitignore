@@ -1,0 +1,13 @@
+node_modules
+.next
+dist
+coverage
+.env
+.env.local
+.env.server
+.DS_Store
+npm-debug.log*
+docker-data
+*.tsbuildinfo
+outputs/db-definition/MonitoringRealtimeProcessMonitoring_*.csv
+project/samples/**/trash/

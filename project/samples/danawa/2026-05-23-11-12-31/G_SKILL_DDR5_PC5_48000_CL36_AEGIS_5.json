@@ -1,0 +1,141 @@
+{
+  "query": "G.SKILL DDR5 PC5-48000 CL36 AEGIS 5",
+  "searchUrl": "https://search.danawa.com/dsearch.php?query=G.SKILL+DDR5+PC5-48000+CL36+AEGIS+5",
+  "capturedAt": "2026-05-23T11:12:45.991Z",
+  "searchHttpStatus": 200,
+  "searchHtmlHash": "7615929c5c57c16d69ee121787972830df92e5da4075a25afc074336deb8536c",
+  "resultCount": 1,
+  "results": [
+    {
+      "pcode": "72913406",
+      "name": "G.SKILL DDR5-6000 CL36 AEGIS 5",
+      "productUrl": "https://prod.danawa.com/info/?pcode=72913406&keyword=G.SKILL+DDR5+PC5-48000+CL36+AEGIS+5&cate=112752",
+      "imageUrl": "https://img.danuri.io/catalog-image/406/913/072/6e4f277e9e2a4efa9ea8b16c6e8b0fd4.jpg",
+      "price": 629000,
+      "cate": "112752",
+      "variants": [
+        {
+          "variantName": "32GB",
+          "pcode": "75656486"
+        },
+        {
+          "variantName": "16GB",
+          "pcode": "72913406"
+        }
+      ],
+      "source": "search_dom",
+      "detail": {
+        "httpStatus": 200,
+        "htmlHash": "766e7da0b89858129be45865c7fa963c01646580b98bf4ef6a829b5423fffe07",
+        "metadata": {
+          "pcode": "72913406",
+          "categoryCode": "112752",
+          "category1": "861",
+          "category2": "874",
+          "category3": "221725",
+          "category4": "0",
+          "productFullName": "G.SKILL DDR5-6000 CL36 AEGIS 5 (16GB)",
+          "makerName": "G.SKILL",
+          "brandName": "",
+          "makerUrl": "http://www.gskill.com/",
+          "kccode": "",
+          "kpscode": "",
+          "circulName": "",
+          "productName": "DDR5-6000 CL36 AEGIS 5",
+          "prodType": "T1",
+          "displayMakeDate": "2024.12.",
+          "productUrl": "https://prod.danawa.com/info/?pcode=72913406&keyword=G.SKILL+DDR5+PC5-48000+CL36+AEGIS+5&cate=112752"
+        },
+        "descriptionHttpStatus": 200,
+        "descriptionHtmlHash": "08af82b0f466dfec6a54ade76d0e1b9103f435fdada38c98ab5f27ced683067e",
+        "specs": [
+          {
+            "section": null,
+            "key": "제조회사",
+            "value": "G.SKILL (제조사 웹사이트 바로가기)"
+          },
+          {
+            "section": null,
+            "key": "등록년월",
+            "value": "2024년 12월"
+          },
+          {
+            "section": null,
+            "key": "사용 장치",
+            "value": "데스크탑용"
+          },
+          {
+            "section": null,
+            "key": "제품 분류",
+            "value": "DDR5"
+          },
+          {
+            "section": null,
+            "key": "메모리 규격",
+            "value": "DIMM(UDIMM)"
+          },
+          {
+            "section": null,
+            "key": "메모리 용량",
+            "value": "16GB"
+          },
+          {
+            "section": null,
+            "key": "동작클럭(대역폭)",
+            "value": "6000MHz (PC5-48000)"
+          },
+          {
+            "section": null,
+            "key": "램타이밍",
+            "value": "CL36-36-36-96"
+          },
+          {
+            "section": null,
+            "key": "동작전압",
+            "value": "1.35V"
+          },
+          {
+            "section": null,
+            "key": "램개수",
+            "value": "1개"
+          },
+          {
+            "section": "부가기능",
+            "key": "XMP3.0",
+            "value": "○"
+          },
+          {
+            "section": "부가기능",
+            "key": "EXPO",
+            "value": "○"
+          },
+          {
+            "section": "부가기능",
+            "key": "온다이ECC",
+            "value": "○"
+          },
+          {
+            "section": "부가기능",
+            "key": "히트싱크",
+            "value": "미포함"
+          },
+          {
+            "section": "부가기능",
+            "key": "높이",
+            "value": "31mm"
+          },
+          {
+            "section": "KC인증",
+            "key": "적합성평가인증",
+            "value": "상세설명 / 판매 사이트 문의 인증번호 확인"
+          },
+          {
+            "section": "KC인증",
+            "key": "안전확인인증",
+            "value": "상세설명 / 판매 사이트 문의 인증번호 확인"
+          }
+        ]
+      }
+    }
+  ]
+}

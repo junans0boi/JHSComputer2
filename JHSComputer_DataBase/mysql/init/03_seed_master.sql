@@ -1,0 +1,125 @@
+INSERT INTO `part_categories`
+  (`CATEGORY_CODE`, `CATEGORY_NAME`, `SORT_ORDER`, `IS_REQUIRED_FOR_BUILD`, `IS_ACTIVE`)
+VALUES
+  ('CPU', 'CPU', 10, 'Y', 'Y'),
+  ('CPU_COOLER', 'CPU 쿨러', 20, 'Y', 'Y'),
+  ('MAINBOARD', '메인보드', 30, 'Y', 'Y'),
+  ('RAM', '메모리', 40, 'Y', 'Y'),
+  ('GPU', '그래픽카드', 50, 'N', 'Y'),
+  ('SSD', 'SSD', 60, 'Y', 'Y'),
+  ('PSU', '파워', 70, 'Y', 'Y'),
+  ('CASE', '케이스', 80, 'Y', 'Y'),
+  ('CASE_FAN', '케이스 팬', 90, 'N', 'Y'),
+  ('TUNING', '튜닝용품', 100, 'N', 'Y')
+ON DUPLICATE KEY UPDATE
+  `CATEGORY_NAME` = VALUES(`CATEGORY_NAME`),
+  `SORT_ORDER` = VALUES(`SORT_ORDER`),
+  `IS_REQUIRED_FOR_BUILD` = VALUES(`IS_REQUIRED_FOR_BUILD`),
+  `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `suppliers`
+  (`SUPPLIER_CODE`, `SUPPLIER_NAME`, `BASE_URL`, `STATUS`)
+VALUES
+  ('compuzone', '컴퓨존', 'https://www.compuzone.co.kr', 'ACTIVE'),
+  ('danawa', '다나와', 'https://prod.danawa.com', 'ACTIVE')
+ON DUPLICATE KEY UPDATE
+  `SUPPLIER_NAME` = VALUES(`SUPPLIER_NAME`),
+  `BASE_URL` = VALUES(`BASE_URL`),
+  `STATUS` = VALUES(`STATUS`);
+
+INSERT INTO `quote_templates`
+  (`TEMPLATE_NAME`, `BUDGET_MIN`, `BUDGET_MAX`, `PURPOSE`, `RESOLUTION`, `PRIORITY_TYPE`, `IS_ACTIVE`)
+VALUES
+  ('게임 FHD 70만원대 기본', 600000, 899999, 'GAME', 'FHD', 'VALUE', 'Y'),
+  ('게임 FHD 100만원대 기본', 900000, 1299999, 'GAME', 'FHD', 'VALUE', 'Y'),
+  ('게임 QHD 150만원대 기본', 1300000, 1799999, 'GAME', 'QHD', 'PERFORMANCE', 'Y'),
+  ('게임 QHD 200만원대 기본', 1800000, 2499999, 'GAME', 'QHD', 'PERFORMANCE', 'Y'),
+  ('게임 4K 300만원대 기본', 2500000, 3999999, 'GAME', 'UHD_4K', 'PERFORMANCE', 'Y'),
+  ('사무용 기본', 400000, 899999, 'OFFICE', 'FHD', 'VALUE', 'Y'),
+  ('방송용 기본', 1500000, 3000000, 'STREAMING', 'QHD', 'PERFORMANCE', 'Y'),
+  ('영상편집 기본', 1500000, 3500000, 'VIDEO_EDITING', 'QHD', 'PERFORMANCE', 'Y'),
+  ('AI 작업 기본', 2000000, 5000000, 'AI', 'QHD', 'PERFORMANCE', 'Y')
+ON DUPLICATE KEY UPDATE
+  `BUDGET_MIN` = VALUES(`BUDGET_MIN`),
+  `BUDGET_MAX` = VALUES(`BUDGET_MAX`),
+  `PURPOSE` = VALUES(`PURPOSE`),
+  `RESOLUTION` = VALUES(`RESOLUTION`),
+  `PRIORITY_TYPE` = VALUES(`PRIORITY_TYPE`),
+  `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `supplier_crawl_targets`
+  (`SUPPLIER_ID`, `PART_CATEGORY_ID`, `TARGET_NAME`, `SOURCE_URL`, `EXTERNAL_CATEGORY_CODE`, `BIG_DIV_NO`, `MEDIUM_DIV_NO`, `DIV_NO`, `CRAWL_PRIORITY`, `IS_ACTIVE`)
+SELECT s.`SUPPLIER_ID`, c.`PART_CATEGORY_ID`, 'CPU', 'https://www.compuzone.co.kr/product/product_list.htm?BigDivNo=4&MediumDivNo=1012', '4/1012', '4', '1012', NULL, 10, 'Y'
+FROM `suppliers` s JOIN `part_categories` c ON c.`CATEGORY_CODE` = 'CPU'
+WHERE s.`SUPPLIER_CODE` = 'compuzone'
+ON DUPLICATE KEY UPDATE `PART_CATEGORY_ID` = VALUES(`PART_CATEGORY_ID`), `TARGET_NAME` = VALUES(`TARGET_NAME`), `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `supplier_crawl_targets`
+  (`SUPPLIER_ID`, `PART_CATEGORY_ID`, `TARGET_NAME`, `SOURCE_URL`, `EXTERNAL_CATEGORY_CODE`, `BIG_DIV_NO`, `MEDIUM_DIV_NO`, `DIV_NO`, `CRAWL_PRIORITY`, `IS_ACTIVE`)
+SELECT s.`SUPPLIER_ID`, c.`PART_CATEGORY_ID`, 'AMD CPU', 'https://www.compuzone.co.kr/product/product_list.htm?BigDivNo=4&MediumDivNo=1012&DivNo=2033', '4/1012/2033', '4', '1012', '2033', 11, 'Y'
+FROM `suppliers` s JOIN `part_categories` c ON c.`CATEGORY_CODE` = 'CPU'
+WHERE s.`SUPPLIER_CODE` = 'compuzone'
+ON DUPLICATE KEY UPDATE `PART_CATEGORY_ID` = VALUES(`PART_CATEGORY_ID`), `TARGET_NAME` = VALUES(`TARGET_NAME`), `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `supplier_crawl_targets`
+  (`SUPPLIER_ID`, `PART_CATEGORY_ID`, `TARGET_NAME`, `SOURCE_URL`, `EXTERNAL_CATEGORY_CODE`, `BIG_DIV_NO`, `MEDIUM_DIV_NO`, `DIV_NO`, `CRAWL_PRIORITY`, `IS_ACTIVE`)
+SELECT s.`SUPPLIER_ID`, c.`PART_CATEGORY_ID`, '인텔 정품 CPU', 'https://www.compuzone.co.kr/product/product_list.htm?BigDivNo=4&MediumDivNo=1012&DivNo=2032', '4/1012/2032', '4', '1012', '2032', 12, 'Y'
+FROM `suppliers` s JOIN `part_categories` c ON c.`CATEGORY_CODE` = 'CPU'
+WHERE s.`SUPPLIER_CODE` = 'compuzone'
+ON DUPLICATE KEY UPDATE `PART_CATEGORY_ID` = VALUES(`PART_CATEGORY_ID`), `TARGET_NAME` = VALUES(`TARGET_NAME`), `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `supplier_crawl_targets`
+  (`SUPPLIER_ID`, `PART_CATEGORY_ID`, `TARGET_NAME`, `SOURCE_URL`, `EXTERNAL_CATEGORY_CODE`, `BIG_DIV_NO`, `MEDIUM_DIV_NO`, `DIV_NO`, `CRAWL_PRIORITY`, `IS_ACTIVE`)
+SELECT s.`SUPPLIER_ID`, c.`PART_CATEGORY_ID`, '메인보드', 'https://www.compuzone.co.kr/product/product_list.htm?BigDivNo=4&MediumDivNo=1013', '4/1013', '4', '1013', NULL, 20, 'Y'
+FROM `suppliers` s JOIN `part_categories` c ON c.`CATEGORY_CODE` = 'MAINBOARD'
+WHERE s.`SUPPLIER_CODE` = 'compuzone'
+ON DUPLICATE KEY UPDATE `PART_CATEGORY_ID` = VALUES(`PART_CATEGORY_ID`), `TARGET_NAME` = VALUES(`TARGET_NAME`), `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `supplier_crawl_targets`
+  (`SUPPLIER_ID`, `PART_CATEGORY_ID`, `TARGET_NAME`, `SOURCE_URL`, `EXTERNAL_CATEGORY_CODE`, `BIG_DIV_NO`, `MEDIUM_DIV_NO`, `DIV_NO`, `CRAWL_PRIORITY`, `IS_ACTIVE`)
+SELECT s.`SUPPLIER_ID`, c.`PART_CATEGORY_ID`, '메모리', 'https://www.compuzone.co.kr/product/product_list.htm?BigDivNo=4&MediumDivNo=1014', '4/1014', '4', '1014', NULL, 30, 'Y'
+FROM `suppliers` s JOIN `part_categories` c ON c.`CATEGORY_CODE` = 'RAM'
+WHERE s.`SUPPLIER_CODE` = 'compuzone'
+ON DUPLICATE KEY UPDATE `PART_CATEGORY_ID` = VALUES(`PART_CATEGORY_ID`), `TARGET_NAME` = VALUES(`TARGET_NAME`), `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `supplier_crawl_targets`
+  (`SUPPLIER_ID`, `PART_CATEGORY_ID`, `TARGET_NAME`, `SOURCE_URL`, `EXTERNAL_CATEGORY_CODE`, `BIG_DIV_NO`, `MEDIUM_DIV_NO`, `DIV_NO`, `CRAWL_PRIORITY`, `IS_ACTIVE`)
+SELECT s.`SUPPLIER_ID`, c.`PART_CATEGORY_ID`, 'SSD', 'https://www.compuzone.co.kr/product/product_list.htm?BigDivNo=4&MediumDivNo=1276', '4/1276', '4', '1276', NULL, 40, 'Y'
+FROM `suppliers` s JOIN `part_categories` c ON c.`CATEGORY_CODE` = 'SSD'
+WHERE s.`SUPPLIER_CODE` = 'compuzone'
+ON DUPLICATE KEY UPDATE `PART_CATEGORY_ID` = VALUES(`PART_CATEGORY_ID`), `TARGET_NAME` = VALUES(`TARGET_NAME`), `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `supplier_crawl_targets`
+  (`SUPPLIER_ID`, `PART_CATEGORY_ID`, `TARGET_NAME`, `SOURCE_URL`, `EXTERNAL_CATEGORY_CODE`, `BIG_DIV_NO`, `MEDIUM_DIV_NO`, `DIV_NO`, `CRAWL_PRIORITY`, `IS_ACTIVE`)
+SELECT s.`SUPPLIER_ID`, c.`PART_CATEGORY_ID`, '그래픽카드', 'https://www.compuzone.co.kr/product/product_list.htm?BigDivNo=4&MediumDivNo=1016', '4/1016', '4', '1016', NULL, 50, 'Y'
+FROM `suppliers` s JOIN `part_categories` c ON c.`CATEGORY_CODE` = 'GPU'
+WHERE s.`SUPPLIER_CODE` = 'compuzone'
+ON DUPLICATE KEY UPDATE `PART_CATEGORY_ID` = VALUES(`PART_CATEGORY_ID`), `TARGET_NAME` = VALUES(`TARGET_NAME`), `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `supplier_crawl_targets`
+  (`SUPPLIER_ID`, `PART_CATEGORY_ID`, `TARGET_NAME`, `SOURCE_URL`, `EXTERNAL_CATEGORY_CODE`, `BIG_DIV_NO`, `MEDIUM_DIV_NO`, `DIV_NO`, `CRAWL_PRIORITY`, `IS_ACTIVE`)
+SELECT s.`SUPPLIER_ID`, c.`PART_CATEGORY_ID`, '케이스', 'https://www.compuzone.co.kr/product/product_list.htm?BigDivNo=4&MediumDivNo=1147', '4/1147', '4', '1147', NULL, 60, 'Y'
+FROM `suppliers` s JOIN `part_categories` c ON c.`CATEGORY_CODE` = 'CASE'
+WHERE s.`SUPPLIER_CODE` = 'compuzone'
+ON DUPLICATE KEY UPDATE `PART_CATEGORY_ID` = VALUES(`PART_CATEGORY_ID`), `TARGET_NAME` = VALUES(`TARGET_NAME`), `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `supplier_crawl_targets`
+  (`SUPPLIER_ID`, `PART_CATEGORY_ID`, `TARGET_NAME`, `SOURCE_URL`, `EXTERNAL_CATEGORY_CODE`, `BIG_DIV_NO`, `MEDIUM_DIV_NO`, `DIV_NO`, `CRAWL_PRIORITY`, `IS_ACTIVE`)
+SELECT s.`SUPPLIER_ID`, c.`PART_CATEGORY_ID`, '파워', 'https://www.compuzone.co.kr/product/product_list.htm?BigDivNo=4&MediumDivNo=1148', '4/1148', '4', '1148', NULL, 70, 'Y'
+FROM `suppliers` s JOIN `part_categories` c ON c.`CATEGORY_CODE` = 'PSU'
+WHERE s.`SUPPLIER_CODE` = 'compuzone'
+ON DUPLICATE KEY UPDATE `PART_CATEGORY_ID` = VALUES(`PART_CATEGORY_ID`), `TARGET_NAME` = VALUES(`TARGET_NAME`), `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `supplier_crawl_targets`
+  (`SUPPLIER_ID`, `PART_CATEGORY_ID`, `TARGET_NAME`, `SOURCE_URL`, `EXTERNAL_CATEGORY_CODE`, `BIG_DIV_NO`, `MEDIUM_DIV_NO`, `DIV_NO`, `CRAWL_PRIORITY`, `IS_ACTIVE`)
+SELECT s.`SUPPLIER_ID`, c.`PART_CATEGORY_ID`, 'CPU쿨러(공랭)', 'https://www.compuzone.co.kr/product/product_list.htm?BigDivNo=4&MediumDivNo=1020&DivNo=2054', '4/1020/2054', '4', '1020', '2054', 80, 'Y'
+FROM `suppliers` s JOIN `part_categories` c ON c.`CATEGORY_CODE` = 'CPU_COOLER'
+WHERE s.`SUPPLIER_CODE` = 'compuzone'
+ON DUPLICATE KEY UPDATE `PART_CATEGORY_ID` = VALUES(`PART_CATEGORY_ID`), `TARGET_NAME` = VALUES(`TARGET_NAME`), `IS_ACTIVE` = VALUES(`IS_ACTIVE`);
+
+INSERT INTO `supplier_crawl_targets`
+  (`SUPPLIER_ID`, `PART_CATEGORY_ID`, `TARGET_NAME`, `SOURCE_URL`, `EXTERNAL_CATEGORY_CODE`, `BIG_DIV_NO`, `MEDIUM_DIV_NO`, `DIV_NO`, `CRAWL_PRIORITY`, `IS_ACTIVE`)
+SELECT s.`SUPPLIER_ID`, c.`PART_CATEGORY_ID`, 'CPU쿨러(수랭)', 'https://www.compuzone.co.kr/product/product_list.htm?BigDivNo=4&MediumDivNo=1020&DivNo=4582', '4/1020/4582', '4', '1020', '4582', 81, 'Y'
+FROM `suppliers` s JOIN `part_categories` c ON c.`CATEGORY_CODE` = 'CPU_COOLER'
+WHERE s.`SUPPLIER_CODE` = 'compuzone'
+ON DUPLICATE KEY UPDATE `PART_CATEGORY_ID` = VALUES(`PART_CATEGORY_ID`), `TARGET_NAME` = VALUES(`TARGET_NAME`), `IS_ACTIVE` = VALUES(`IS_ACTIVE`);

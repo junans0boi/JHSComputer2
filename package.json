@@ -1,0 +1,42 @@
+{
+  "name": "jhs-computer",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "JHSComputer_Server",
+    "JHSComputer_Frontend",
+    "JHSComputer_Agent",
+    "JHSComputer_DataBase"
+  ],
+  "scripts": {
+    "dev": "sh -c 'npm run dev:api & npm run dev:web & wait'",
+    "dev:api": "npm run start:dev -w @jhs-computer/api",
+    "dev:web": "npm run dev -w @jhs-computer/web",
+    "db:up": "docker compose -f JHSComputer_DataBase/docker-compose.yml up -d mysql",
+    "db:down": "docker compose -f JHSComputer_DataBase/docker-compose.yml down",
+    "db:bootstrap:server": "npm run db:bootstrap:server -w @jhs-computer/database",
+    "db:reset": "npm run db:reset -w @jhs-computer/database",
+    "db:reset:dev": "npm run db:reset:dev -w @jhs-computer/database",
+    "db:apply": "npm run db:apply -w @jhs-computer/database",
+    "db:apply:dev": "npm run db:apply:dev -w @jhs-computer/database",
+    "db:apply:stage": "npm run db:apply:stage -w @jhs-computer/database",
+    "db:apply:prod": "npm run db:apply:prod -w @jhs-computer/database",
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "crawl:compuzone:samples": "node JHSComputer_Agent/compuzone/sample-crawl.mjs",
+    "crawl:danawa:samples": "node JHSComputer_Agent/danawa/sample-crawl.mjs",
+    "analyze:samples": "node JHSComputer_Agent/analysis/analyze-samples.mjs",
+    "start:infra": "npm run db:up && docker compose up -d redis",
+    "stop:infra": "npm run db:down && docker compose down"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "overrides": {
+    "postcss": "^8.5.15"
+  },
+  "devDependencies": {
+    "cheerio": "^1.2.0",
+    "iconv-lite": "^0.7.2"
+  }
+}

@@ -1,0 +1,1185 @@
+{
+  "createdAt": "2026-05-23T11:14:30.490Z",
+  "compuzone": {
+    "sourceDir": "project/samples/compuzone/2026-05-23_07-48-44",
+    "categoryCount": 8,
+    "totalProducts": 160,
+    "totalVariantRows": 202,
+    "categories": [
+      {
+        "categoryFile": "CASE.json",
+        "ourCategory": "CASE",
+        "categoryName": "케이스",
+        "productCount": 20,
+        "productsWithVariants": 16,
+        "variantRows": 35,
+        "priceMissing": 0,
+        "example": {
+          "externalProductId": "1350175",
+          "name": "[OH’S] NICE [미들타워]",
+          "price": 43900,
+          "discountPrice": 43900,
+          "reviewCount": 0,
+          "rating": 0,
+          "variantCount": 2,
+          "summarySpecText": "ATX 케이스 /색상: 블랙 / 지원보드규격 : ATX , M-ATX , M-ITX / VGA 길이 : 400mm / CPU쿨러 높이 : 165mm / F-PANEL / 케이스LED버튼 ( ON-OFF기능 ) / 슬라이드 트레이2개 / 미들타워 /측면: 스마트볼캐치패널 (원터치방식) / [패널] 전면 패널 타입 : 강화유리 / 측면 패널 타입 : 강화유리 / [쿨러/튜닝] : 쿨링팬 : 총3개 / LED팬 : 3개 / 후면 : 120mm LED x1 / VGA장착 최대길이 (약 400mm) / CPU쿨러 최대길이 (약 165mm)",
+          "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1350175&BigDivNo=4&MediumDivNo=1147&DivNo=0"
+        }
+      },
+      {
+        "categoryFile": "COOLER_AIR.json",
+        "ourCategory": "COOLER",
+        "categoryName": "CPU쿨러(공랭)",
+        "productCount": 20,
+        "productsWithVariants": 7,
+        "variantRows": 13,
+        "priceMissing": 0,
+        "example": {
+          "externalProductId": "1274544",
+          "name": "[에디] CY100A ARGB [CPU쿨러/120mm] [블랙]",
+          "price": 23500,
+          "discountPrice": 23500,
+          "reviewCount": 11,
+          "rating": 5,
+          "variantCount": 0,
+          "summarySpecText": "1851/1700/115x/1200/AM4/AM5/CPU-120mm/4핀/타워형/5V(3핀)/AURA-SYNC/MYSTIC-LIGHT/RGB-FUSION/싱글 공랭 쿨러/TDP : 230W/ A/S기간 : 5년 / CPU쿨러 최대높이 (약 148mm)",
+          "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1274544&BigDivNo=4&MediumDivNo=1020&DivNo=2054"
+        }
+      },
+      {
+        "categoryFile": "CPU.json",
+        "ourCategory": "CPU",
+        "categoryName": "CPU",
+        "productCount": 20,
+        "productsWithVariants": 8,
+        "variantRows": 14,
+        "priceMissing": 0,
+        "example": {
+          "externalProductId": "1013843",
+          "name": "[AMD] 라이젠7 라파엘 7800X3D (8코어/16스레드/4.2GHz/쿨러미포함)",
+          "price": 403000,
+          "discountPrice": 403000,
+          "reviewCount": 2382,
+          "rating": 5,
+          "variantCount": 1,
+          "summarySpecText": "8코어 16스레드 4.2GHz 120w TDP 5nm / 라이젠 라파엘 / 라이젠7 / 옥타(8) 코어 / AM5 / 내장그래픽 유 / 4.2 ~ 5.0GHz / 12MB 이상 / 5nm",
+          "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1013843&BigDivNo=4&MediumDivNo=1012&DivNo=0"
+        }
+      },
+      {
+        "categoryFile": "GPU.json",
+        "ourCategory": "GPU",
+        "categoryName": "그래픽카드",
+        "productCount": 20,
+        "productsWithVariants": 0,
+        "variantRows": 0,
+        "priceMissing": 0,
+        "example": {
+          "externalProductId": "1234579",
+          "name": "[MSI] 지포스 RTX 5060 Ti 벤투스 2X OC 플러스 D7 8GB",
+          "price": 603080,
+          "discountPrice": 603080,
+          "reviewCount": 273,
+          "rating": 4.9,
+          "variantCount": 0,
+          "summarySpecText": "RTX 5060 Ti / PCIe5.0 / 정격파워600W 이상 / 전원 포트: 8핀 x1 / 가로(길이): 227mm / 베이스클럭: 2407MHz / 부스트클럭: 2602MHz / OC클럭: 2617MHz / 스트림 프로세서: 4608개 / GDDR7 / 출력단자: HDMI2.1 , DP2.1 / 지원정보: 8K 지원 , HDR 지원 , HDCP 2.3 / 사용전력: 180W / 2팬 / 두께: 41mm / 제로팬(0-dB기술) / 백플레이트 / DrMOS / RTX5060 Ti",
+          "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1234579&BigDivNo=4&MediumDivNo=1016&DivNo=0"
+        }
+      },
+      {
+        "categoryFile": "MAINBOARD.json",
+        "ourCategory": "MAINBOARD",
+        "categoryName": "메인보드",
+        "productCount": 20,
+        "productsWithVariants": 1,
+        "variantRows": 2,
+        "priceMissing": 0,
+        "example": {
+          "externalProductId": "1028287",
+          "name": "[MSI] PRO B650M-P (AMD B650/M-ATX)",
+          "price": 129000,
+          "discountPrice": 129000,
+          "reviewCount": 709,
+          "rating": 5,
+          "variantCount": 0,
+          "summarySpecText": "AMD(소켓AM5) / AMD B650 / DDR5 / VGA 연결: PCIe4.0 x16 / M-ATX (24.4x24.4cm) / 전원부: 9페이즈 / [메모리] 7200MHz (PC5-57600) / 4개 / 메모리 용량: 최대 256GB / EXPO / [확장슬롯] PCIe버전: PCIe4.0, PCIe3.0 / PCIex1: 2개 / [저장장치] M.2: 2개 / SATA3: 4개 / M.2 연결: PCIe4.0, NVMe / [후면단자] HDMI / DP / D-SUB / USB3.x 10Gbps / USB3.x 5Gbps / USB 2.0 / RJ-45 / 오디오잭 / PS/2 / USB A타입: 8개 / 유선랜 칩셋: Realtek RTL8125B / 2.5Gbps / RJ-45: 1개 / 오디오 칩셋: Realtek ALC897 / 7.1채널(8ch) / [내부I/O] USB/팬 헤더: USB3.0 헤더 , USB2.0 헤더 , USB3.1 Type C 헤더, RGB 12V 4핀 헤더 , ARGB 5V 3핀 헤더 , 펌프전용 헤더 / 시스템팬 4핀: 3개 / [특징] 전원부 방열판 / UEFI",
+          "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1028287&BigDivNo=4&MediumDivNo=1013&DivNo=0"
+        }
+      },
+      {
+        "categoryFile": "PSU.json",
+        "ourCategory": "PSU",
+        "categoryName": "파워",
+        "productCount": 20,
+        "productsWithVariants": 11,
+        "variantRows": 52,
+        "priceMissing": 0,
+        "example": {
+          "externalProductId": "1143770",
+          "name": "[마이크로닉스] Classic II 80PLUS GOLD 풀모듈러 ATX3.1 (PCIE5.1)",
+          "price": 141500,
+          "discountPrice": 141500,
+          "reviewCount": 4216,
+          "rating": 4.9,
+          "variantCount": 8,
+          "summarySpecText": "ATX 파워 / 정격출력: 850W / 80 PLUS 골드 / +12V 싱글레일 / 액티브PFC / PF(역률): 99% / 120mm 팬 / 깊이: 140mm / 무상 10년 / [커넥터] 풀모듈러 / 메인전원: 24핀(20+4) / 보조전원: 8+4+4핀 1개 / PCIe 16핀(12+4): 12V2x6 1개 / PCIe 8핀(6+2): 3개 / SATA: 8개 / IDE 4핀: 4개 / FDD: 1개 / [부가기능] 팬리스모드 / 자동 팬 조절 / 대기전력 1W 미만 / 플랫케이블 / 3개 /25.07.29 PCIe 8핀(6+2): 2개->3개로 변경",
+          "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1143770&BigDivNo=4&MediumDivNo=1148&DivNo=0"
+        }
+      },
+      {
+        "categoryFile": "RAM.json",
+        "ourCategory": "RAM",
+        "categoryName": "메모리",
+        "productCount": 20,
+        "productsWithVariants": 13,
+        "variantRows": 32,
+        "priceMissing": 0,
+        "example": {
+          "externalProductId": "1197279",
+          "name": "[G.SKILL] DDR5 PC5-48000 CL36 AEGIS 5",
+          "price": 340000,
+          "discountPrice": 340000,
+          "reviewCount": 121,
+          "rating": 4.8,
+          "variantCount": 2,
+          "summarySpecText": "16GB / 6000MHz (PC5-48000) / CL36-36-36-96 / 1.35V / 1개 / XMP3.0 / EXPO / 방열판 무 / F5-6000J3636F16GX1-IS",
+          "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1197279&BigDivNo=4&MediumDivNo=1014&DivNo=0"
+        }
+      },
+      {
+        "categoryFile": "SSD.json",
+        "ourCategory": "SSD",
+        "categoryName": "SSD",
+        "productCount": 20,
+        "productsWithVariants": 18,
+        "variantRows": 54,
+        "priceMissing": 0,
+        "example": {
+          "externalProductId": "1182756",
+          "name": "[삼성전자] 공식인증 990 EVO Plus M.2 NVMe 2280",
+          "price": 473000,
+          "discountPrice": 473000,
+          "reviewCount": 922,
+          "rating": 4.9,
+          "variantCount": 3,
+          "summarySpecText": "PCIeGen4 / 1TB / TLC / 읽기 7150M / 쓰기 6300M / 컨트롤러 고정 / DRAM 미탑재 / 80mm / 보증기간 5년 / MZ-V9S1T0BW",
+          "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1182756&BigDivNo=4&MediumDivNo=1276&DivNo=0"
+        }
+      }
+    ]
+  },
+  "danawa": {
+    "sourceRoot": "project/samples/danawa",
+    "sampleDirCount": 2,
+    "queryCount": 8,
+    "queries": [
+      {
+        "sourceDir": "project/samples/danawa/2026-05-23-10-07-17",
+        "query": "AMD 라이젠7 9800X3D",
+        "topResult": {
+          "pcode": "70531547",
+          "name": "AMD 라이젠7-6세대 9800X3D (그래니트 릿지)",
+          "price": 582360,
+          "productUrl": "https://prod.danawa.com/info/?pcode=70531547&keyword=AMD+%EB%9D%BC%EC%9D%B4%EC%A0%A07+9800X3D&cate=113990",
+          "variantCount": 3,
+          "variants": [
+            {
+              "variantName": "멀티팩 정품",
+              "pcode": "70531547"
+            },
+            {
+              "variantName": "정품",
+              "pcode": "70679912"
+            },
+            {
+              "variantName": "해외구매",
+              "pcode": "92233121"
+            }
+          ],
+          "specCount": 33,
+          "specSections": [
+            {
+              "section": "(기본)",
+              "keys": [
+                "제조회사",
+                "등록년월",
+                "AMD CPU종류",
+                "소켓 구분",
+                "코어 수",
+                "스레드 수",
+                "메모리 규격",
+                "내장그래픽",
+                "세대 구분",
+                "출시일",
+                "제조 공정"
+              ]
+            },
+            {
+              "section": "사양",
+              "keys": [
+                "기본 클럭",
+                "최대 클럭",
+                "L2 캐시",
+                "L3 캐시",
+                "연산 체계",
+                "TDP",
+                "PCIe 버전",
+                "최대 PCIe 레인수"
+              ]
+            },
+            {
+              "section": "메모리 사양",
+              "keys": [
+                "최대 메모리 크기",
+                "메모리 클럭",
+                "메모리 채널"
+              ]
+            },
+            {
+              "section": "그래픽 사양",
+              "keys": [
+                "GPU 모델명",
+                "GPU 코어 속도"
+              ]
+            },
+            {
+              "section": "기술 지원",
+              "keys": [
+                "SMT(하이퍼스레딩)",
+                "AMD Ryzen Master",
+                "AMD 3D V캐시"
+              ]
+            },
+            {
+              "section": "구성",
+              "keys": [
+                "패키지 형태",
+                "쿨러"
+              ]
+            },
+            {
+              "section": "벤치마크",
+              "keys": [
+                "시네벤치R23(싱글)",
+                "시네벤치R23(멀티)"
+              ]
+            },
+            {
+              "section": "KC인증",
+              "keys": [
+                "적합성평가인증",
+                "안전확인인증"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sourceDir": "project/samples/danawa/2026-05-23-10-07-17",
+        "query": "MSI 지포스 RTX 5060 벤투스 2X OC D7 8GB",
+        "topResult": {
+          "pcode": "90956033",
+          "name": "MSI 지포스 RTX 5060 벤투스 2X OC D7 8GB",
+          "price": 484890,
+          "productUrl": "https://prod.danawa.com/info/?pcode=90956033&keyword=MSI+%EC%A7%80%ED%8F%AC%EC%8A%A4+RTX+5060+%EB%B2%A4%ED%88%AC%EC%8A%A4+2X+OC+D7+8GB&cate=112753",
+          "variantCount": 0,
+          "variants": [],
+          "specCount": 38,
+          "specSections": [
+            {
+              "section": "(기본)",
+              "keys": [
+                "제조회사",
+                "등록년월",
+                "칩셋 제조사",
+                "제품 시리즈",
+                "GPU 제조 공정",
+                "NVIDIA 칩셋",
+                "인터페이스",
+                "권장 파워용량",
+                "전원 포트",
+                "가로(길이)"
+              ]
+            },
+            {
+              "section": "칩셋 사양",
+              "keys": [
+                "베이스클럭",
+                "부스트클럭",
+                "OC클럭",
+                "쿠다 프로세서",
+                "스트림 프로세서",
+                "최대 AI TOPS"
+              ]
+            },
+            {
+              "section": "메모리 사양",
+              "keys": [
+                "메모리 종류",
+                "메모리 클럭",
+                "메모리 용량",
+                "메모리 버스"
+              ]
+            },
+            {
+              "section": "그래픽 출력",
+              "keys": [
+                "DisplayPort",
+                "HDMI",
+                "모니터 지원"
+              ]
+            },
+            {
+              "section": "지원정보",
+              "keys": [
+                "8K 지원",
+                "HDR 지원",
+                "HDCP 2.3"
+              ]
+            },
+            {
+              "section": "전력 관련",
+              "keys": [
+                "사용전력"
+              ]
+            },
+            {
+              "section": "냉각방식",
+              "keys": [
+                "방열판",
+                "히트파이프",
+                "팬쿨러"
+              ]
+            },
+            {
+              "section": "제품 외형",
+              "keys": [
+                "팬 개수",
+                "세로(높이)",
+                "두께"
+              ]
+            },
+            {
+              "section": "부가기능",
+              "keys": [
+                "제로팬(0-dB기술)",
+                "백플레이트",
+                "DrMOS"
+              ]
+            },
+            {
+              "section": "KC인증",
+              "keys": [
+                "적합성평가인증",
+                "안전확인인증"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sourceDir": "project/samples/danawa/2026-05-23-11-12-31",
+        "query": "G.SKILL DDR5 PC5-48000 CL36 AEGIS 5",
+        "topResult": {
+          "pcode": "72913406",
+          "name": "G.SKILL DDR5-6000 CL36 AEGIS 5",
+          "price": 629000,
+          "productUrl": "https://prod.danawa.com/info/?pcode=72913406&keyword=G.SKILL+DDR5+PC5-48000+CL36+AEGIS+5&cate=112752",
+          "variantCount": 2,
+          "variants": [
+            {
+              "variantName": "32GB",
+              "pcode": "75656486"
+            },
+            {
+              "variantName": "16GB",
+              "pcode": "72913406"
+            }
+          ],
+          "specCount": 17,
+          "specSections": [
+            {
+              "section": "(기본)",
+              "keys": [
+                "제조회사",
+                "등록년월",
+                "사용 장치",
+                "제품 분류",
+                "메모리 규격",
+                "메모리 용량",
+                "동작클럭(대역폭)",
+                "램타이밍",
+                "동작전압",
+                "램개수"
+              ]
+            },
+            {
+              "section": "부가기능",
+              "keys": [
+                "XMP3.0",
+                "EXPO",
+                "온다이ECC",
+                "히트싱크",
+                "높이"
+              ]
+            },
+            {
+              "section": "KC인증",
+              "keys": [
+                "적합성평가인증",
+                "안전확인인증"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sourceDir": "project/samples/danawa/2026-05-23-11-12-31",
+        "query": "MSI PRO B650M-P",
+        "topResult": {
+          "pcode": "20108249",
+          "name": "MSI PRO B650M-P",
+          "price": 116820,
+          "productUrl": "https://prod.danawa.com/info/?pcode=20108249&keyword=MSI+PRO+B650M-P&cate=112751",
+          "variantCount": 0,
+          "variants": [],
+          "specCount": 60,
+          "specSections": [
+            {
+              "section": "(기본)",
+              "keys": [
+                "제조회사",
+                "등록년월"
+              ]
+            },
+            {
+              "section": "기본 사양",
+              "keys": [
+                "제품 분류",
+                "CPU 소켓",
+                "세부 칩셋",
+                "메모리 종류",
+                "VGA 연결",
+                "폼팩터",
+                "CPU 장착수",
+                "전원부"
+              ]
+            },
+            {
+              "section": "[메모리]",
+              "keys": [
+                "메모리 속도",
+                "메모리 슬롯",
+                "메모리 채널",
+                "메모리 용량"
+              ]
+            },
+            {
+              "section": "메모리 기술",
+              "keys": [
+                "EXPO"
+              ]
+            },
+            {
+              "section": "PCIe버전",
+              "keys": [
+                "PCIe4.0",
+                "PCIe3.0"
+              ]
+            },
+            {
+              "section": "PCIe슬롯",
+              "keys": [
+                "PCIex1"
+              ]
+            },
+            {
+              "section": "[저장장치]",
+              "keys": [
+                "M.2",
+                "SATA3"
+              ]
+            },
+            {
+              "section": "M.2 연결",
+              "keys": [
+                "PCIe4.0",
+                "NVMe"
+              ]
+            },
+            {
+              "section": "M.2 폼팩터",
+              "keys": [
+                "2260",
+                "2280"
+              ]
+            },
+            {
+              "section": "RAID 지원",
+              "keys": [
+                "NVMe RAID",
+                "SATA RAID"
+              ]
+            },
+            {
+              "section": "그래픽 출력",
+              "keys": [
+                "HDMI",
+                "DP",
+                "D-SUB"
+              ]
+            },
+            {
+              "section": "후면단자",
+              "keys": [
+                "USB3.x 10Gbps",
+                "USB3.x 5Gbps",
+                "USB 2.0",
+                "RJ-45",
+                "오디오잭",
+                "PS/2",
+                "USB A타입",
+                "USB A타입 10Gbps",
+                "USB A타입 5Gbps",
+                "USB2.0"
+              ]
+            },
+            {
+              "section": "네트워크",
+              "keys": [
+                "유선랜 칩셋",
+                "유선랜 속도",
+                "RJ-45"
+              ]
+            },
+            {
+              "section": "오디오",
+              "keys": [
+                "오디오 칩셋",
+                "아날로그 출력"
+              ]
+            },
+            {
+              "section": "USB/팬 헤더",
+              "keys": [
+                "USB3.0 헤더",
+                "USB2.0 헤더",
+                "USB3.1 Type C 헤더",
+                "RGB 12V 4핀 헤더",
+                "ARGB 5V 3핀 헤더",
+                "펌프전용 헤더",
+                "RGB 4핀",
+                "ARGB 3핀",
+                "시스템팬 4핀",
+                "USB3.1 C타입 헤더"
+              ]
+            },
+            {
+              "section": "특징",
+              "keys": [
+                "전원부 방열판",
+                "UEFI"
+              ]
+            },
+            {
+              "section": "KC인증",
+              "keys": [
+                "적합성평가인증",
+                "안전확인인증"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sourceDir": "project/samples/danawa/2026-05-23-11-12-31",
+        "query": "OH’S NICE 미들타워",
+        "topResult": {
+          "pcode": "122673623",
+          "name": "OH'S NICE",
+          "price": 43090,
+          "productUrl": "https://prod.danawa.com/info/?pcode=122673623&keyword=OH%E2%80%99S+NICE+%EB%AF%B8%EB%93%A4%ED%83%80%EC%9B%8C&cate=112775",
+          "variantCount": 2,
+          "variants": [
+            {
+              "variantName": "블랙",
+              "pcode": "122673623"
+            },
+            {
+              "variantName": "화이트",
+              "pcode": "122673631"
+            }
+          ],
+          "specCount": 31,
+          "specSections": [
+            {
+              "section": "(기본)",
+              "keys": [
+                "제조회사",
+                "등록년월",
+                "제품 분류"
+              ]
+            },
+            {
+              "section": "지원보드규격",
+              "keys": [
+                "ATX",
+                "M-ATX",
+                "M-ITX",
+                "VGA 길이",
+                "CPU쿨러 높이",
+                "케이스 크기"
+              ]
+            },
+            {
+              "section": "내부 확장",
+              "keys": [
+                "8.9cm베이",
+                "6.4cm베이",
+                "저장장치 장착"
+              ]
+            },
+            {
+              "section": "[패널]",
+              "keys": [
+                "전면 패널 타입",
+                "측면 패널 타입",
+                "먼지필터"
+              ]
+            },
+            {
+              "section": "[쿨러/튜닝]",
+              "keys": [
+                "쿨링팬",
+                "LED팬",
+                "후면",
+                "내부 측면"
+              ]
+            },
+            {
+              "section": "외부포트",
+              "keys": [
+                "USB2.0",
+                "USB3.x 5Gbps"
+              ]
+            },
+            {
+              "section": "[크기]",
+              "keys": [
+                "너비(W)",
+                "깊이(D)",
+                "높이(H)"
+              ]
+            },
+            {
+              "section": "[호환성]",
+              "keys": [
+                "지원파워규격",
+                "파워 장착 길이",
+                "파워 위치",
+                "[부가기능]",
+                "LED 색상"
+              ]
+            },
+            {
+              "section": "KC인증",
+              "keys": [
+                "적합성평가인증",
+                "안전확인인증"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sourceDir": "project/samples/danawa/2026-05-23-11-12-31",
+        "query": "마이크로닉스 Classic II 80PLUS GOLD 풀모듈러 ATX3.1",
+        "topResult": {
+          "pcode": "51815078",
+          "name": "마이크로닉스 Classic II 850W 80PLUS골드 풀모듈러 ATX3.1",
+          "price": 141500,
+          "productUrl": "https://prod.danawa.com/info/?pcode=51815078&keyword=%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C%EB%8B%89%EC%8A%A4+Classic+II+80PLUS+GOLD+%ED%92%80%EB%AA%A8%EB%93%88%EB%9F%AC+ATX3.1&cate=112777",
+          "variantCount": 0,
+          "variants": [],
+          "specCount": 44,
+          "specSections": [
+            {
+              "section": "(기본)",
+              "keys": [
+                "제조회사",
+                "등록년월",
+                "제품 분류",
+                "정격출력",
+                "80PLUS인증",
+                "케이블연결",
+                "전압변동",
+                "+12V 출력방식",
+                "PFC회로",
+                "PF(역률)",
+                "쿨링팬 크기",
+                "쿨링팬 개수",
+                "베어링",
+                "깊이",
+                "A/S 보증기간"
+              ]
+            },
+            {
+              "section": "DC 출력",
+              "keys": [
+                "+3.3V 출력",
+                "+5V 출력",
+                "+12V 출력",
+                "-12V 출력",
+                "+5Vsb 출력"
+              ]
+            },
+            {
+              "section": "[커넥터]",
+              "keys": [
+                "메인전원",
+                "보조전원",
+                "PCIe 16핀(12+4)",
+                "PCIe 8핀(6+2)",
+                "SATA",
+                "IDE 4핀",
+                "FDD"
+              ]
+            },
+            {
+              "section": "부가기능",
+              "keys": [
+                "팬리스모드",
+                "자동 팬 조절",
+                "대기전력 1W 미만",
+                "플랫케이블"
+              ]
+            },
+            {
+              "section": "내부설계",
+              "keys": [
+                "105도 콘덴서",
+                "DC to DC 설계",
+                "LLC공진형컨버터"
+              ]
+            },
+            {
+              "section": "보호회로",
+              "keys": [
+                "과전압(OVP)",
+                "저전압(UVP)",
+                "과전력(OPP)",
+                "과열(OTP/OHP)",
+                "단락(SCP)",
+                "서지+인러쉬(SIP)",
+                "공회전(NLO)",
+                "[변경사항]"
+              ]
+            },
+            {
+              "section": "KC인증",
+              "keys": [
+                "적합성평가인증",
+                "안전확인인증"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sourceDir": "project/samples/danawa/2026-05-23-11-12-31",
+        "query": "삼성전자 990 EVO Plus M.2 NVMe 2280",
+        "topResult": {
+          "pcode": "69869543",
+          "name": "삼성전자 990 EVO Plus M.2 NVMe",
+          "price": 1130970,
+          "productUrl": "https://prod.danawa.com/info/?pcode=69869543&keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+990+EVO+Plus+M.2+NVMe+2280&cate=112760",
+          "variantCount": 3,
+          "variants": [
+            {
+              "variantName": "4TB",
+              "pcode": "69869606"
+            },
+            {
+              "variantName": "2TB",
+              "pcode": "69869573"
+            },
+            {
+              "variantName": "1TB",
+              "pcode": "69869543"
+            }
+          ],
+          "specCount": 34,
+          "specSections": [
+            {
+              "section": "(기본)",
+              "keys": [
+                "제조회사",
+                "등록년월"
+              ]
+            },
+            {
+              "section": "[기본사양]",
+              "keys": [
+                "제품분류",
+                "폼팩터",
+                "인터페이스",
+                "프로토콜",
+                "용량",
+                "메모리 타입",
+                "낸드 구조",
+                "컨트롤러"
+              ]
+            },
+            {
+              "section": "[성능]",
+              "keys": [
+                "순차읽기",
+                "순차쓰기",
+                "읽기IOPS",
+                "쓰기IOPS"
+              ]
+            },
+            {
+              "section": "지원기능",
+              "keys": [
+                "TRIM",
+                "S.M.A.R.T",
+                "SLC캐싱",
+                "HMB",
+                "GC",
+                "DEVSLP"
+              ]
+            },
+            {
+              "section": "부가기능",
+              "keys": [
+                "AES 암호화"
+              ]
+            },
+            {
+              "section": "[환경특성]",
+              "keys": [
+                "MTBF",
+                "TBW",
+                "SLC",
+                "게임기 호환"
+              ]
+            },
+            {
+              "section": "A/S기간",
+              "keys": [
+                "5년",
+                "제한보증"
+              ]
+            },
+            {
+              "section": "쿨링 정보",
+              "keys": [
+                "NVMe 방열판"
+              ]
+            },
+            {
+              "section": "[크기/무게]",
+              "keys": [
+                "가로",
+                "세로",
+                "두께",
+                "무게"
+              ]
+            },
+            {
+              "section": "KC인증",
+              "keys": [
+                "적합성평가인증",
+                "안전확인인증"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sourceDir": "project/samples/danawa/2026-05-23-11-12-31",
+        "query": "에디 CY100A ARGB CPU쿨러",
+        "topResult": {
+          "pcode": "96424847",
+          "name": "에디 CY100A ARGB",
+          "price": 23460,
+          "productUrl": "https://prod.danawa.com/info/?pcode=96424847&keyword=%EC%97%90%EB%94%94+CY100A+ARGB+CPU%EC%BF%A8%EB%9F%AC&cate=11236855",
+          "variantCount": 2,
+          "variants": [
+            {
+              "variantName": "블랙",
+              "pcode": "96424847"
+            },
+            {
+              "variantName": "화이트",
+              "pcode": "97847852"
+            }
+          ],
+          "specCount": 43,
+          "specSections": [
+            {
+              "section": "(기본)",
+              "keys": [
+                "제조회사",
+                "등록년월",
+                "냉각 방식",
+                "공랭 형태",
+                "TDP",
+                "A/S기간",
+                "베이스/워터블록 재질",
+                "방열판/라디 재질",
+                "히트파이프",
+                "히트파이프재질",
+                "색상"
+              ]
+            },
+            {
+              "section": "인텔 소켓",
+              "keys": [
+                "LGA1851",
+                "LGA1700",
+                "LGA1200",
+                "LGA115x"
+              ]
+            },
+            {
+              "section": "AMD 소켓",
+              "keys": [
+                "AM5",
+                "AM4",
+                "가로",
+                "세로",
+                "높이",
+                "무게"
+              ]
+            },
+            {
+              "section": "[쿨링팬]",
+              "keys": [
+                "팬 크기",
+                "팬 개수",
+                "팬 두께",
+                "팬 커넥터",
+                "베어링",
+                "최대 팬속도",
+                "최대 풍량",
+                "풍압(정압)",
+                "최대 팬소음"
+              ]
+            },
+            {
+              "section": "작동전압",
+              "keys": [
+                "팬 12V",
+                "LED 5V"
+              ]
+            },
+            {
+              "section": "부가기능",
+              "keys": [
+                "LED 라이트",
+                "PWM 지원",
+                "LED색상"
+              ]
+            },
+            {
+              "section": "LED시스템",
+              "keys": [
+                "AURA SYNC",
+                "MYSTIC LIGHT",
+                "RGB FUSION",
+                "[구성품/기타]"
+              ]
+            },
+            {
+              "section": "구성품",
+              "keys": [
+                "써멀컴파운드",
+                "써멀유형"
+              ]
+            },
+            {
+              "section": "KC인증",
+              "keys": [
+                "적합성평가인증",
+                "안전확인인증"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "recommendations": [
+    {
+      "topic": "표준 부품과 판매 단위 분리",
+      "decision": "`parts`는 기술 모델, `supplier_listings`/`supplier_listing_variants`는 실제 판매 페이지와 패키지 단위로 둔다.",
+      "evidence": [
+        {
+          "supplier": "danawa",
+          "product": "AMD 라이젠7-6세대 9800X3D (그래니트 릿지)",
+          "variants": [
+            {
+              "variantName": "멀티팩 정품",
+              "pcode": "70531547"
+            },
+            {
+              "variantName": "정품",
+              "pcode": "70679912"
+            },
+            {
+              "variantName": "해외구매",
+              "pcode": "92233121"
+            }
+          ]
+        },
+        {
+          "supplier": "compuzone",
+          "product": "[AMD] 라이젠7 라파엘 7800X3D (8코어/16스레드/4.2GHz/쿨러미포함)",
+          "variantCount": 1
+        }
+      ]
+    },
+    {
+      "topic": "external_product_id 단일화",
+      "decision": "컴퓨존 ProductNo와 다나와 pcode는 모두 `supplier_listings.external_product_id`에 저장하고 `supplier_id + external_product_id`로 유니크 처리한다.",
+      "evidence": [
+        "컴퓨존 샘플은 ProductNo를 안정적으로 제공한다.",
+        "다나와 샘플은 pcode를 검색/상세/묶음 옵션의 키로 제공한다."
+      ]
+    },
+    {
+      "topic": "스펙 저장 2단계",
+      "decision": "다나와/컴퓨존 원본 스펙은 `part_spec_sources`에 저장하고, 호환성 판단 값만 카테고리별 정규화 테이블로 승격한다.",
+      "evidence": [
+        {
+          "query": "AMD 라이젠7 9800X3D",
+          "specCount": 33,
+          "sections": [
+            "(기본)",
+            "사양",
+            "메모리 사양",
+            "그래픽 사양",
+            "기술 지원",
+            "구성",
+            "벤치마크",
+            "KC인증"
+          ]
+        },
+        {
+          "query": "MSI 지포스 RTX 5060 벤투스 2X OC D7 8GB",
+          "specCount": 38,
+          "sections": [
+            "(기본)",
+            "칩셋 사양",
+            "메모리 사양",
+            "그래픽 출력",
+            "지원정보",
+            "전력 관련",
+            "냉각방식",
+            "제품 외형",
+            "부가기능",
+            "KC인증"
+          ]
+        },
+        {
+          "query": "G.SKILL DDR5 PC5-48000 CL36 AEGIS 5",
+          "specCount": 17,
+          "sections": [
+            "(기본)",
+            "부가기능",
+            "KC인증"
+          ]
+        },
+        {
+          "query": "MSI PRO B650M-P",
+          "specCount": 60,
+          "sections": [
+            "(기본)",
+            "기본 사양",
+            "[메모리]",
+            "메모리 기술",
+            "PCIe버전",
+            "PCIe슬롯",
+            "[저장장치]",
+            "M.2 연결",
+            "M.2 폼팩터",
+            "RAID 지원",
+            "그래픽 출력",
+            "후면단자",
+            "네트워크",
+            "오디오",
+            "USB/팬 헤더",
+            "특징",
+            "KC인증"
+          ]
+        },
+        {
+          "query": "OH’S NICE 미들타워",
+          "specCount": 31,
+          "sections": [
+            "(기본)",
+            "지원보드규격",
+            "내부 확장",
+            "[패널]",
+            "[쿨러/튜닝]",
+            "외부포트",
+            "[크기]",
+            "[호환성]",
+            "KC인증"
+          ]
+        },
+        {
+          "query": "마이크로닉스 Classic II 80PLUS GOLD 풀모듈러 ATX3.1",
+          "specCount": 44,
+          "sections": [
+            "(기본)",
+            "DC 출력",
+            "[커넥터]",
+            "부가기능",
+            "내부설계",
+            "보호회로",
+            "KC인증"
+          ]
+        },
+        {
+          "query": "삼성전자 990 EVO Plus M.2 NVMe 2280",
+          "specCount": 34,
+          "sections": [
+            "(기본)",
+            "[기본사양]",
+            "[성능]",
+            "지원기능",
+            "부가기능",
+            "[환경특성]",
+            "A/S기간",
+            "쿨링 정보",
+            "[크기/무게]",
+            "KC인증"
+          ]
+        },
+        {
+          "query": "에디 CY100A ARGB CPU쿨러",
+          "specCount": 43,
+          "sections": [
+            "(기본)",
+            "인텔 소켓",
+            "AMD 소켓",
+            "[쿨링팬]",
+            "작동전압",
+            "부가기능",
+            "LED시스템",
+            "구성품",
+            "KC인증"
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "part_spec_values 역할 축소",
+      "decision": "`part_spec_values`는 검색/필터용 보조 인덱스로 유지하고, 정답 스펙과 호환성 판단은 `cpu_specs`, `gpu_specs`, `mainboard_specs` 등에서 수행한다.",
+      "evidence": "다나와 스펙은 카테고리마다 키와 단위가 크게 달라 범용 key-value만으로 호환성 로직을 안정적으로 만들기 어렵다."
+    }
+  ]
+}

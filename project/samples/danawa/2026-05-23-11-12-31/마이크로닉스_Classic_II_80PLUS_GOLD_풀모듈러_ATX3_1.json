@@ -1,0 +1,287 @@
+{
+  "query": "마이크로닉스 Classic II 80PLUS GOLD 풀모듈러 ATX3.1",
+  "searchUrl": "https://search.danawa.com/dsearch.php?query=%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C%EB%8B%89%EC%8A%A4+Classic+II+80PLUS+GOLD+%ED%92%80%EB%AA%A8%EB%93%88%EB%9F%AC+ATX3.1",
+  "capturedAt": "2026-05-23T11:13:00.097Z",
+  "searchHttpStatus": 200,
+  "searchHtmlHash": "276158afced86598af433daab91b90117f4b315acd7f9cccb1b6da5809de201c",
+  "resultCount": 3,
+  "results": [
+    {
+      "pcode": "51815078",
+      "name": "마이크로닉스 Classic II 850W 80PLUS골드 풀모듈러 ATX3.1",
+      "productUrl": "https://prod.danawa.com/info/?pcode=51815078&keyword=%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C%EB%8B%89%EC%8A%A4+Classic+II+80PLUS+GOLD+%ED%92%80%EB%AA%A8%EB%93%88%EB%9F%AC+ATX3.1&cate=112777",
+      "imageUrl": "https://img.danuri.io/catalog-image/078/815/051/a41a5d1dee654e3a99b9eaa3d6ce38fa.jpg",
+      "price": 141500,
+      "cate": "112777",
+      "source": "search_dom",
+      "variants": [],
+      "detail": {
+        "httpStatus": 200,
+        "htmlHash": "768e317ac4cae1c53b94daeccf0e045e750a458710a2bae352334b410eb95b6c",
+        "metadata": {
+          "pcode": "51815078",
+          "categoryCode": "112777",
+          "category1": "861",
+          "category2": "880",
+          "category3": "997",
+          "category4": "0",
+          "productFullName": "마이크로닉스 Classic II 850W 80PLUS골드 풀모듈러 ATX3.1",
+          "makerName": "마이크로닉스",
+          "brandName": "",
+          "makerUrl": "http://www.micronics.co.kr/",
+          "kccode": "R-R-HMM-HP1O850GD-E12F",
+          "kpscode": "ZU10162-20002",
+          "circulName": "",
+          "productName": "Classic II 850W 80PLUS골드 풀모듈러 ATX3.1",
+          "prodType": "T1",
+          "displayMakeDate": "2024.05.",
+          "productUrl": "https://prod.danawa.com/info/?pcode=51815078&keyword=%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C%EB%8B%89%EC%8A%A4+Classic+II+80PLUS+GOLD+%ED%92%80%EB%AA%A8%EB%93%88%EB%9F%AC+ATX3.1&cate=112777"
+        },
+        "descriptionHttpStatus": 200,
+        "descriptionHtmlHash": "4fdfa02433ffb16645321778afa92d1a4b577492dd0f5c0fdfce9bc70e74121c",
+        "specs": [
+          {
+            "section": null,
+            "key": "제조회사",
+            "value": "마이크로닉스 (제조사 웹사이트 바로가기)"
+          },
+          {
+            "section": null,
+            "key": "등록년월",
+            "value": "2024년 05월"
+          },
+          {
+            "section": null,
+            "key": "제품 분류",
+            "value": "ATX 파워"
+          },
+          {
+            "section": null,
+            "key": "정격출력",
+            "value": "850W"
+          },
+          {
+            "section": null,
+            "key": "80PLUS인증",
+            "value": "80 PLUS 골드"
+          },
+          {
+            "section": null,
+            "key": "케이블연결",
+            "value": "풀모듈러"
+          },
+          {
+            "section": null,
+            "key": "전압변동",
+            "value": "±0.5%"
+          },
+          {
+            "section": null,
+            "key": "+12V 출력방식",
+            "value": "+12V 싱글레일"
+          },
+          {
+            "section": null,
+            "key": "PFC회로",
+            "value": "액티브PFC"
+          },
+          {
+            "section": null,
+            "key": "PF(역률)",
+            "value": "99%"
+          },
+          {
+            "section": null,
+            "key": "쿨링팬 크기",
+            "value": "120mm 팬"
+          },
+          {
+            "section": null,
+            "key": "쿨링팬 개수",
+            "value": "1개(팬)"
+          },
+          {
+            "section": null,
+            "key": "베어링",
+            "value": "FDB(유체)"
+          },
+          {
+            "section": null,
+            "key": "깊이",
+            "value": "140mm"
+          },
+          {
+            "section": null,
+            "key": "A/S 보증기간",
+            "value": "무상 10년"
+          },
+          {
+            "section": "DC 출력",
+            "key": "+3.3V 출력",
+            "value": "22A"
+          },
+          {
+            "section": "DC 출력",
+            "key": "+5V 출력",
+            "value": "22A"
+          },
+          {
+            "section": "DC 출력",
+            "key": "+12V 출력",
+            "value": "70.8A"
+          },
+          {
+            "section": "DC 출력",
+            "key": "-12V 출력",
+            "value": "0.3A"
+          },
+          {
+            "section": "DC 출력",
+            "key": "+5Vsb 출력",
+            "value": "3.0A"
+          },
+          {
+            "section": "[커넥터]",
+            "key": "메인전원",
+            "value": "24핀(20+4)"
+          },
+          {
+            "section": "[커넥터]",
+            "key": "보조전원",
+            "value": "8핀x1, (4+4)핀x1"
+          },
+          {
+            "section": "[커넥터]",
+            "key": "PCIe 16핀(12+4)",
+            "value": "12V2x6 1개"
+          },
+          {
+            "section": "[커넥터]",
+            "key": "PCIe 8핀(6+2)",
+            "value": "3개"
+          },
+          {
+            "section": "[커넥터]",
+            "key": "SATA",
+            "value": "8개"
+          },
+          {
+            "section": "[커넥터]",
+            "key": "IDE 4핀",
+            "value": "4개"
+          },
+          {
+            "section": "[커넥터]",
+            "key": "FDD",
+            "value": "1개"
+          },
+          {
+            "section": "부가기능",
+            "key": "팬리스모드",
+            "value": "○"
+          },
+          {
+            "section": "부가기능",
+            "key": "자동 팬 조절",
+            "value": "○"
+          },
+          {
+            "section": "부가기능",
+            "key": "대기전력 1W 미만",
+            "value": "○"
+          },
+          {
+            "section": "부가기능",
+            "key": "플랫케이블",
+            "value": "○"
+          },
+          {
+            "section": "내부설계",
+            "key": "105도 콘덴서",
+            "value": "○"
+          },
+          {
+            "section": "내부설계",
+            "key": "DC to DC 설계",
+            "value": "○"
+          },
+          {
+            "section": "내부설계",
+            "key": "LLC공진형컨버터",
+            "value": "○"
+          },
+          {
+            "section": "보호회로",
+            "key": "과전압(OVP)",
+            "value": "○"
+          },
+          {
+            "section": "보호회로",
+            "key": "저전압(UVP)",
+            "value": "○"
+          },
+          {
+            "section": "보호회로",
+            "key": "과전력(OPP)",
+            "value": "○"
+          },
+          {
+            "section": "보호회로",
+            "key": "과열(OTP/OHP)",
+            "value": "○"
+          },
+          {
+            "section": "보호회로",
+            "key": "단락(SCP)",
+            "value": "○"
+          },
+          {
+            "section": "보호회로",
+            "key": "서지+인러쉬(SIP)",
+            "value": "○"
+          },
+          {
+            "section": "보호회로",
+            "key": "공회전(NLO)",
+            "value": "○"
+          },
+          {
+            "section": "보호회로",
+            "key": "[변경사항]",
+            "value": "[변경사항]"
+          },
+          {
+            "section": "KC인증",
+            "key": "적합성평가인증",
+            "value": "R-R-HMM-HP1O850GD-E12F 인증번호 확인"
+          },
+          {
+            "section": "KC인증",
+            "key": "안전확인인증",
+            "value": "ZU10162-20002 인증번호 확인"
+          }
+        ]
+      }
+    },
+    {
+      "pcode": "63029591",
+      "name": "마이크로닉스 Classic II 1050W 80PLUS골드 풀모듈러 ATX3.1",
+      "productUrl": "https://prod.danawa.com/info/?pcode=63029591&keyword=%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C%EB%8B%89%EC%8A%A4+Classic+II+80PLUS+GOLD+%ED%92%80%EB%AA%A8%EB%93%88%EB%9F%AC+ATX3.1&cate=112777",
+      "imageUrl": "https://img.danuri.io/catalog-image/591/029/063/bd5cfa0a468746af825adb11f6fa3fed.jpg",
+      "price": 176500,
+      "cate": "112777",
+      "source": "search_dom",
+      "variants": []
+    },
+    {
+      "pcode": "47487848",
+      "name": "마이크로닉스 Classic II 850W 80PLUS골드 풀모듈러 ATX3.1 화이트",
+      "productUrl": "https://prod.danawa.com/info/?pcode=47487848&keyword=%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C%EB%8B%89%EC%8A%A4+Classic+II+80PLUS+GOLD+%ED%92%80%EB%AA%A8%EB%93%88%EB%9F%AC+ATX3.1&cate=112777",
+      "imageUrl": "https://img.danuri.io/catalog-image/848/487/047/3186865d86e2472f8fe2fca8341be852.jpeg",
+      "price": 151000,
+      "cate": "112777",
+      "source": "search_dom",
+      "variants": []
+    }
+  ]
+}

@@ -1,0 +1,245 @@
+{
+  "query": "AMD 라이젠7 9800X3D",
+  "searchUrl": "https://search.danawa.com/dsearch.php?query=AMD+%EB%9D%BC%EC%9D%B4%EC%A0%A07+9800X3D",
+  "capturedAt": "2026-05-23T10:07:24.573Z",
+  "searchHttpStatus": 200,
+  "searchHtmlHash": "9c07bb29acb5cb4f5802da36a5216e0a83f01f9b0216b7bb5333926589c164f0",
+  "resultCount": 3,
+  "results": [
+    {
+      "pcode": "70531547",
+      "name": "AMD 라이젠7-6세대 9800X3D (그래니트 릿지)",
+      "productUrl": "https://prod.danawa.com/info/?pcode=70531547&keyword=AMD+%EB%9D%BC%EC%9D%B4%EC%A0%A07+9800X3D&cate=113990",
+      "imageUrl": "https://img.danuri.io/catalog-image/547/531/070/9f5d3691f36442cd94c5622ea17489d1.jpg",
+      "price": 582360,
+      "cate": "113990",
+      "source": "search_dom",
+      "variants": [
+        {
+          "variantName": "멀티팩 정품",
+          "pcode": "70531547"
+        },
+        {
+          "variantName": "정품",
+          "pcode": "70679912"
+        },
+        {
+          "variantName": "해외구매",
+          "pcode": "92233121"
+        }
+      ],
+      "detail": {
+        "httpStatus": 200,
+        "htmlHash": "7eac030ce977085e4f2ef7bd9dade80e28936b4996afee0de67e4a96d195e86c",
+        "metadata": {
+          "pcode": "70531547",
+          "categoryCode": "113990",
+          "category1": "861",
+          "category2": "873",
+          "category3": "960",
+          "category4": "0",
+          "productFullName": "AMD 라이젠7-6세대 9800X3D (그래니트 릿지) (멀티팩 정품)",
+          "makerName": "AMD",
+          "brandName": "라이젠7-6세대",
+          "makerUrl": "https://www.amd.com/ko",
+          "kccode": "",
+          "kpscode": "",
+          "circulName": "",
+          "productName": "9800X3D (그래니트 릿지)",
+          "prodType": "T1",
+          "displayMakeDate": "2024.11.",
+          "productUrl": "https://prod.danawa.com/info/?pcode=70531547&keyword=AMD+%EB%9D%BC%EC%9D%B4%EC%A0%A07+9800X3D&cate=113990"
+        },
+        "descriptionHttpStatus": 200,
+        "descriptionHtmlHash": "67828a2b4ce30d0513277802789b4bddb31c43715c338b17efa85b2ac1391216",
+        "specs": [
+          {
+            "section": null,
+            "key": "제조회사",
+            "value": "AMD (제조사 웹사이트 바로가기)"
+          },
+          {
+            "section": null,
+            "key": "등록년월",
+            "value": "2024년 11월"
+          },
+          {
+            "section": null,
+            "key": "AMD CPU종류",
+            "value": "라이젠7-6세대"
+          },
+          {
+            "section": null,
+            "key": "소켓 구분",
+            "value": "AMD(소켓AM5)"
+          },
+          {
+            "section": null,
+            "key": "코어 수",
+            "value": "8코어"
+          },
+          {
+            "section": null,
+            "key": "스레드 수",
+            "value": "16스레드"
+          },
+          {
+            "section": null,
+            "key": "메모리 규격",
+            "value": "DDR5"
+          },
+          {
+            "section": null,
+            "key": "내장그래픽",
+            "value": "내장그래픽:탑재"
+          },
+          {
+            "section": null,
+            "key": "세대 구분",
+            "value": "6세대(Zen5)"
+          },
+          {
+            "section": null,
+            "key": "출시일",
+            "value": "2024 4분기"
+          },
+          {
+            "section": null,
+            "key": "제조 공정",
+            "value": "TSMC 4nm"
+          },
+          {
+            "section": "사양",
+            "key": "기본 클럭",
+            "value": "4.7GHz"
+          },
+          {
+            "section": "사양",
+            "key": "최대 클럭",
+            "value": "5.2GHz"
+          },
+          {
+            "section": "사양",
+            "key": "L2 캐시",
+            "value": "8MB"
+          },
+          {
+            "section": "사양",
+            "key": "L3 캐시",
+            "value": "96MB"
+          },
+          {
+            "section": "사양",
+            "key": "연산 체계",
+            "value": "64비트"
+          },
+          {
+            "section": "사양",
+            "key": "TDP",
+            "value": "120W"
+          },
+          {
+            "section": "사양",
+            "key": "PCIe 버전",
+            "value": "PCIe5.0"
+          },
+          {
+            "section": "사양",
+            "key": "최대 PCIe 레인수",
+            "value": "28(24)레인"
+          },
+          {
+            "section": "메모리 사양",
+            "key": "최대 메모리 크기",
+            "value": "192GB"
+          },
+          {
+            "section": "메모리 사양",
+            "key": "메모리 클럭",
+            "value": "5600MHz"
+          },
+          {
+            "section": "메모리 사양",
+            "key": "메모리 채널",
+            "value": "2"
+          },
+          {
+            "section": "그래픽 사양",
+            "key": "GPU 모델명",
+            "value": "AMD 라데온 그래픽"
+          },
+          {
+            "section": "그래픽 사양",
+            "key": "GPU 코어 속도",
+            "value": "2,200MHz"
+          },
+          {
+            "section": "기술 지원",
+            "key": "SMT(하이퍼스레딩)",
+            "value": "○"
+          },
+          {
+            "section": "기술 지원",
+            "key": "AMD Ryzen Master",
+            "value": "○"
+          },
+          {
+            "section": "기술 지원",
+            "key": "AMD 3D V캐시",
+            "value": "○"
+          },
+          {
+            "section": "구성",
+            "key": "패키지 형태",
+            "value": "멀티팩(정품)"
+          },
+          {
+            "section": "구성",
+            "key": "쿨러",
+            "value": "미포함"
+          },
+          {
+            "section": "벤치마크",
+            "key": "시네벤치R23(싱글)",
+            "value": "2073"
+          },
+          {
+            "section": "벤치마크",
+            "key": "시네벤치R23(멀티)",
+            "value": "23334"
+          },
+          {
+            "section": "KC인증",
+            "key": "적합성평가인증",
+            "value": "상세설명 / 판매 사이트 문의 인증번호 확인"
+          },
+          {
+            "section": "KC인증",
+            "key": "안전확인인증",
+            "value": "상세설명 / 판매 사이트 문의 인증번호 확인"
+          }
+        ]
+      }
+    },
+    {
+      "pcode": "74999351",
+      "name": "영웅컴퓨터 영웅 울트라게이밍 9800TS R7 9800X3D RTX5070Ti",
+      "productUrl": "https://prod.danawa.com/info/?pcode=74999351&keyword=AMD+%EB%9D%BC%EC%9D%B4%EC%A0%A07+9800X3D&cate=112756",
+      "imageUrl": "https://img.danuri.io/catalog-image/351/999/074/19b675f20fe844d3ad88e71b5341771b.jpg",
+      "price": 3299730,
+      "cate": "112756",
+      "source": "search_dom",
+      "variants": []
+    },
+    {
+      "pcode": "122634949",
+      "name": "MSI MAG Codex Z2 A9NVR A15 R7-9800X3D RTX 5070 Ti 게이밍",
+      "productUrl": "https://prod.danawa.com/info/?pcode=122634949&keyword=AMD+%EB%9D%BC%EC%9D%B4%EC%A0%A07+9800X3D&cate=112756",
+      "imageUrl": "https://img.danuri.io/catalog-image/949/634/122/cb6a113624e3465a83b2de0c7a847ee4.jpg",
+      "price": 3299000,
+      "cate": "112756",
+      "source": "search_dom",
+      "variants": []
+    }
+  ]
+}

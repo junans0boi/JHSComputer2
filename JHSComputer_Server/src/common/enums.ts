@@ -1,0 +1,161 @@
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+}
+
+export enum UserStatus {
+  ACTIVE = 'ACTIVE',
+  BLOCKED = 'BLOCKED',
+  WITHDRAWN = 'WITHDRAWN',
+}
+
+export enum SocialProvider {
+  KAKAO = 'KAKAO',
+  NAVER = 'NAVER',
+  GOOGLE = 'GOOGLE',
+}
+
+export enum PartStatus {
+  ACTIVE = 'ACTIVE',
+  HIDDEN = 'HIDDEN',
+  DISCONTINUED = 'DISCONTINUED',
+}
+
+export enum SpecSource {
+  CRAWLED = 'CRAWLED',
+  ADMIN = 'ADMIN',
+  IMPORTED = 'IMPORTED',
+}
+
+export enum SupplierStatus {
+  ACTIVE = 'ACTIVE',
+  PAUSED = 'PAUSED',
+}
+
+export enum ListingMatchStatus {
+  UNMATCHED = 'UNMATCHED',
+  AUTO_MATCHED = 'AUTO_MATCHED',
+  ADMIN_CONFIRMED = 'ADMIN_CONFIRMED',
+  REJECTED = 'REJECTED',
+}
+
+export enum StockStatus {
+  IN_STOCK = 'IN_STOCK',
+  LOW_STOCK = 'LOW_STOCK',
+  OUT_OF_STOCK = 'OUT_OF_STOCK',
+  UNKNOWN = 'UNKNOWN',
+}
+
+export enum PriceSourceType {
+  SCHEDULED_CRAWL = 'SCHEDULED_CRAWL',
+  ORDER_CHECK = 'ORDER_CHECK',
+  ADMIN = 'ADMIN',
+}
+
+export enum Purpose {
+  GAME = 'GAME',
+  STREAMING = 'STREAMING',
+  VIDEO_EDITING = 'VIDEO_EDITING',
+  OFFICE = 'OFFICE',
+  AI = 'AI',
+}
+
+export enum Resolution {
+  FHD = 'FHD',
+  QHD = 'QHD',
+  UHD_4K = 'UHD_4K',
+}
+
+export enum PriorityType {
+  PERFORMANCE = 'PERFORMANCE',
+  VALUE = 'VALUE',
+  DESIGN = 'DESIGN',
+  UPGRADE = 'UPGRADE',
+}
+
+export enum BudgetScope {
+  BODY_ONLY = 'BODY_ONLY',
+  BODY_WITH_WINDOWS = 'BODY_WITH_WINDOWS',
+  FULL_TOTAL = 'FULL_TOTAL',
+}
+
+export enum WindowsOption {
+  LICENSE_AND_INSTALL = 'LICENSE_AND_INSTALL',
+  INSTALL_ONLY = 'INSTALL_ONLY',
+  NONE = 'NONE',
+}
+
+export enum QuoteStatus {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  PRICE_CHANGED = 'PRICE_CHANGED',
+  ORDERED = 'ORDERED',
+  ARCHIVED = 'ARCHIVED',
+}
+
+export enum QuoteHistoryEventType {
+  CREATED = 'CREATED',
+  ITEM_CHANGED = 'ITEM_CHANGED',
+  PRICE_CHANGED = 'PRICE_CHANGED',
+  COMPATIBILITY_CHANGED = 'COMPATIBILITY_CHANGED',
+  ORDERED = 'ORDERED',
+}
+
+export enum CompatibilityStatus {
+  PASS = 'PASS',
+  WARNING = 'WARNING',
+  FAIL = 'FAIL',
+}
+
+export enum PriceCheckStatus {
+  SAME = 'SAME',
+  CHANGED = 'CHANGED',
+  FAILED = 'FAILED',
+}
+
+export enum QualityPreset {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  ULTRA = 'ULTRA',
+}
+
+export enum PerformanceGrade {
+  NOT_RECOMMENDED = 'NOT_RECOMMENDED',
+  PLAYABLE = 'PLAYABLE',
+  GOOD = 'GOOD',
+  EXCELLENT = 'EXCELLENT',
+}
+
+export enum OrderStatus {
+  PRICE_APPROVAL_REQUIRED = 'PRICE_APPROVAL_REQUIRED',
+  ADMIN_REVIEW = 'ADMIN_REVIEW',
+  WAITING_DEPOSIT = 'WAITING_DEPOSIT',
+  DEPOSIT_CONFIRMED = 'DEPOSIT_CONFIRMED',
+  PARTS_ORDERING = 'PARTS_ORDERING',
+  PARTS_WAITING = 'PARTS_WAITING',
+  PARTS_ARRIVED = 'PARTS_ARRIVED',
+  ASSEMBLING = 'ASSEMBLING',
+  TESTING = 'TESTING',
+  PREPARING_DELIVERY = 'PREPARING_DELIVERY',
+  SHIPPING = 'SHIPPING',
+  DELIVERED = 'DELIVERED',
+  PURCHASE_CONFIRMED = 'PURCHASE_CONFIRMED',
+  REVIEW_AVAILABLE = 'REVIEW_AVAILABLE',
+  CANCELLED = 'CANCELLED',
+  REFUNDED = 'REFUNDED',
+  ON_HOLD = 'ON_HOLD',
+}
+
+export enum PaymentMethod {
+  BANK_TRANSFER = 'BANK_TRANSFER',
+  PG_VIRTUAL_ACCOUNT = 'PG_VIRTUAL_ACCOUNT',
+  CARD = 'CARD',
+}
+
+export enum PaymentStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  CANCELLED = 'CANCELLED',
+  REFUNDED = 'REFUNDED',
+}

@@ -1,0 +1,3 @@
+-- Database and user creation is handled by the NestJS setup runner.
+-- It reads DB_DEV_*, DB_STAGE_*, and DB_PROD_* from .env files so server
+-- credentials are not hard-coded into SQL source.

@@ -1,0 +1,12 @@
+{
+  "name": "@jhs-computer/agent",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "crawl:compuzone:samples": "node compuzone/sample-crawl.mjs --out=../project/samples/compuzone",
+    "crawl:danawa:samples": "node danawa/sample-crawl.mjs --out=../project/samples/danawa",
+    "analyze:samples": "node analysis/analyze-samples.mjs --compuzone-root=../project/samples/compuzone --danawa-root=../project/samples/danawa --out=../project/analysis/data-shape",
+    "build": "node -e \"console.log('JHSComputer_Agent: no build step')\"",
+    "typecheck": "node -e \"console.log('JHSComputer_Agent: no typecheck step')\""
+  }
+}

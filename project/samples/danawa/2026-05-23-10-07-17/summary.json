@@ -1,0 +1,75 @@
+{
+  "capturedAt": "2026-05-23T10:07:30.819Z",
+  "outDir": "project/samples/danawa/2026-05-23-10-07-17",
+  "args": {
+    "queries": [
+      "AMD 라이젠7 9800X3D",
+      "MSI 지포스 RTX 5060 벤투스 2X OC D7 8GB"
+    ],
+    "results": 3,
+    "details": 1,
+    "delayMs": 1500,
+    "outDir": "project/samples/danawa"
+  },
+  "queryCount": 2,
+  "summaries": [
+    {
+      "query": "AMD 라이젠7 9800X3D",
+      "file": "project/samples/danawa/2026-05-23-10-07-17/AMD_라이젠7_9800X3D.json",
+      "resultCount": 3,
+      "detailedCount": 1,
+      "topResults": [
+        {
+          "pcode": "70531547",
+          "name": "AMD 라이젠7-6세대 9800X3D (그래니트 릿지)",
+          "price": 582360,
+          "variantCount": 3,
+          "specCount": 33
+        },
+        {
+          "pcode": "74999351",
+          "name": "영웅컴퓨터 영웅 울트라게이밍 9800TS R7 9800X3D RTX5070Ti",
+          "price": 3299730,
+          "variantCount": 0,
+          "specCount": 0
+        },
+        {
+          "pcode": "122634949",
+          "name": "MSI MAG Codex Z2 A9NVR A15 R7-9800X3D RTX 5070 Ti 게이밍",
+          "price": 3299000,
+          "variantCount": 0,
+          "specCount": 0
+        }
+      ]
+    },
+    {
+      "query": "MSI 지포스 RTX 5060 벤투스 2X OC D7 8GB",
+      "file": "project/samples/danawa/2026-05-23-10-07-17/MSI_지포스_RTX_5060_벤투스_2X_OC_D7_8GB.json",
+      "resultCount": 3,
+      "detailedCount": 1,
+      "topResults": [
+        {
+          "pcode": "90956033",
+          "name": "MSI 지포스 RTX 5060 벤투스 2X OC D7 8GB",
+          "price": 484890,
+          "variantCount": 0,
+          "specCount": 38
+        },
+        {
+          "pcode": "86814989",
+          "name": "MSI 지포스 RTX 5060 Ti 벤투스 2X OC 플러스 D7 8GB",
+          "price": 588490,
+          "variantCount": 0,
+          "specCount": 0
+        },
+        {
+          "pcode": "90436100",
+          "name": "MSI 지포스 RTX 5060 Ti 벤투스 2X 플러스 D7 8GB",
+          "price": 671820,
+          "variantCount": 0,
+          "specCount": 0
+        }
+      ]
+    }
+  ]
+}

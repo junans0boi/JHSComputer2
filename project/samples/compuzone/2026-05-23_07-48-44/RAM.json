@@ -1,0 +1,1036 @@
+{
+  "category": {
+    "key": "RAM",
+    "name": "메모리",
+    "bigDivNo": "4",
+    "mediumDivNo": "1014",
+    "divNo": "0",
+    "ourCategory": "RAM"
+  },
+  "requestedAt": "2026-05-23T07:48:59.419Z",
+  "listPages": [
+    {
+      "scrollPage": 1,
+      "request": {
+        "actype": "getList",
+        "BigDivNo": "4",
+        "MediumDivNo": "1014",
+        "DivNo": "0",
+        "PageCount": "20",
+        "StartNum": "0",
+        "PageNum": "1",
+        "PreOrder": "recommand",
+        "lvm": "L",
+        "ScrollPage": "1",
+        "ProductType": "list",
+        "setPricechk": "N"
+      },
+      "status": 200,
+      "htmlHash": "436a8e12086e8e53bd854ccde1cce2f090fed732075f162494e2ee993bfb19e2",
+      "parsedCount": 20
+    }
+  ],
+  "products": [
+    {
+      "productNo": "1197279",
+      "idx": 0,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2474",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[G.SKILL] DDR5 PC5-48000 CL36 AEGIS 5",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1197279&BigDivNo=4&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1218/1197279/1197279_600.jpg",
+      "summarySpecText": "16GB / 6000MHz (PC5-48000) / CL36-36-36-96 / 1.35V / 1개 / XMP3.0 / EXPO / 방열판 무 / F5-6000J3636F16GX1-IS",
+      "pricing": {
+        "listPrice": 340000,
+        "discountPrice": 340000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 121,
+        "rate": 4.8
+      },
+      "badges": [
+        "토스페이",
+        "쿠폰",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1197279",
+          "originalProductNo": "1197279",
+          "requiredOption": false,
+          "variantName": "[16GB] (6000)",
+          "price": 340000306000
+        },
+        {
+          "variantProductNo": "1213006",
+          "originalProductNo": "1197279",
+          "requiredOption": false,
+          "variantName": "[32GB] (6000)",
+          "price": 759000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      },
+      "detailSample": {
+        "status": 200,
+        "htmlHash": "94aeb945c5842c21d61a3b6aa17e65fe604c11890630dad3d5e9f89049075049",
+        "parsed": {
+          "productNo": "1197279",
+          "detailTitle": "[G.SKILL] DDR5 PC5-48000 CL36 AEGIS 5 [16GB] (6000) : 컴퓨존",
+          "metaKeywords": "16GB / 6000MHz (PC5-48000) / CL36-36-36-96 / 1.35V / 1개 / XMP3.0 / EXPO / 방열판 무 / F5-6000J3636F16GX1-IS",
+          "metaDescription": "[G.SKILL] DDR5 PC5-48000 CL36 AEGIS 5 [16GB] (6000)",
+          "priceCandidates": [
+            340000
+          ],
+          "hasOptionLayerRequest": true,
+          "hasGroupInfoRequest": true,
+          "rawSignals": {
+            "addOrderCount": 9,
+            "todayCookieCount": 2,
+            "productOptionLayerCount": 7
+          }
+        }
+      }
+    },
+    {
+      "productNo": "990235",
+      "idx": 1,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[삼성전자] 삼성 DDR5 PC5-44800",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=990235&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2023/0201/990235/990235_600.jpg",
+      "summarySpecText": "DDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용",
+      "pricing": {
+        "listPrice": 349000,
+        "discountPrice": 349000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 28644,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "토요일출발",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "990236",
+          "originalProductNo": "990235",
+          "requiredOption": false,
+          "variantName": "[8GB] (5600)",
+          "price": 172000
+        },
+        {
+          "variantProductNo": "990235",
+          "originalProductNo": "990235",
+          "requiredOption": false,
+          "variantName": "[16GB] (5600)",
+          "price": 349000
+        },
+        {
+          "variantProductNo": "1296969",
+          "originalProductNo": "990235",
+          "requiredOption": false,
+          "variantName": "[24GB] (5600)",
+          "price": 428000
+        },
+        {
+          "variantProductNo": "1038507",
+          "originalProductNo": "990235",
+          "requiredOption": false,
+          "variantName": "[32GB] (5600)",
+          "price": 721000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1303995",
+      "idx": 2,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[SK hynix] SK하이닉스 DDR4 PC4-25600 [16GB] (3200)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1303995&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/1210/1303995/1303995_600.jpg",
+      "summarySpecText": "DDR4 / 16GB / 3200MHz (PC4-25600) / 1개 / 방열판 무",
+      "pricing": {
+        "listPrice": 230000,
+        "discountPrice": 230000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 204,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "977732",
+      "idx": 3,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[에센코어] 에센코어 KLEVV DDR5 PC5-44800 CL46 파인인포",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=977732&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2022/1220/977732/977732_600.jpg",
+      "summarySpecText": "DDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용 / 메모리 타이밍 : 46-46-46-90 / SK하이닉스 A다이 언락",
+      "pricing": {
+        "listPrice": 316590,
+        "discountPrice": 316590,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 2782,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "977732",
+          "originalProductNo": "977732",
+          "requiredOption": false,
+          "variantName": "[16GB] (5600)",
+          "price": 316590
+        },
+        {
+          "variantProductNo": "1068471",
+          "originalProductNo": "977732",
+          "requiredOption": false,
+          "variantName": "[32GB] (5600)",
+          "price": 614300
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1205143",
+      "idx": 4,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2038",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[삼성전자] 삼성 DDR5 PC5-44800 ECC/REG 서버용",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1205143&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0117/1205143/1205143_600.jpg",
+      "summarySpecText": "DDR5-REG ECC / 64GB / 5600MHz (PC5-44800) / 방열판 무 / 서버용 / M321R8GA0PB0-CWM / M321R8GA0EB2-CWMKH",
+      "pricing": {
+        "listPrice": 3750000,
+        "discountPrice": 3750000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 117,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "특송",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1231281",
+          "originalProductNo": "1205143",
+          "requiredOption": false,
+          "variantName": "[16GB] (5600)",
+          "price": 963000
+        },
+        {
+          "variantProductNo": "1205145",
+          "originalProductNo": "1205143",
+          "requiredOption": false,
+          "variantName": "[32GB] (5600)",
+          "price": 1968500
+        },
+        {
+          "variantProductNo": "1205143",
+          "originalProductNo": "1205143",
+          "requiredOption": false,
+          "variantName": "[64GB] (5600)",
+          "price": 3750000
+        },
+        {
+          "variantProductNo": "1216684",
+          "originalProductNo": "1205143",
+          "requiredOption": false,
+          "variantName": "(품절) [128GB] (5600)",
+          "price": null
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1004773",
+      "idx": 5,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[SK hynix] SK하이닉스 DDR5 PC5-44800",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1004773&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2023/0315/1004773/1004773_600.jpg",
+      "summarySpecText": "DDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용",
+      "pricing": {
+        "listPrice": 363800,
+        "discountPrice": 363800,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 3651,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "토요일출발",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1004773",
+          "originalProductNo": "1004773",
+          "requiredOption": false,
+          "variantName": "[16GB] (5600)",
+          "price": 363800
+        },
+        {
+          "variantProductNo": "984267",
+          "originalProductNo": "1004773",
+          "requiredOption": false,
+          "variantName": "[32GB] (5600)",
+          "price": 731000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1245474",
+      "idx": 6,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2474",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[에센코어] KLEVV DDR5 PC5-48000 CL30 FIT V 서린",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1245474&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0526/1245474/1245474_600.jpg",
+      "summarySpecText": "DDR5 / 32GB / 6000MHz (PC5-48000) / CL30-36-36-76 / 1.35V / 2개 묶음 / XMP3.0 / EXPO / 방열판 유 / 고성능 게임용 메모리 / PC용 / 높이: 33.21mm / 모듈제조사: SK하이닉스 / 코어울트라 미지원 / KD5AGU880-60A300L",
+      "pricing": {
+        "listPrice": 663900,
+        "discountPrice": 663900,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 138,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1245474",
+          "originalProductNo": "1245474",
+          "requiredOption": false,
+          "variantName": "[32GB (16GB*2)] (6000)",
+          "price": 663900
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1145291",
+      "idx": 7,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[마이크론] 마이크론 Crucial DDR5 PC5-44800 CL46 대원씨티에스",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1145291&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0516/1145291/1145291_600.jpg",
+      "summarySpecText": "DDR5 / 8GB / 5600MHz (PC5-44800) / 방열판 무 / PC용 / 램타이밍: CL46-45-45 / 1.10V",
+      "pricing": {
+        "listPrice": 157780,
+        "discountPrice": 157780,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 2365,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1145291",
+          "originalProductNo": "1145291",
+          "requiredOption": false,
+          "variantName": "[8GB] (5600)",
+          "price": 157780
+        },
+        {
+          "variantProductNo": "1123155",
+          "originalProductNo": "1145291",
+          "requiredOption": false,
+          "variantName": "(품절) [16GB] 벌크 (5600)",
+          "price": null
+        },
+        {
+          "variantProductNo": "1090354",
+          "originalProductNo": "1145291",
+          "requiredOption": false,
+          "variantName": "(품절) [32GB] (5600)",
+          "price": null
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1316008",
+      "idx": 8,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[컴이지] 킹덤 DDR5 PC5-44800 CL46 [16GB] (5600)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1316008&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0126/1316008/1316008_600.jpg",
+      "summarySpecText": "DDR5 / 16GB / 5600MHz (PC5-44800) / 1개 / 방열판 무",
+      "pricing": {
+        "listPrice": 264000,
+        "discountPrice": 264000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 13,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1190726",
+      "idx": 9,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[에센코어] KLEVV DDR5 PC5-44800 CL46 AMD 파인인포",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1190726&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1119/1190726/1190726_600.jpg",
+      "summarySpecText": "DDR5 / 16GB / 5600MHz (PC5-44800) / 방열판 무 / PC용 / 인텔 15세대 에로우레이크 호환 불가",
+      "pricing": {
+        "listPrice": 299860,
+        "discountPrice": 299860,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1167,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1190726",
+          "originalProductNo": "1190726",
+          "requiredOption": false,
+          "variantName": "[16GB] (5600) ▶ 벌크◀",
+          "price": 299860
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1173498",
+      "idx": 10,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[삼성전자] 삼성 DDR4 PC4-25600 (23년도 주차) [8GB] (3200)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1173498&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0904/1173498/1173498_600.jpg",
+      "summarySpecText": "DDR4 / PC용 / 8GB / 3200MHz (PC4-25600) / 방열판 무 / PC용 / 23년도 주차 / 1년 무상 A/S",
+      "pricing": {
+        "listPrice": 125000,
+        "discountPrice": 125000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1898,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1310901",
+      "idx": 11,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2474",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[PATRIOT] DDR5 PC5-48000 CL30 SIGNATURE PREMIUM EVO 블랙 [16GB] (6000)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1310901&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0109/1310901/1310901_600.jpg",
+      "summarySpecText": "DDR5 / 16GB / 6000MHz (PC5-48000) / CL30 / 1개 / XMP3.0 / EXPO / 방열판 유 / 7D501285",
+      "pricing": {
+        "listPrice": 299000,
+        "discountPrice": 299000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 31,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "836494",
+      "idx": 12,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[타무즈] 타무즈 DDR4 PC4-25600",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=836494&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2021/0923/836494/836494_600.jpg",
+      "summarySpecText": "DDR4 / 16GB / 3200MHz (PC4-25600) / 방열판 무 / PC용",
+      "pricing": {
+        "listPrice": 171500,
+        "discountPrice": 171500,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 2884,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "849529",
+          "originalProductNo": "836494",
+          "requiredOption": false,
+          "variantName": "[4GB] (3200)",
+          "price": 57700
+        },
+        {
+          "variantProductNo": "753189",
+          "originalProductNo": "836494",
+          "requiredOption": false,
+          "variantName": "[8GB] (3200)",
+          "price": 90000
+        },
+        {
+          "variantProductNo": "836494",
+          "originalProductNo": "836494",
+          "requiredOption": false,
+          "variantName": "[16GB] (3200)",
+          "price": 171500
+        },
+        {
+          "variantProductNo": "753187",
+          "originalProductNo": "836494",
+          "requiredOption": false,
+          "variantName": "[32GB] (3200)",
+          "price": 378000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1239404",
+      "idx": 13,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[마이크론] 마이크론 Crucial DDR5-51200 CL52 CUDIMM 아스크텍",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1239404&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0507/1239404/1239404_600.jpg",
+      "summarySpecText": "DDR5 / 64GB / 6400MHz (PC5-51200) / CL52 / 1개 / 방열판 무 / PC용 / 클럭드라이버",
+      "pricing": {
+        "listPrice": 1496000,
+        "discountPrice": 1496000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 2,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1239405",
+          "originalProductNo": "1239404",
+          "requiredOption": false,
+          "variantName": "(품절) [32GB] (6400)",
+          "price": null
+        },
+        {
+          "variantProductNo": "1239404",
+          "originalProductNo": "1239404",
+          "requiredOption": false,
+          "variantName": "[64GB] (6400) ★인텔 15세대 전용★",
+          "price": 1496000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1116137",
+      "idx": 14,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[Team Group] 팀그룹 DDR4 PC4-25600 Elite 서린",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1116137&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0208/1116137/1116137_600.jpg",
+      "summarySpecText": "DDR4 / 8GB / 3200MHz (PC4-25600) / 방열판 무 / PC용",
+      "pricing": {
+        "listPrice": 107000,
+        "discountPrice": 107000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 252,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1116137",
+          "originalProductNo": "1116137",
+          "requiredOption": false,
+          "variantName": "[8GB] (3200)",
+          "price": 107000
+        },
+        {
+          "variantProductNo": "1116136",
+          "originalProductNo": "1116137",
+          "requiredOption": false,
+          "variantName": "[16GB] (3200)",
+          "price": 193000
+        },
+        {
+          "variantProductNo": "1313311",
+          "originalProductNo": "1116137",
+          "requiredOption": false,
+          "variantName": "[32GB] (3200)",
+          "price": 399000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1310902",
+      "idx": 15,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2474",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[PATRIOT] DDR5 PC5-48000 CL30 SIGNATURE PREMIUM EVO 화이트 [16GB] (6000)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1310902&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0109/1310902/1310902_600.jpg",
+      "summarySpecText": "DDR5/16GB/6000MHz (PC5-48000)/CL30/1개/XMP3.0/EXPO/방열판 유 / 7D501286",
+      "pricing": {
+        "listPrice": 299000,
+        "discountPrice": 299000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 13,
+        "rate": 4.8
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1259975",
+      "idx": 16,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[이메이션] DDR5 PC5-44800 CL46 WH",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1259975&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0710/1259975/1259975_600.jpg",
+      "summarySpecText": "DDR5 / 32GB / 5600MHz (PC5-44800) / 방열판 무 / PC용",
+      "pricing": {
+        "listPrice": 547000,
+        "discountPrice": 547000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 30,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1259975",
+          "originalProductNo": "1259975",
+          "requiredOption": false,
+          "variantName": "[32GB] (5600)",
+          "price": 547000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "975283",
+      "idx": 17,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[삼성전자] 삼성 DDR4 PC4-21300 (21년도 이전 주차) [8GB] (2666)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=975283&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2022/1212/975283/975283_600.jpg",
+      "summarySpecText": "8GB / 288핀 / DDR4 2666(PC4 21300) / DDR4-SDRAM / 2666MHz (PC4-21300) / DDR4",
+      "pricing": {
+        "listPrice": 92000,
+        "discountPrice": 92000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1727,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1103977",
+      "idx": 18,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2474",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[에센코어] KLEVV DDR5 PC5-48000 CL30 CRAS V RGB WHITE 서린",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1103977&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0110/1103977/1103977_600.jpg",
+      "summarySpecText": "DDR5 / 32GB / 6000MHz (PC5-48000) / 2개 묶음 / 방열판 유 / CL30 / 고성능 게임용 메모리 / PC용 / AURA - SYNC / MYSTIC - LIGHT / RGB - FUSION / POLYCHROME - SYNC / KD5AGUA80-60A300J",
+      "pricing": {
+        "listPrice": 770490,
+        "discountPrice": 770490,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 542,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "쿠폰",
+        "후기",
+        "기획전",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1103977",
+          "originalProductNo": "1103977",
+          "requiredOption": false,
+          "variantName": "[32GB (16GB*2)] (6000)",
+          "price": 770490747380
+        },
+        {
+          "variantProductNo": "1124089",
+          "originalProductNo": "1103977",
+          "requiredOption": false,
+          "variantName": "(품절) [48GB (24GB*2)] (6000)",
+          "price": null
+        },
+        {
+          "variantProductNo": "1124088",
+          "originalProductNo": "1103977",
+          "requiredOption": false,
+          "variantName": "[64GB (32GB*2)] (6000)",
+          "price": 1550000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1275771",
+      "idx": 19,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1014",
+        "divNo": "2036",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "RAM",
+      "name": "[Kingston] FURY DDR5 PC5-44800 CL46 코잇 [16GB] (5600) ▶ ★2차 할인★◀",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1275771&BigDivNo=&MediumDivNo=1014&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0829/1275771/1275771_600.jpg",
+      "summarySpecText": "DDR5 / 16GB / 5600MHz (PC5-44800) / CL46-45-45 / 1.10V / 방열판 무 / PC용 / 높이 : 31.25mm",
+      "pricing": {
+        "listPrice": 429000,
+        "discountPrice": 299000,
+        "customPrice": 0,
+        "discountRate": 30
+      },
+      "review": {
+        "count": 23,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    }
+  ],
+  "observations": {
+    "totalProducts": 20,
+    "buyableProducts": 20,
+    "groupOrVariantProducts": 13,
+    "priceMissingProducts": 0,
+    "detailPriceMismatches": []
+  }
+}

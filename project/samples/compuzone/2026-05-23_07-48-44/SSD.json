@@ -1,0 +1,1224 @@
+{
+  "category": {
+    "key": "SSD",
+    "name": "SSD",
+    "bigDivNo": "4",
+    "mediumDivNo": "1276",
+    "divNo": "0",
+    "ourCategory": "SSD"
+  },
+  "requestedAt": "2026-05-23T07:49:05.021Z",
+  "listPages": [
+    {
+      "scrollPage": 1,
+      "request": {
+        "actype": "getList",
+        "BigDivNo": "4",
+        "MediumDivNo": "1276",
+        "DivNo": "0",
+        "PageCount": "20",
+        "StartNum": "0",
+        "PageNum": "1",
+        "PreOrder": "recommand",
+        "lvm": "L",
+        "ScrollPage": "1",
+        "ProductType": "list",
+        "setPricechk": "N"
+      },
+      "status": 200,
+      "htmlHash": "daa82ac8874122c48a2559c2bed0c7f8aba3f3d302e9b46c7ef25121107d7ff7",
+      "parsedCount": 20
+    }
+  ],
+  "products": [
+    {
+      "productNo": "1182756",
+      "idx": 0,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[삼성전자] 공식인증 990 EVO Plus M.2 NVMe 2280",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1182756&BigDivNo=4&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1018/1182756/1182756_600.jpg",
+      "summarySpecText": "PCIeGen4 / 1TB / TLC / 읽기 7150M / 쓰기 6300M / 컨트롤러 고정 / DRAM 미탑재 / 80mm / 보증기간 5년 / MZ-V9S1T0BW",
+      "pricing": {
+        "listPrice": 473000,
+        "discountPrice": 473000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 922,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "무료배송",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "경품",
+        "토요일출발",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1182756",
+          "originalProductNo": "1182756",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 473000
+        },
+        {
+          "variantProductNo": "1182755",
+          "originalProductNo": "1182756",
+          "requiredOption": false,
+          "variantName": "[2TB]",
+          "price": 941000
+        },
+        {
+          "variantProductNo": "1182754",
+          "originalProductNo": "1182756",
+          "requiredOption": false,
+          "variantName": "[4TB]",
+          "price": 1697000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      },
+      "detailSample": {
+        "status": 200,
+        "htmlHash": "5006836e1d22fd75eeb4fc94925fb2ecc3a48599261ee51a462e3a6c7de91baf",
+        "parsed": {
+          "productNo": "1182756",
+          "detailTitle": "[삼성전자] 공식인증 990 EVO Plus M.2 NVMe 2280 [1TB] : 컴퓨존",
+          "metaKeywords": "PCIeGen4 / 1TB / TLC / 읽기 7150M / 쓰기 6300M / 컨트롤러 고정 / DRAM 미탑재 / 80mm / 보증기간 5년 / MZ-V9S1T0BW",
+          "metaDescription": "[삼성전자] 공식인증 990 EVO Plus M.2 NVMe 2280 [1TB]",
+          "priceCandidates": [
+            473000
+          ],
+          "hasOptionLayerRequest": true,
+          "hasGroupInfoRequest": true,
+          "rawSignals": {
+            "addOrderCount": 11,
+            "todayCookieCount": 2,
+            "productOptionLayerCount": 7
+          }
+        }
+      }
+    },
+    {
+      "productNo": "1276998",
+      "idx": 1,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[Western Digital] Blue SN5100 M.2 NVMe 2280",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1276998&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0902/1276998/1276998_600.jpg",
+      "summarySpecText": "PCIeGen4 / 500GB / QLC / 읽기 6600M / 쓰기 5600M / 컨트롤러 고정 / DRAM 미탑재 / 80mm / 보증기간 5년 / M.2 NVMe",
+      "pricing": {
+        "listPrice": 212000,
+        "discountPrice": 212000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 795,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "토요일출발",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1276998",
+          "originalProductNo": "1276998",
+          "requiredOption": false,
+          "variantName": "[500GB] ▶ SN5000 후속모델◀",
+          "price": 212000
+        },
+        {
+          "variantProductNo": "1276997",
+          "originalProductNo": "1276998",
+          "requiredOption": false,
+          "variantName": "[1TB] ▶ SN5000 후속모델◀",
+          "price": 312500
+        },
+        {
+          "variantProductNo": "1276996",
+          "originalProductNo": "1276998",
+          "requiredOption": false,
+          "variantName": "[2TB] ▶ SN5000 후속모델◀",
+          "price": 450000
+        },
+        {
+          "variantProductNo": "1290291",
+          "originalProductNo": "1276998",
+          "requiredOption": false,
+          "variantName": "(품절) [4TB] ▶ SN5000 후속모델◀",
+          "price": null
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "911358",
+      "idx": 2,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[SK hynix] Platinum P41 M.2 NVMe 2280",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=911358&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2022/0518/911358/911358_600.jpg",
+      "summarySpecText": "PCIeGen4 / 1TB / TLC / 읽기 7000M / 쓰기 6500M / 컨트롤러 고정 / DRAM 탑재 / 80mm / 보증기간 5년",
+      "pricing": {
+        "listPrice": 438000,
+        "discountPrice": 438000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 10375,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "후기",
+        "경품",
+        "토요일출발",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "911359",
+          "originalProductNo": "911358",
+          "requiredOption": false,
+          "variantName": "[500GB]",
+          "price": 330000
+        },
+        {
+          "variantProductNo": "911358",
+          "originalProductNo": "911358",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 438000
+        },
+        {
+          "variantProductNo": "911357",
+          "originalProductNo": "911358",
+          "requiredOption": false,
+          "variantName": "[2TB]",
+          "price": 640000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "753914",
+      "idx": 3,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[SK hynix] Gold P31 M.2 NVMe 2280",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=753914&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2021/0121/753914/753914_600.jpg",
+      "summarySpecText": "PCIeGen3 / 1TB / TLC / 읽기 3500M / 쓰기 3200M / 컨트롤러 고정 / DRAM 탑재 / 80mm / 보증기간 5년",
+      "pricing": {
+        "listPrice": 340000,
+        "discountPrice": 340000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 8746,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "토요일출발",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "753914",
+          "originalProductNo": "753914",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 340000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1178621",
+      "idx": 4,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[마이크론] Crucial P310 M.2 NVMe 2280 대원씨티에스",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1178621&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1004/1178621/1178621_600.jpg",
+      "summarySpecText": "PCIeGen4 / 1TB / QLC / 읽기 7100M / 쓰기 6000M / 컨트롤러 고정 / DRAM 미탑재 / 80mm / 보증기간 5년",
+      "pricing": {
+        "listPrice": 274000,
+        "discountPrice": 274000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 591,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "토요일출발",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1178621",
+          "originalProductNo": "1178621",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 274000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1291338",
+      "idx": 5,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[TWSC] CUSU CV3500Q M.2 NVMe 2280",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1291338&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/1027/1291338/1291338_600.jpg",
+      "summarySpecText": "PCIeGen3 / 512GB / QLC / 읽기 3200M / 쓰기 1300M / 컨트롤러 고정 / DRAM 미탑재 / 80mm / 보증기간 3년 / M.2 NVMe",
+      "pricing": {
+        "listPrice": 123000,
+        "discountPrice": 123000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 313,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "토요일출발",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1291338",
+          "originalProductNo": "1291338",
+          "requiredOption": false,
+          "variantName": "[512GB]",
+          "price": 123000
+        },
+        {
+          "variantProductNo": "1291337",
+          "originalProductNo": "1291338",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 235000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1231199",
+      "idx": 6,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[ADATA] LEGEND 710 M.2 NVMe 2280 파인인포",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1231199&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0410/1231199/1231199_600.jpg",
+      "summarySpecText": "PCIeGen3 / 256GB / QLC / 읽기 2100M / 쓰기 1000M / 컨트롤러 고정 / DRAM 미탑재 / 80mm / 보증기간 3년 / 방열판 포함 / PS5 확장 가능",
+      "pricing": {
+        "listPrice": 109000,
+        "discountPrice": 109000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 405,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "후기",
+        "경품",
+        "토요일출발",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1231199",
+          "originalProductNo": "1231199",
+          "requiredOption": false,
+          "variantName": "[256GB] 방열판",
+          "price": 109000
+        },
+        {
+          "variantProductNo": "1231198",
+          "originalProductNo": "1231199",
+          "requiredOption": false,
+          "variantName": "[512GB] 방열판",
+          "price": 168000
+        },
+        {
+          "variantProductNo": "1231197",
+          "originalProductNo": "1231199",
+          "requiredOption": false,
+          "variantName": "[1TB] 방열판",
+          "price": 288540
+        },
+        {
+          "variantProductNo": "1231196",
+          "originalProductNo": "1231199",
+          "requiredOption": false,
+          "variantName": "(품절) [2TB] 방열판",
+          "price": null
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1337426",
+      "idx": 7,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3399",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[GIGABYTE] GIGABYTE SSD SATA 피씨디렉트 [1TB]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1337426&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0402/1337426/1337426_600.jpg",
+      "summarySpecText": "1TB / TLC / 읽기 550M / 쓰기 500M / 컨트롤러 미고정 / DRAM 미탑재 / 보증기간 3년 / SATA (2.5형)",
+      "pricing": {
+        "listPrice": 250000,
+        "discountPrice": 250000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 5,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1306665",
+      "idx": 8,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[ADATA] XPG SX8200 Pro M.2 NVMe 2280 파인인포 [512GB]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1306665&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/1218/1306665/1306665_600.jpg",
+      "summarySpecText": "PCIeGen3 / 512GB / TLC / 읽기 3500M / 쓰기 2350M / 컨트롤러 고정 / DRAM 탑재 / 80mm / 보증기간 5년 / 방열판 포함 / M.2 NVMe",
+      "pricing": {
+        "listPrice": 170560,
+        "discountPrice": 170560,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 212,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "후기",
+        "경품",
+        "토요일출발"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "915060",
+      "idx": 9,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3399",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[Western Digital] Blue SA510 SATA",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=915060&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2022/0530/915060/915060_600.jpg",
+      "summarySpecText": "500GB / TLC / 읽기 560M / 쓰기 510M / 컨트롤러 고정 / DRAM 미탑재 / 보증기간 5년",
+      "pricing": {
+        "listPrice": 209900,
+        "discountPrice": 209900,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 2030,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "915060",
+          "originalProductNo": "915060",
+          "requiredOption": false,
+          "variantName": "[500GB]",
+          "price": 209900
+        },
+        {
+          "variantProductNo": "915059",
+          "originalProductNo": "915060",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 295400
+        },
+        {
+          "variantProductNo": "1051553",
+          "originalProductNo": "915060",
+          "requiredOption": false,
+          "variantName": "(품절) [2TB]",
+          "price": null
+        },
+        {
+          "variantProductNo": "1051554",
+          "originalProductNo": "915060",
+          "requiredOption": false,
+          "variantName": "[4TB]",
+          "price": 787200
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1274606",
+      "idx": 10,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3399",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[Western Digital] GREEN SATA",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1274606&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0826/1274606/1274606_600.jpg",
+      "summarySpecText": "250GB / TLC / 읽기 545M / 쓰기 500~990M / 컨트롤러 고정 / DRAM 미탑재 / 보증기간 3년 / SATA (2.5형)",
+      "pricing": {
+        "listPrice": 114000,
+        "discountPrice": 114000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 105,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1274606",
+          "originalProductNo": "1274606",
+          "requiredOption": false,
+          "variantName": "[250GB]",
+          "price": 114000
+        },
+        {
+          "variantProductNo": "1274603",
+          "originalProductNo": "1274606",
+          "requiredOption": false,
+          "variantName": "(품절) [2TB]",
+          "price": null
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1188171",
+      "idx": 11,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[에센코어] KLEVV CRAS C715 M.2 NVMe 2280",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1188171&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1107/1188171/1188171_600.jpg",
+      "summarySpecText": "PCIeGen3 / 480~512GB / TLC / 읽기 3200M / 쓰기 2000M / 컨트롤러 고정 / DRAM 미탑재 / 80mm / 보증기간 5년 / Acronis 공식 소프트웨어지원",
+      "pricing": {
+        "listPrice": 163000,
+        "discountPrice": 163000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1482,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "경품",
+        "토요일출발",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1188171",
+          "originalProductNo": "1188171",
+          "requiredOption": false,
+          "variantName": "[512GB]",
+          "price": 163000
+        },
+        {
+          "variantProductNo": "1188170",
+          "originalProductNo": "1188171",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 270000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "993680",
+      "idx": 12,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[Team Group] MP44L M.2 NVMe 2280 서린",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=993680&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2023/0214/993680/993680_600.jpg",
+      "summarySpecText": "PCIeGen4 / 500GB / TLC / 읽기 5000M / 쓰기 3700M / 컨트롤러 미고정 / DRAM 미탑재 / 80mm / 보증기간 5년",
+      "pricing": {
+        "listPrice": 199000,
+        "discountPrice": 158000,
+        "customPrice": 0,
+        "discountRate": 20
+      },
+      "review": {
+        "count": 341,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "993680",
+          "originalProductNo": "993680",
+          "requiredOption": false,
+          "variantName": "[500GB]",
+          "price": 158000
+        },
+        {
+          "variantProductNo": "993679",
+          "originalProductNo": "993680",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 279000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "968477",
+      "idx": 13,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[삼성전자] 공식인증 990 PRO M.2 NVMe 2280",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=968477&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2022/1111/968477/968477_600.jpg",
+      "summarySpecText": "PCIeGen4 / 1TB / TLC / 읽기 7450M / 쓰기 6900M / 컨트롤러 고정 / DRAM 탑재 / 80mm / 보증기간 5년 / M.2 NVMe / MZ-V9P1T0BW",
+      "pricing": {
+        "listPrice": 500200,
+        "discountPrice": 500200,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1895,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "무료배송",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "경품",
+        "토요일출발",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "968477",
+          "originalProductNo": "968477",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 500200
+        },
+        {
+          "variantProductNo": "968478",
+          "originalProductNo": "968477",
+          "requiredOption": false,
+          "variantName": "[2TB]",
+          "price": 829900
+        },
+        {
+          "variantProductNo": "1094098",
+          "originalProductNo": "968477",
+          "requiredOption": false,
+          "variantName": "[4TB]",
+          "price": 1767000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "953185",
+      "idx": 14,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[Western Digital] Black SN850X M.2 NVMe 2280",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=953185&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2022/0920/953185/953185_600.jpg",
+      "summarySpecText": "PCIeGen4 / 1TB / TLC / 읽기 7300M / 쓰기 6300M / 컨트롤러 고정 / DRAM 탑재 / 80mm / 보증기간 5년",
+      "pricing": {
+        "listPrice": 357000,
+        "discountPrice": 357000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 5594,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "기타",
+        "경품",
+        "토요일출발",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "953185",
+          "originalProductNo": "953185",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 357000
+        },
+        {
+          "variantProductNo": "953186",
+          "originalProductNo": "953185",
+          "requiredOption": false,
+          "variantName": "[1TB] Heatsink (방열판)",
+          "price": 379000
+        },
+        {
+          "variantProductNo": "1334254",
+          "originalProductNo": "953185",
+          "requiredOption": false,
+          "variantName": "[2TB]",
+          "price": 520000
+        },
+        {
+          "variantProductNo": "1335823",
+          "originalProductNo": "953185",
+          "requiredOption": false,
+          "variantName": "[2TB] Heatsink (방열판)",
+          "price": 630000
+        },
+        {
+          "variantProductNo": "953183",
+          "originalProductNo": "953185",
+          "requiredOption": false,
+          "variantName": "[4TB]",
+          "price": 955000
+        },
+        {
+          "variantProductNo": "1193870",
+          "originalProductNo": "953185",
+          "requiredOption": false,
+          "variantName": "[8TB]",
+          "price": 2180000
+        },
+        {
+          "variantProductNo": "1212896",
+          "originalProductNo": "953185",
+          "requiredOption": false,
+          "variantName": "[8TB] Heatsink (방열판)",
+          "price": 1890000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1289445",
+      "idx": 15,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[TWSC] CUSU CV5000 M.2 NVMe 2280",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1289445&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/1020/1289445/1289445_600.jpg",
+      "summarySpecText": "PCIeGen4 / 512GB / QLC / 읽기 4400M / 쓰기 3000M / 컨트롤러 고정 / DRAM 미탑재 / 80mm / 보증기간 5년 / PS5 확장 가능",
+      "pricing": {
+        "listPrice": 152000,
+        "discountPrice": 136900,
+        "customPrice": 0,
+        "discountRate": 9
+      },
+      "review": {
+        "count": 67,
+        "rate": 4.8
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1289445",
+          "originalProductNo": "1289445",
+          "requiredOption": false,
+          "variantName": "[512GB]",
+          "price": 136900
+        },
+        {
+          "variantProductNo": "1289444",
+          "originalProductNo": "1289445",
+          "requiredOption": false,
+          "variantName": "(품절) [1TB]",
+          "price": null
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1221931",
+      "idx": 16,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[삼성전자] 공식인증 9100 PRO M.2 NVMe 2280",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1221931&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0314/1221931/1221931_600.jpg",
+      "summarySpecText": "PCIeGen5 / 1TB / TLC / 읽기 14700M / 쓰기 13300M / 컨트롤러 고정 / DRAM 탑재 / 80mm / 보증기간 5년 / MZ-VAP1T0BW",
+      "pricing": {
+        "listPrice": 509000,
+        "discountPrice": 509000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 194,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "무료배송",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "경품",
+        "토요일출발",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1221931",
+          "originalProductNo": "1221931",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 509000
+        },
+        {
+          "variantProductNo": "1221930",
+          "originalProductNo": "1221931",
+          "requiredOption": false,
+          "variantName": "(품절) [2TB]",
+          "price": null
+        },
+        {
+          "variantProductNo": "1221929",
+          "originalProductNo": "1221931",
+          "requiredOption": false,
+          "variantName": "[4TB]",
+          "price": 2000800
+        },
+        {
+          "variantProductNo": "1284366",
+          "originalProductNo": "1221931",
+          "requiredOption": false,
+          "variantName": "[8TB]",
+          "price": 4356000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1278777",
+      "idx": 17,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3399",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[TWSC] CUSU C300 SATA",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1278777&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0908/1278777/1278777_600.jpg",
+      "summarySpecText": "256GB / QLC / 읽기 500M / 쓰기 400M / 컨트롤러 고정 / DRAM 미탑재 / 보증기간 3년 / SATA (2.5형)",
+      "pricing": {
+        "listPrice": 79000,
+        "discountPrice": 79000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 81,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "토요일출발",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1278777",
+          "originalProductNo": "1278777",
+          "requiredOption": false,
+          "variantName": "[256GB]",
+          "price": 79000
+        },
+        {
+          "variantProductNo": "1278776",
+          "originalProductNo": "1278777",
+          "requiredOption": false,
+          "variantName": "[512GB]",
+          "price": 105000
+        },
+        {
+          "variantProductNo": "1278775",
+          "originalProductNo": "1278777",
+          "requiredOption": false,
+          "variantName": "[1TB]",
+          "price": 192920
+        },
+        {
+          "variantProductNo": "1278774",
+          "originalProductNo": "1278777",
+          "requiredOption": false,
+          "variantName": "[2TB]",
+          "price": 350000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1231192",
+      "idx": 18,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[ADATA] LEGEND 860 M.2 NVMe 2280 파인인포",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1231192&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0410/1231192/1231192_600.jpg",
+      "summarySpecText": "PCIeGen4 / 500GB / QLC / 읽기 5000M / 쓰기 3000M / 컨트롤러 고정 / DRAM 미탑재 / 80mm / 보증기간 5년 / 방열판 포함",
+      "pricing": {
+        "listPrice": 176000,
+        "discountPrice": 176000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 175,
+        "rate": 4.9
+      },
+      "badges": [
+        "토스페이",
+        "후기",
+        "경품",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1231192",
+          "originalProductNo": "1231192",
+          "requiredOption": false,
+          "variantName": "[500GB] 방열판",
+          "price": 176000
+        },
+        {
+          "variantProductNo": "1231191",
+          "originalProductNo": "1231192",
+          "requiredOption": false,
+          "variantName": "[1TB] 방열판",
+          "price": 335000
+        },
+        {
+          "variantProductNo": "1231190",
+          "originalProductNo": "1231192",
+          "requiredOption": false,
+          "variantName": "[2TB] 방열판",
+          "price": 635000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1287129",
+      "idx": 19,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1276",
+        "divNo": "3400",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "SSD",
+      "name": "[성민디지탈] SK hynix 병행수입 PC801 M.2 NVMe 2280",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1287129&BigDivNo=&MediumDivNo=1276&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/1010/1287129/1287129_600.jpg",
+      "summarySpecText": "PCIeGen4 / 1TB / TLC / 읽기 7000M / 쓰기 6500M / 컨트롤러 고정 / DRAM 탑재 / 80mm / 보증기간 3년 / PS5 확장 가능 / M.2 NVMe",
+      "pricing": {
+        "listPrice": 327000,
+        "discountPrice": 327000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 75,
+        "rate": 5
+      },
+      "badges": [
+        "토스페이",
+        "토요일출발"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1286931",
+          "originalProductNo": "1287129",
+          "requiredOption": false,
+          "variantName": "(품절) [512GB] (새상품/ AS 3년)",
+          "price": null
+        },
+        {
+          "variantProductNo": "1287129",
+          "originalProductNo": "1287129",
+          "requiredOption": false,
+          "variantName": "[1TB] (새상품/ AS 3년)",
+          "price": 327000
+        },
+        {
+          "variantProductNo": "1296724",
+          "originalProductNo": "1287129",
+          "requiredOption": false,
+          "variantName": "[2TB] (새상품/ AS 3년)",
+          "price": 505000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    }
+  ],
+  "observations": {
+    "totalProducts": 20,
+    "buyableProducts": 20,
+    "groupOrVariantProducts": 18,
+    "priceMissingProducts": 0,
+    "detailPriceMismatches": []
+  }
+}
