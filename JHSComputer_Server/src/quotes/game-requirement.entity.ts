@@ -4,31 +4,37 @@ import { Game } from './game.entity';
 
 @Entity('game_requirements')
 export class GameRequirement {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', {
+    type: 'bigint',
+    name: 'GAME_REQUIREMENT_ID',
+  })
   id!: string;
 
-  @Column({ name: 'game_id', type: 'bigint' })
+  @Column({ name: 'GAME_ID', type: 'bigint' })
   gameId!: string;
 
-  @ManyToOne(() => Game, (game) => game.requirements, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'game_id' })
+  @ManyToOne(() => Game, (game) => game.requirements, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'GAME_ID' })
   game!: Game;
 
-  @Column({ type: 'enum', enum: Resolution })
+  @Column({ name: 'RESOLUTION', type: 'varchar', length: 30 })
   resolution!: Resolution;
 
-  @Column({ name: 'target_fps', type: 'int' })
+  @Column({ name: 'TARGET_FPS', type: 'int' })
   targetFps!: number;
 
-  @Column({ name: 'quality_preset', type: 'enum', enum: QualityPreset })
+  @Column({ name: 'QUALITY_PRESET', type: 'varchar', length: 30 })
   qualityPreset!: QualityPreset;
 
-  @Column({ name: 'cpu_score_min', type: 'int', nullable: true })
+  @Column({ name: 'CPU_SCORE_MIN', type: 'int', nullable: true })
   cpuScoreMin!: number | null;
 
-  @Column({ name: 'gpu_score_min', type: 'int', nullable: true })
+  @Column({ name: 'GPU_SCORE_MIN', type: 'int', nullable: true })
   gpuScoreMin!: number | null;
 
-  @Column({ name: 'ram_gb_min', type: 'int', nullable: true })
+  @Column({ name: 'RAM_GB_MIN', type: 'int', nullable: true })
   ramGbMin!: number | null;
 }

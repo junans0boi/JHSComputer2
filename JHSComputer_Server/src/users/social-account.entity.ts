@@ -13,28 +13,28 @@ import { User } from './user.entity';
 @Entity('social_accounts')
 @Unique(['provider', 'providerUserId'])
 export class SocialAccount {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'SOCIAL_ACCOUNT_ID' })
   id!: string;
 
-  @Column({ name: 'user_id', type: 'bigint' })
+  @Column({ name: 'USER_ID', type: 'bigint' })
   userId!: string;
 
-  @ManyToOne(() => User, (user) => user.socialAccounts, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, (user) => user.socialAccounts, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @JoinColumn({ name: 'USER_ID' })
   user!: User;
 
-  @Column({ type: 'enum', enum: SocialProvider })
+  @Column({ name: 'PROVIDER', type: 'varchar', length: 20 })
   provider!: SocialProvider;
 
-  @Column({ name: 'provider_user_id', type: 'varchar', length: 255 })
+  @Column({ name: 'PROVIDER_USER_ID', type: 'varchar', length: 100 })
   providerUserId!: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'EMAIL', type: 'varchar', length: 100, nullable: true })
   email!: string | null;
 
-  @Column({ name: 'profile_json', type: 'json', nullable: true })
+  @Column({ name: 'PROFILE_JSON', type: 'json', nullable: true })
   profileJson!: Record<string, unknown> | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'CREATED_DT' })
   createdAt!: Date;
 }

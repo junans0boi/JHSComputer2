@@ -1,23 +1,29 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BooleanTransformer } from '../common/transformers';
 import { GameRequirement } from './game-requirement.entity';
 import { PerformanceEstimate } from './performance-estimate.entity';
 
 @Entity('games')
-@Unique(['slug'])
 export class Game {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'GAME_ID' })
   id!: string;
 
-  @Column({ type: 'varchar', length: 120 })
+  @Column({ name: 'GAME_NAME', type: 'varchar', length: 100 })
   name!: string;
 
-  @Column({ type: 'varchar', length: 120 })
+  @Column({ name: 'SLUG', type: 'varchar', length: 100 })
   slug!: string;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ name: 'PRIORITY', type: 'int', default: 0 })
   priority!: number;
 
-  @Column({ name: 'is_active', type: 'boolean', default: true })
+  @Column({
+    name: 'IS_ACTIVE',
+    type: 'char',
+    length: 1,
+    default: 'Y',
+    transformer: BooleanTransformer,
+  })
   isActive!: boolean;
 
   @OneToMany(() => GameRequirement, (requirement) => requirement.game)

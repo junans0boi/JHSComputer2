@@ -14,25 +14,35 @@ import { SocialAccount } from './social-account.entity';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'USER_ID' })
   id!: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'EMAIL', type: 'varchar', length: 100, nullable: true })
   email!: string | null;
 
-  @Column({ type: 'varchar', length: 80 })
+  @Column({ name: 'USER_NAME', type: 'varchar', length: 100 })
   name!: string;
 
-  @Column({ type: 'varchar', length: 80, nullable: true })
+  @Column({ name: 'NICKNAME', type: 'varchar', length: 100, nullable: true })
   nickname!: string | null;
 
-  @Column({ type: 'varchar', length: 30, nullable: true })
+  @Column({ name: 'PHONE', type: 'varchar', length: 20, nullable: true })
   phone!: string | null;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  @Column({
+    name: 'ROLE',
+    type: 'varchar',
+    length: 20,
+    default: UserRole.USER,
+  })
   role!: UserRole;
 
-  @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
+  @Column({
+    name: 'STATUS',
+    type: 'varchar',
+    length: 20,
+    default: UserStatus.ACTIVE,
+  })
   status!: UserStatus;
 
   @OneToMany(() => SocialAccount, (socialAccount) => socialAccount.user)
@@ -44,12 +54,12 @@ export class User {
   @OneToMany(() => Order, (order) => order.user)
   orders!: Order[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'CREATED_DT' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt!: Date;
+  @UpdateDateColumn({ name: 'UPDATED_DT', nullable: true })
+  updatedAt!: Date | null;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  @DeleteDateColumn({ name: 'DELETED_DT', nullable: true })
   deletedAt!: Date | null;
 }

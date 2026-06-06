@@ -8,5 +8,8 @@
     "analyze:samples": "node analysis/analyze-samples.mjs --compuzone-root=../project/samples/compuzone --danawa-root=../project/samples/danawa --out=../project/analysis/data-shape",
     "build": "node -e \"console.log('JHSComputer_Agent: no build step')\"",
     "typecheck": "node -e \"console.log('JHSComputer_Agent: no typecheck step')\""
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0"
   }
 }

@@ -1,29 +1,44 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm';
 import { SupplierStatus } from '../common/enums';
-import { DealerPriceRule } from './dealer-price-rule.entity';
-import { SupplierListing } from './supplier-listing.entity';
+import { SupplierProduct } from './supplier-product.entity';
 
 @Entity('suppliers')
-@Unique(['code'])
+@Unique(['supplierCode'])
 export class Supplier {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'SUPPLIER_ID' })
   id!: string;
 
-  @Column({ type: 'varchar', length: 60 })
-  code!: string;
+  @Column({ name: 'SUPPLIER_CODE', type: 'varchar', length: 40 })
+  supplierCode!: string;
 
-  @Column({ type: 'varchar', length: 120 })
-  name!: string;
+  @Column({ name: 'SUPPLIER_NAME', type: 'varchar', length: 100 })
+  supplierName!: string;
 
-  @Column({ name: 'base_url', type: 'varchar', length: 500, nullable: true })
+  @Column({ name: 'BASE_URL', type: 'varchar', length: 300, nullable: true })
   baseUrl!: string | null;
 
-  @Column({ type: 'enum', enum: SupplierStatus, default: SupplierStatus.ACTIVE })
+  @Column({
+    name: 'STATUS',
+    type: 'varchar',
+    length: 20,
+    default: SupplierStatus.ACTIVE,
+  })
   status!: SupplierStatus;
 
-  @OneToMany(() => SupplierListing, (listing) => listing.supplier)
-  listings!: SupplierListing[];
+  @OneToMany(() => SupplierProduct, (product) => product.supplier)
+  products!: SupplierProduct[];
 
-  @OneToMany(() => DealerPriceRule, (rule) => rule.supplier)
-  dealerPriceRules!: DealerPriceRule[];
+  @CreateDateColumn({ name: 'CREATED_DT' })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ name: 'UPDATED_DT', nullable: true })
+  updatedAt!: Date | null;
 }

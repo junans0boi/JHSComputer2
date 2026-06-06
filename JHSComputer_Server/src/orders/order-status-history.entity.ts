@@ -4,32 +4,32 @@ import { Order } from './order.entity';
 
 @Entity('order_status_histories')
 export class OrderStatusHistory {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', { name: 'ORDER_STATUS_HISTORY_ID', type: 'bigint' })
   id!: string;
 
-  @Column({ name: 'order_id', type: 'bigint' })
+  @Column({ name: 'ORDER_ID', type: 'bigint' })
   orderId!: string;
 
   @ManyToOne(() => Order, (order) => order.statusHistories, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'order_id' })
+  @JoinColumn({ name: 'ORDER_ID' })
   order!: Order;
 
-  @Column({ name: 'from_status', type: 'varchar', length: 60, nullable: true })
+  @Column({ name: 'FROM_STATUS', type: 'varchar', length: 40, nullable: true })
   fromStatus!: string | null;
 
-  @Column({ name: 'to_status', type: 'varchar', length: 60 })
+  @Column({ name: 'TO_STATUS', type: 'varchar', length: 40 })
   toStatus!: string;
 
-  @Column({ name: 'actor_user_id', type: 'bigint', nullable: true })
+  @Column({ name: 'ACTOR_USER_ID', type: 'bigint', nullable: true })
   actorUserId!: string | null;
 
   @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'actor_user_id' })
+  @JoinColumn({ name: 'ACTOR_USER_ID' })
   actorUser!: User | null;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'MEMO', type: 'varchar', length: 255, nullable: true })
   memo!: string | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'CREATED_DT' })
   createdAt!: Date;
 }

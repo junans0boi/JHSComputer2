@@ -18,100 +18,125 @@ import {
 } from '../common/enums';
 import { Order } from '../orders/order.entity';
 import { User } from '../users/user.entity';
-import { CompatibilityCheck } from './compatibility-check.entity';
-import { PriceCheckLog } from './price-check-log.entity';
-import { QuoteHistory } from './quote-history.entity';
 import { QuoteItem } from './quote-item.entity';
 import { QuoteTemplate } from './quote-template.entity';
 
 @Entity('quotes')
 export class Quote {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'QUOTE_ID' })
   id!: string;
 
-  @Column({ name: 'user_id', type: 'bigint' })
+  @Column({ name: 'USER_ID', type: 'bigint' })
   userId!: string;
 
-  @ManyToOne(() => User, (user) => user.quotes)
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, (user) => user.quotes, {
+    onDelete: 'RESTRICT',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'USER_ID' })
   user!: User;
 
-  @Column({ name: 'template_id', type: 'bigint', nullable: true })
+  @Column({ name: 'QUOTE_TEMPLATE_ID', type: 'bigint', nullable: true })
   templateId!: string | null;
 
-  @ManyToOne(() => QuoteTemplate, (template) => template.quotes, { nullable: true })
-  @JoinColumn({ name: 'template_id' })
+  @ManyToOne(() => QuoteTemplate, (template) => template.quotes, {
+    nullable: true,
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'QUOTE_TEMPLATE_ID' })
   template!: QuoteTemplate | null;
 
-  @Column({ type: 'enum', enum: QuoteStatus, default: QuoteStatus.ACTIVE })
+  @Column({
+    name: 'STATUS',
+    type: 'varchar',
+    length: 30,
+    default: QuoteStatus.ACTIVE,
+  })
   status!: QuoteStatus;
 
-  @Column({ name: 'budget_amount', type: 'int' })
+  @Column({ name: 'BUDGET_AMOUNT', type: 'int', default: 0 })
   budgetAmount!: number;
 
-  @Column({ name: 'budget_scope', type: 'enum', enum: BudgetScope, default: BudgetScope.FULL_TOTAL })
+  @Column({
+    name: 'BUDGET_SCOPE',
+    type: 'varchar',
+    length: 30,
+    default: BudgetScope.BODY_ONLY,
+  })
   budgetScope!: BudgetScope;
 
-  @Column({ type: 'enum', enum: Purpose })
+  @Column({ name: 'PURPOSE', type: 'varchar', length: 30 })
   purpose!: Purpose;
 
-  @Column({ type: 'enum', enum: Resolution, nullable: true })
+  @Column({ name: 'RESOLUTION', type: 'varchar', length: 30, nullable: true })
   resolution!: Resolution | null;
 
-  @Column({ name: 'monitor_input', type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'MONITOR_INPUT', type: 'varchar', length: 150, nullable: true })
   monitorInput!: string | null;
 
-  @Column({ name: 'target_games_json', type: 'json', nullable: true })
+  @Column({ name: 'TARGET_GAMES_JSON', type: 'json', nullable: true })
   targetGamesJson!: string[] | null;
 
-  @Column({ name: 'storage_preference', type: 'varchar', length: 40 })
-  storagePreference!: string;
+  @Column({
+    name: 'STORAGE_PREFERENCE',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
+  storagePreference!: string | null;
 
-  @Column({ name: 'windows_option', type: 'enum', enum: WindowsOption, default: WindowsOption.NONE })
+  @Column({
+    name: 'WINDOWS_OPTION',
+    type: 'varchar',
+    length: 30,
+    default: WindowsOption.NONE,
+  })
   windowsOption!: WindowsOption;
 
-  @Column({ name: 'priority_type', type: 'enum', enum: PriorityType, default: PriorityType.VALUE })
+  @Column({
+    name: 'PRIORITY_TYPE',
+    type: 'varchar',
+    length: 30,
+    default: PriorityType.VALUE,
+  })
   priorityType!: PriorityType;
 
-  @Column({ name: 'aesthetic_option', type: 'varchar', length: 80, nullable: true })
+  @Column({
+    name: 'AESTHETIC_OPTION',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
   aestheticOption!: string | null;
 
-  @Column({ name: 'subtotal_parts_price', type: 'int', default: 0 })
+  @Column({ name: 'SUBTOTAL_PARTS_PRICE', type: 'int', default: 0 })
   subtotalPartsPrice!: number;
 
-  @Column({ name: 'assembly_fee', type: 'int', default: 0 })
+  @Column({ name: 'ASSEMBLY_FEE', type: 'int', default: 0 })
   assemblyFee!: number;
 
-  @Column({ name: 'windows_fee', type: 'int', default: 0 })
+  @Column({ name: 'WINDOWS_FEE', type: 'int', default: 0 })
   windowsFee!: number;
 
-  @Column({ name: 'shipping_fee', type: 'int', default: 0 })
+  @Column({ name: 'SHIPPING_FEE', type: 'int', default: 0 })
   shippingFee!: number;
 
-  @Column({ name: 'total_price', type: 'int', default: 0 })
+  @Column({ name: 'TOTAL_PRICE', type: 'int', default: 0 })
   totalPrice!: number;
 
-  @Column({ name: 'last_price_checked_at', type: 'datetime', nullable: true })
+  @Column({ name: 'LAST_PRICE_CHECKED_DT', type: 'datetime', nullable: true })
   lastPriceCheckedAt!: Date | null;
 
   @OneToMany(() => QuoteItem, (item) => item.quote)
   items!: QuoteItem[];
 
-  @OneToMany(() => QuoteHistory, (history) => history.quote)
-  histories!: QuoteHistory[];
-
-  @OneToMany(() => CompatibilityCheck, (check) => check.quote)
-  compatibilityChecks!: CompatibilityCheck[];
-
-  @OneToMany(() => PriceCheckLog, (log) => log.quote)
-  priceCheckLogs!: PriceCheckLog[];
-
   @OneToMany(() => Order, (order) => order.quote)
   orders!: Order[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'CREATED_DT' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt!: Date;
+  @UpdateDateColumn({ name: 'UPDATED_DT', nullable: true })
+  updatedAt!: Date | null;
 }

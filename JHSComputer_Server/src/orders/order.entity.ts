@@ -17,73 +17,94 @@ import { Payment } from './payment.entity';
 
 @Entity('orders')
 export class Order {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'ORDER_ID' })
   id!: string;
 
-  @Column({ name: 'order_no', type: 'varchar', length: 40, unique: true })
+  @Column({ name: 'ORDER_NO', type: 'varchar', length: 50, unique: true })
   orderNo!: string;
 
-  @Column({ name: 'user_id', type: 'bigint' })
+  @Column({ name: 'USER_ID', type: 'bigint' })
   userId!: string;
 
-  @ManyToOne(() => User, (user) => user.orders)
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, (user) => user.orders, {
+    onDelete: 'RESTRICT',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'USER_ID' })
   user!: User;
 
-  @Column({ name: 'quote_id', type: 'bigint' })
+  @Column({ name: 'QUOTE_ID', type: 'bigint' })
   quoteId!: string;
 
-  @ManyToOne(() => Quote, (quote) => quote.orders)
-  @JoinColumn({ name: 'quote_id' })
+  @ManyToOne(() => Quote, (quote) => quote.orders, {
+    onDelete: 'RESTRICT',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'QUOTE_ID' })
   quote!: Quote;
 
-  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.ADMIN_REVIEW })
+  @Column({
+    name: 'STATUS',
+    type: 'varchar',
+    length: 40,
+    default: OrderStatus.ADMIN_REVIEW,
+  })
   status!: OrderStatus;
 
-  @Column({ name: 'recipient_name', type: 'varchar', length: 80 })
+  @Column({
+    name: 'PRICE_CHECK_STATUS',
+    type: 'varchar',
+    length: 30,
+    default: 'NOT_CHECKED',
+  })
+  priceCheckStatus!: string;
+
+  @Column({ name: 'PRICE_CHECKED_DT', type: 'datetime', nullable: true })
+  priceCheckedDt!: Date | null;
+
+  @Column({ name: 'PRICE_CHANGE_JSON', type: 'json', nullable: true })
+  priceChangeJson!: any | null;
+
+  @Column({ name: 'PRICE_APPROVED_DT', type: 'datetime', nullable: true })
+  priceApprovedDt!: Date | null;
+
+  @Column({ name: 'RECIPIENT_NAME', type: 'varchar', length: 100 })
   recipientName!: string;
 
-  @Column({ name: 'recipient_phone', type: 'varchar', length: 30 })
+  @Column({ name: 'RECIPIENT_PHONE', type: 'varchar', length: 20 })
   recipientPhone!: string;
 
-  @Column({ name: 'postal_code', type: 'varchar', length: 20 })
+  @Column({ name: 'POSTAL_CODE', type: 'varchar', length: 20 })
   postalCode!: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ name: 'ADDRESS1', type: 'varchar', length: 255 })
   address1!: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'ADDRESS2', type: 'varchar', length: 255, nullable: true })
   address2!: string | null;
 
-  @Column({ name: 'delivery_memo', type: 'varchar', length: 255, nullable: true })
+  @Column({
+    name: 'DELIVERY_MEMO',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   deliveryMemo!: string | null;
 
-  @Column({ name: 'subtotal_parts_price', type: 'int', default: 0 })
+  @Column({ name: 'SUBTOTAL_PARTS_PRICE', type: 'int', default: 0 })
   subtotalPartsPrice!: number;
 
-  @Column({ name: 'assembly_fee', type: 'int', default: 0 })
+  @Column({ name: 'ASSEMBLY_FEE', type: 'int', default: 0 })
   assemblyFee!: number;
 
-  @Column({ name: 'windows_fee', type: 'int', default: 0 })
+  @Column({ name: 'WINDOWS_FEE', type: 'int', default: 0 })
   windowsFee!: number;
 
-  @Column({ name: 'shipping_fee', type: 'int', default: 0 })
+  @Column({ name: 'SHIPPING_FEE', type: 'int', default: 0 })
   shippingFee!: number;
 
-  @Column({ name: 'total_price', type: 'int', default: 0 })
+  @Column({ name: 'TOTAL_PRICE', type: 'int', default: 0 })
   totalPrice!: number;
-
-  @Column({ name: 'estimated_total_buy_price', type: 'int', nullable: true })
-  estimatedTotalBuyPrice!: number | null;
-
-  @Column({ name: 'actual_total_buy_price', type: 'int', nullable: true })
-  actualTotalBuyPrice!: number | null;
-
-  @Column({ name: 'estimated_margin', type: 'int', nullable: true })
-  estimatedMargin!: number | null;
-
-  @Column({ name: 'actual_margin', type: 'int', nullable: true })
-  actualMargin!: number | null;
 
   @OneToMany(() => OrderItem, (item) => item.order)
   items!: OrderItem[];
@@ -94,9 +115,9 @@ export class Order {
   @OneToMany(() => OrderStatusHistory, (history) => history.order)
   statusHistories!: OrderStatusHistory[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'CREATED_DT' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt!: Date;
+  @UpdateDateColumn({ name: 'UPDATED_DT', nullable: true })
+  updatedAt!: Date | null;
 }

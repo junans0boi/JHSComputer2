@@ -5,48 +5,59 @@ import { Game } from './game.entity';
 
 @Entity('performance_estimates')
 export class PerformanceEstimate {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', {
+    type: 'bigint',
+    name: 'PERFORMANCE_ESTIMATE_ID',
+  })
   id!: string;
 
-  @Column({ name: 'game_id', type: 'bigint' })
+  @Column({ name: 'GAME_ID', type: 'bigint' })
   gameId!: string;
 
-  @ManyToOne(() => Game, (game) => game.performanceEstimates, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'game_id' })
+  @ManyToOne(() => Game, (game) => game.performanceEstimates, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'GAME_ID' })
   game!: Game;
 
-  @Column({ name: 'cpu_part_id', type: 'bigint', nullable: true })
+  @Column({ name: 'CPU_PART_ID', type: 'bigint', nullable: true })
   cpuPartId!: string | null;
 
-  @ManyToOne(() => Part, { nullable: true })
-  @JoinColumn({ name: 'cpu_part_id' })
+  @ManyToOne(() => Part, { onDelete: 'SET NULL', onUpdate: 'CASCADE' })
+  @JoinColumn({ name: 'CPU_PART_ID' })
   cpuPart!: Part | null;
 
-  @Column({ name: 'gpu_part_id', type: 'bigint', nullable: true })
+  @Column({ name: 'GPU_PART_ID', type: 'bigint', nullable: true })
   gpuPartId!: string | null;
 
-  @ManyToOne(() => Part, { nullable: true })
-  @JoinColumn({ name: 'gpu_part_id' })
+  @ManyToOne(() => Part, { onDelete: 'SET NULL', onUpdate: 'CASCADE' })
+  @JoinColumn({ name: 'GPU_PART_ID' })
   gpuPart!: Part | null;
 
-  @Column({ type: 'enum', enum: Resolution })
+  @Column({ name: 'RESOLUTION', type: 'varchar', length: 30 })
   resolution!: Resolution;
 
-  @Column({ name: 'quality_preset', type: 'enum', enum: QualityPreset })
+  @Column({ name: 'QUALITY_PRESET', type: 'varchar', length: 30 })
   qualityPreset!: QualityPreset;
 
-  @Column({ name: 'fps_min', type: 'int', nullable: true })
+  @Column({ name: 'FPS_MIN', type: 'int', nullable: true })
   fpsMin!: number | null;
 
-  @Column({ name: 'fps_max', type: 'int', nullable: true })
+  @Column({ name: 'FPS_MAX', type: 'int', nullable: true })
   fpsMax!: number | null;
 
-  @Column({ type: 'enum', enum: PerformanceGrade })
+  @Column({ name: 'GRADE', type: 'varchar', length: 30 })
   grade!: PerformanceGrade;
 
-  @Column({ name: 'source_summary', type: 'varchar', length: 255, nullable: true })
+  @Column({
+    name: 'SOURCE_SUMMARY',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   sourceSummary!: string | null;
 
-  @Column({ name: 'verified_at', type: 'datetime', nullable: true })
-  verifiedAt!: Date | null;
+  @Column({ name: 'VERIFIED_DT', type: 'datetime', nullable: true })
+  verifiedDt!: Date | null;
 }

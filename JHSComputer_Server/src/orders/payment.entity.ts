@@ -5,38 +5,38 @@ import { Order } from './order.entity';
 
 @Entity('payments')
 export class Payment {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', { name: 'PAYMENT_ID', type: 'bigint' })
   id!: string;
 
-  @Column({ name: 'order_id', type: 'bigint' })
+  @Column({ name: 'ORDER_ID', type: 'bigint' })
   orderId!: string;
 
   @ManyToOne(() => Order, (order) => order.payments, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'order_id' })
+  @JoinColumn({ name: 'ORDER_ID' })
   order!: Order;
 
-  @Column({ type: 'enum', enum: PaymentMethod, default: PaymentMethod.BANK_TRANSFER })
+  @Column({ name: 'METHOD', type: 'varchar', length: 30, default: PaymentMethod.BANK_TRANSFER })
   method!: PaymentMethod;
 
-  @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PENDING })
+  @Column({ name: 'STATUS', type: 'varchar', length: 30, default: PaymentStatus.PENDING })
   status!: PaymentStatus;
 
-  @Column({ type: 'int' })
+  @Column({ name: 'AMOUNT', type: 'int', default: 0 })
   amount!: number;
 
-  @Column({ name: 'depositor_name', type: 'varchar', length: 80, nullable: true })
+  @Column({ name: 'DEPOSITOR_NAME', type: 'varchar', length: 80, nullable: true })
   depositorName!: string | null;
 
-  @Column({ name: 'confirmed_by_user_id', type: 'bigint', nullable: true })
+  @Column({ name: 'CONFIRMED_BY_USER_ID', type: 'bigint', nullable: true })
   confirmedByUserId!: string | null;
 
   @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'confirmed_by_user_id' })
+  @JoinColumn({ name: 'CONFIRMED_BY_USER_ID' })
   confirmedByUser!: User | null;
 
-  @Column({ name: 'confirmed_at', type: 'datetime', nullable: true })
-  confirmedAt!: Date | null;
+  @Column({ name: 'CONFIRMED_DT', type: 'datetime', nullable: true })
+  confirmedDt!: Date | null;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'MEMO', type: 'varchar', length: 255, nullable: true })
   memo!: string | null;
 }
