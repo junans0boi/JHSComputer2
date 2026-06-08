@@ -9,7 +9,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   app.enableCors({
-    origin: config.get<string>('WEB_ORIGIN') ?? 'http://localhost:3000',
+    origin: config.get<string>('WEB_ORIGIN') ?? 'http://localhost:6001',
     credentials: true,
   });
   app.useGlobalPipes(
@@ -20,7 +20,7 @@ async function bootstrap() {
     }),
   );
 
-  const port = config.get<number>('API_PORT') ?? 3001;
+  const port = config.get<number>('API_PORT') ?? 6002;
   await app.listen(port);
 }
 

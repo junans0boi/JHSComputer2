@@ -2,6 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HealthController } from './health/health.controller';
+import { PartsModule } from './parts/parts.module';
+import { QuotesModule } from './quotes/quotes.module';
+import { OrdersModule } from './orders/orders.module';
+import { UsersModule } from './users/users.module';
+import { CommonCodesModule } from './common-codes/common-codes.module';
 
 @Module({
   imports: [
@@ -25,6 +30,11 @@ import { HealthController } from './health/health.controller';
         charset: 'utf8mb4_unicode_ci',
       }),
     }),
+    PartsModule,
+    QuotesModule,
+    OrdersModule,
+    UsersModule,
+    CommonCodesModule,
   ],
   controllers: [HealthController],
 })

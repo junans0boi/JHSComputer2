@@ -1,0 +1,996 @@
+{
+  "category": {
+    "key": "CPU",
+    "name": "CPU",
+    "bigDivNo": "4",
+    "mediumDivNo": "1012",
+    "divNo": "0",
+    "ourCategory": "CPU"
+  },
+  "requestedAt": "2026-06-08T06:23:10.205Z",
+  "listPages": [
+    {
+      "scrollPage": 1,
+      "request": {
+        "actype": "getList",
+        "BigDivNo": "4",
+        "MediumDivNo": "1012",
+        "DivNo": "0",
+        "PageCount": "20",
+        "StartNum": "0",
+        "PageNum": "1",
+        "PreOrder": "recommand",
+        "lvm": "L",
+        "ScrollPage": "1",
+        "ProductType": "list",
+        "setPricechk": "N"
+      },
+      "status": 200,
+      "htmlHash": "c7507858b6c6d82c023ebeeb2f9968a8ac5d216e594d6a46d2a33b875d921616",
+      "parsedCount": 20
+    }
+  ],
+  "products": [
+    {
+      "productNo": "1187400",
+      "idx": 0,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2033",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[AMD] 라이젠7 그래니트 9800X3D (8코어/16스레드/4.7GHz/쿨러미포함)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1187400&BigDivNo=4&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1105/1187400/1187400_600.jpg",
+      "summarySpecText": "8코어 / 16스레드 / 4.7GHz / L3 : 32MB / 3D V-Cache : 96MB / TDP : 120w / 4nm / 라이젠 그래니트릿지 / 라이젠7 / 옥타(8) 코어 / AM5 / 내장그래픽 유 / 4.7 ~ 5.2GHz / 박스 (쿨러미포함) / 라이젠 그래니트 릿지",
+      "pricing": {
+        "listPrice": 617000,
+        "discountPrice": 617000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 2317,
+        "rate": 5
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "1시간픽업",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1187400",
+          "originalProductNo": "1187400",
+          "requiredOption": false,
+          "variantName": "[멀티팩]",
+          "price": 617000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      },
+      "detailSample": {
+        "status": 200,
+        "htmlHash": "45d105c429f41ebaaa6e6ae57cc0f6805a1f9c39485ad90a03972f110218842f",
+        "parsed": {
+          "productNo": "1187400",
+          "detailTitle": "[AMD] 라이젠7 그래니트 9800X3D (8코어/16스레드/4.7GHz/쿨러미포함) [멀티팩] : 컴퓨존",
+          "metaKeywords": "8코어 / 16스레드 / 4.7GHz / L3 : 32MB / 3D V-Cache : 96MB / TDP : 120w / 4nm / 라이젠 그래니트릿지 / 라이젠7 / 옥타(8) 코어 / AM5 / 내장그래픽 유 / 4.7 ~ 5.2GHz / 박스 (쿨러미포함) / 라이젠 그래니트 릿지",
+          "metaDescription": "[AMD] 라이젠7 그래니트 9800X3D (8코어/16스레드/4.7GHz/쿨러미포함) [멀티팩]",
+          "priceCandidates": [
+            617000
+          ],
+          "hasOptionLayerRequest": true,
+          "hasGroupInfoRequest": true,
+          "rawSignals": {
+            "addOrderCount": 5,
+            "todayCookieCount": 2,
+            "productOptionLayerCount": 7
+          },
+          "detailImages": [
+            "https://image3.compuzone.co.kr/img/product_img_detail/2024/1105/1187400/0b9fb9715875a790d66a0e1448653196.png"
+          ]
+        }
+      }
+    },
+    {
+      "productNo": "1108538",
+      "idx": 1,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2032",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[INTEL] 코어 i3-14100 정품벌크 (랩터레이크 리프레시/3.5GHz/12MB/쿨러 미포함)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1108538&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0122/1108538/1108538_600.jpg",
+      "summarySpecText": "인텔(소켓1700) / 10nm(인텔7) / P4코어 / 8쓰레드 / 기본 클럭: 3.5GHz / 최대 클럭: 4.7GHz / L2 캐시: 5MB / L3 캐시: 12MB / PBP-MTP: 60-110W / PCIe5.0, 4.0 / 메모리 규격: DDR5, DDR4 / 4800, 3200MHz / 내장그래픽: 탑재 / 인텔 UHD 730 / 기술 지원: 하이퍼스레딩 / 벌크 (쿨러미포함)",
+      "pricing": {
+        "listPrice": 185000,
+        "discountPrice": 185000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 242,
+        "rate": 4.9
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "1시간픽업"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      },
+      "detailSample": {
+        "status": 200,
+        "htmlHash": "5d1847b5f9a650ec3dfd90313e23ad520eaffcc2bf7330f3804ac2c3e9f6c099",
+        "parsed": {
+          "productNo": "1108538",
+          "detailTitle": "[INTEL] 코어 i3-14100 정품벌크 (랩터레이크 리프레시/3.5GHz/12MB/쿨러 미포함) : 컴퓨존",
+          "metaKeywords": "인텔(소켓1700) / 10nm(인텔7) / P4코어 / 8쓰레드 / 기본 클럭: 3.5GHz / 최대 클럭: 4.7GHz / L2 캐시: 5MB / L3 캐시: 12MB / PBP-MTP: 60-110W / PCIe5.0, 4.0 / 메모리 규격: DDR5, DDR4 / 4800, 3200MHz / 내장그래픽: 탑재 / 인텔 UHD 730 / 기술 지원: 하이퍼스레딩 / 벌크 (쿨러미포함)",
+          "metaDescription": "[INTEL] 코어 i3-14100 정품벌크 (랩터레이크 리프레시/3.5GHz/12MB/쿨러 미포함)",
+          "priceCandidates": [
+            185000
+          ],
+          "hasOptionLayerRequest": true,
+          "hasGroupInfoRequest": true,
+          "rawSignals": {
+            "addOrderCount": 13,
+            "todayCookieCount": 2,
+            "productOptionLayerCount": 7
+          },
+          "detailImages": [
+            "https://image3.compuzone.co.kr/img/product_img_detail/2024/0122/1108538/f217c1d27cb7205520db9562c366dfd5.jpeg"
+          ]
+        }
+      }
+    },
+    {
+      "productNo": "1013843",
+      "idx": 2,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2033",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[AMD] 라이젠7 라파엘 7800X3D (8코어/16스레드/4.2GHz/쿨러미포함)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1013843&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2023/0405/1013843/1013843_600.jpg",
+      "summarySpecText": "8코어 16스레드 4.2GHz 120w TDP 5nm / 라이젠 라파엘 / 라이젠7 / 옥타(8) 코어 / AM5 / 내장그래픽 유 / 4.2 ~ 5.0GHz / 12MB 이상 / 5nm",
+      "pricing": {
+        "listPrice": 403000,
+        "discountPrice": 403000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 2446,
+        "rate": 5
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "1시간픽업",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1013843",
+          "originalProductNo": "1013843",
+          "requiredOption": false,
+          "variantName": "멀티팩",
+          "price": 403000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1294309",
+      "idx": 3,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2033",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[AMD] 라이젠 5 버미어 5600 (6코어/12스레드/3.5GHz/쿨러포함/대리점정품)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1294309&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/1105/1294309/1294309_600.jpg",
+      "summarySpecText": "라이젠 버미어 / 라이젠5 / 헥사(6) 코어 / 12스레드 / 3.5 ~ 4.4GHz / AM4 / 내장그래픽 무 / 박스 (쿨러포함) / 35MB / 7nm / TDP 65W / DDR4",
+      "pricing": {
+        "listPrice": 170000,
+        "discountPrice": 170000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 796,
+        "rate": 5
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "1시간픽업"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1294309",
+          "originalProductNo": "1294309",
+          "requiredOption": false,
+          "variantName": "[정품박스]",
+          "price": 170000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1164047",
+      "idx": 4,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2033",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[AMD] 라이젠9 그래니트 9950X (16코어/32스레드/4.3GHz/대리점정품/쿨러미포함) [멀티팩]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1164047&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0726/1164047/1164047_600.jpg",
+      "summarySpecText": "AMD(소켓AM5) / 6세대(Zen5) / 4nm / 16코어 / 32쓰레드 / 기본 클럭: 4.3GHz / 최대 클럭: 5.7GHz / L2 캐시: 16MB / L3 캐시: 64MB / TDP: 170W / PCIe5.0 / 메모리 규격: DDR5 / 5200MHz / 내장그래픽: 탑재 / AMD 라데온 그래픽 / 쿨러: 미포함 / 라이젠 그래니트 릿지 / 라이젠9",
+      "pricing": {
+        "listPrice": 799000,
+        "discountPrice": 799000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 191,
+        "rate": 4.9
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "1시간픽업"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1203135",
+      "idx": 5,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2032",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[INTEL] 인텔 코어 Ultra 5 프로세서 225 (애로우레이크) [정품박스/쿨러포함]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1203135&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0113/1203135/1203135_600.jpg",
+      "summarySpecText": "인텔(소켓1851)/TSMC 3nm/P6+E4코어/10스레드/기본 클럭: 3.3GHz/최대 클럭: 4.9GHz/L2 캐시: 22MB/PBP : 65W/PCIe5.0, 4.0/메모리 규격: DDR5/6400MHz/내장그래픽: 탑재/인텔 그래픽스(Xe LPG)/기술 지원: 인텔 XTU, 인텔 딥러닝부스트/쿨러: 포함",
+      "pricing": {
+        "listPrice": 295000,
+        "discountPrice": 295000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 601,
+        "rate": 4.9
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "기타",
+        "경품",
+        "1시간픽업"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1220480",
+      "idx": 6,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2033",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[AMD] 라이젠9 그래니트 9950X3D (16코어/32스레드/4.3GHz/쿨러미포함) [멀티팩]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1220480&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0311/1220480/1220480_600.jpg",
+      "summarySpecText": "라이젠 그래니트릿지/ 16코어 / 32스레드 / 4.3GHz / L3 : 128MB / TDP : 170w / AM5 / 내장그래픽 유 / 박스 (쿨러미포함) / 라이젠9 / 4nm",
+      "pricing": {
+        "listPrice": 1390000,
+        "discountPrice": 1390000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 264,
+        "rate": 5
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "1시간픽업"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1332915",
+      "idx": 7,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2033",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[AMD] 라이젠5 세잔 5500GT (6코어/12스레드/3.6GHz/대리점정품) 멀티팩",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1332915&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0323/1332915/1332915_600.jpg",
+      "summarySpecText": "라이젠 세잔/라이젠5/헥사(6) 코어/AM4/내장그래픽 유/3.0 ~ 3.9 GHz/4.0 ~ 4.9 GHz/박스 (쿨러미포함)/11~20MB/7nm",
+      "pricing": {
+        "listPrice": 185000,
+        "discountPrice": 185000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 3719,
+        "rate": 4.9
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "1시간픽업"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1146524",
+          "originalProductNo": "1332915",
+          "requiredOption": false,
+          "variantName": "[쿨러포함]",
+          "price": 189000
+        },
+        {
+          "variantProductNo": "1332915",
+          "originalProductNo": "1332915",
+          "requiredOption": false,
+          "variantName": "[쿨러미포함]",
+          "price": 185000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1183677",
+      "idx": 8,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2032",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[INTEL] 인텔 코어 Ultra 7 프로세서 265K (애로우 레이크/3.9GHz/30MB/쿨러미포함) [정품박스]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1183677&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1023/1183677/1183677_600.jpg",
+      "summarySpecText": "인텔(소켓1851) / P8+E12코어 / 20스레드 / 기본 클럭: 3.9GHz / 최대 클럭: 5.5GHz / L2 캐시: 36MB / L3 캐시: 30MB / PBP-MTP: 125-250W / PCIe5.0, 4.0 / 메모리 규격: DDR5 / 6400MHz / 내장그래픽: 탑재 / 인텔 그래픽스(Xe LPG) / 기술 지원: 인텔 XTU, 인텔 딥러닝부스트 / 쿨러: 미포함",
+      "pricing": {
+        "listPrice": 502000,
+        "discountPrice": 502000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 613,
+        "rate": 4.9
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "기타",
+        "경품",
+        "1시간픽업"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1108545",
+      "idx": 9,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "3452",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[INTEL] [병행] 코어 i5-14400 (14세대/ 랩터레이크 리프레시/ 2.5GHz)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1108545&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0122/1108545/1108545_600.jpg",
+      "summarySpecText": "인텔(소켓1700) / 10코어 / 16쓰레드 / 기본 클럭: 2.5GHz / 최대 클럭: 4.7GHz / 캐시: 20MB / PBP: 65W / 메모리 규격: DDR4 / 3200MHz / DDR5 / 4800MHz / 내장그래픽: 탑재 / 랩터레이크 리프레시 / 코어 i5 / 벌크 (쿨러 미포함)",
+      "pricing": {
+        "listPrice": 273400,
+        "discountPrice": 273400,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1664,
+        "rate": 5
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "1시간픽업"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1108545",
+          "originalProductNo": "1108545",
+          "requiredOption": false,
+          "variantName": "[벌크/쿨러 미포함]",
+          "price": 273400
+        },
+        {
+          "variantProductNo": "1108527",
+          "originalProductNo": "1108545",
+          "requiredOption": false,
+          "variantName": "[벌크/쿨러 포함]",
+          "price": 284700
+        },
+        {
+          "variantProductNo": "1108550",
+          "originalProductNo": "1108545",
+          "requiredOption": false,
+          "variantName": "[벌크/동쿨러 포함]",
+          "price": 285700
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1161736",
+      "idx": 10,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2033",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[AMD] 라이젠5 세잔 5600GT (6코어/12스레드/3.6GHz/쿨러포함/대리점정품) 멀티팩",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1161736&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0718/1161736/1161736_600.jpg",
+      "summarySpecText": "AMD(소켓AM4) / 4세대 (Zen 3) / 7nm / 헥사(6)코어 / 12쓰레드 / 기본 클럭: 3.6GHz / 최대 클럭: 4.6GHz / L3 캐시: 16MB / TDP: 65W / PCIe3.0 / 메모리 규격: DDR4 / 내장그래픽 : 탑재 / Wraith Stealth 포함 / 라이젠 세잔 / 라이젠5",
+      "pricing": {
+        "listPrice": 215000,
+        "discountPrice": 205000,
+        "customPrice": 0,
+        "discountRate": 4
+      },
+      "review": {
+        "count": 1153,
+        "rate": 4.9
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "1시간픽업"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1164055",
+      "idx": 11,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2033",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[AMD] 라이젠5 그래니트 9600X (6코어/12스레드/3.9GHz/대리점정품/쿨러포함) 멀티팩",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1164055&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0726/1164055/1164055_600.jpg",
+      "summarySpecText": "AMD(소켓AM5) / 6세대(Zen5) / 4nm / 6코어 / 12쓰레드 / 기본 클럭: 3.9GHz / 최대 클럭: 5.4GHz / L2 캐시: 6MB / L3 캐시: 32MB / TDP: 65W / PCIe5.0 / 메모리 규격: DDR5 / 5600MHz / 내장그래픽: 탑재 / AMD 라데온 그래픽 / 쿨러: 포함 / 라이젠5 / 라이젠 그래니트 릿지",
+      "pricing": {
+        "listPrice": 272500,
+        "discountPrice": 272500,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1378,
+        "rate": 4.9
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "1시간픽업"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1334276",
+      "idx": 12,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2032",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[INTEL] 인텔 코어 Ultra 5 프로세서 250K PLUS (애로우 레이크/4.2GHz/30MB)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1334276&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0325/1334276/1334276_600.jpg",
+      "summarySpecText": "15세대 애로우레이크/코어 울트라 5/옥타데카(18) 코어/LGA 1851/4.0 ~ 4.9 GHz/박스 (쿨러미포함)/3nm/21~30MB/Xe LPG",
+      "pricing": {
+        "listPrice": 358000,
+        "discountPrice": 358000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 77,
+        "rate": 5
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "가산점 현장구매 가능 상품· 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "기타",
+        "경품",
+        "1시간픽업",
+        "가산점 현장구매 가능 상품 · 해당 상품은 가산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1334276",
+          "originalProductNo": "1334276",
+          "requiredOption": false,
+          "variantName": "[정품박스/쿨러미포함]",
+          "price": 358000
+        },
+        {
+          "variantProductNo": "1334314",
+          "originalProductNo": "1334276",
+          "requiredOption": false,
+          "variantName": "(품절) [정품벌크/쿨러미포함]",
+          "price": null
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1334275",
+      "idx": 13,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2032",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[INTEL] 인텔 코어 Ultra 7 프로세서 270K PLUS (애로우 레이크/3.7GHz/36MB)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1334275&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2026/0325/1334275/1334275_600.jpg",
+      "summarySpecText": "코어 i7/15세대 애로우레이크/코어 울트라 7/쿼드라코사(24) 코어/LGA 1851/3.0 ~ 3.9 GHz/박스 (쿨러미포함)/3nm/31~40MB/Xe LPG",
+      "pricing": {
+        "listPrice": 517000,
+        "discountPrice": 517000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 139,
+        "rate": 4.9
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "용산점 현장구매 가능 상품· 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다.",
+        "기타",
+        "경품",
+        "1시간픽업",
+        "용산점 현장구매 가능 상품 · 해당 상품은 용산점 라운지에 방문하여 바로 구매가 가능한 새 상품입니다.· 개봉하여 상품 확인은 불가한 점 양해 부탁드립니다."
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1334275",
+          "originalProductNo": "1334275",
+          "requiredOption": false,
+          "variantName": "[정품박스/쿨러미포함]",
+          "price": 517000
+        },
+        {
+          "variantProductNo": "1334315",
+          "originalProductNo": "1334275",
+          "requiredOption": false,
+          "variantName": "[정품벌크/쿨러미포함]",
+          "price": 495000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1062764",
+      "idx": 14,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2033",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[AMD] 라이젠5 라파엘 7500F (6코어/12스레드/3.7GHz/대리점정품/멀티팩)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1062764&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2023/0822/1062764/1062764_600.jpg",
+      "summarySpecText": "AMD(소켓AM5) / 5세대(Zen4) / 5nm / 6코어 / 12쓰레드 / 기본 클럭: 3.7GHz / 최대 클럭: 5.0GHz / L2 캐시: 6MB / L3 캐시: 32MB / TDP: 65W / 벌크 (쿨러미포함) / 89358 라이젠 라파엘 / 10537 라이젠5",
+      "pricing": {
+        "listPrice": 184000,
+        "discountPrice": 184000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 5855,
+        "rate": 5
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "1시간픽업"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1062764",
+          "originalProductNo": "1062764",
+          "requiredOption": false,
+          "variantName": "쿨러미포함",
+          "price": 184000
+        },
+        {
+          "variantProductNo": "1050102",
+          "originalProductNo": "1062764",
+          "requiredOption": false,
+          "variantName": "쿨러포함",
+          "price": 189000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1203134",
+      "idx": 15,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2032",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[INTEL] 인텔 코어 Ultra 5 프로세서 225F (애로우 레이크/3.3GHz/22MB)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1203134&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0113/1203134/1203134_600.jpg",
+      "summarySpecText": "인텔(소켓1851)/TSMC 3nm/P6+E4코어/10스레드/기본 클럭: 3.3GHz/최대 클럭: 4.9GHz/L2 캐시: 22MB/PBP : 65W/PCIe5.0, 4.0/메모리 규격: DDR5/6400MHz/내장그래픽: 미탑재/기술 지원: 인텔 XTU, 인텔 딥러닝부스트/쿨러: 포함",
+      "pricing": {
+        "listPrice": 237000,
+        "discountPrice": 237000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 389,
+        "rate": 4.9
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "기타",
+        "경품",
+        "1시간픽업"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1280870",
+          "originalProductNo": "1203134",
+          "requiredOption": false,
+          "variantName": "[정품벌크/쿨러미포함]",
+          "price": 208000
+        },
+        {
+          "variantProductNo": "1203134",
+          "originalProductNo": "1203134",
+          "requiredOption": false,
+          "variantName": "[정품박스/쿨러포함]",
+          "price": 237000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1186165",
+      "idx": 16,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2032",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[INTEL] 인텔 코어 Ultra 9 프로세서 285K (애로우 레이크/쿨러미포함) [정품벌크]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1186165&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/1101/1186165/1186165_600.jpg",
+      "summarySpecText": "인텔(소켓1851) / P8+E16코어 / 24스레드 / 기본 클럭: 3.7GHz / 최대 클럭: 5.7GHz / L2 캐시: 40MB / L3 캐시: 36MB / PBP-MTP: 125-250W / PCIe5.0, 4.0 / 메모리 규격: DDR5 / 6400MHz / 내장그래픽: 탑재 / 인텔 그래픽스(Xe LPG) / 기술 지원: 인텔 XTU, 인텔 딥러닝부스트 / 쿨러: 미포함",
+      "pricing": {
+        "listPrice": 904000,
+        "discountPrice": 904000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 60,
+        "rate": 4.9
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "1시간픽업"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1102703",
+      "idx": 17,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2032",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[INTEL] 코어 i5-14400F (랩터레이크 리프레시/2.5GHz/20MB)",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1102703&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2024/0108/1102703/1102703_600.jpg",
+      "summarySpecText": "인텔(소켓1700) / 10코어 / 16쓰레드 / 기본 클럭: 2.5GHz / 최대 클럭: 4.7GHz / 캐시: 20MB / PBP: 65W / 메모리 규격: DDR4 / 3200MHz / DDR5 / 4800MHz / 내장그래픽: 미지원 / 코어 i5",
+      "pricing": {
+        "listPrice": 259000,
+        "discountPrice": 259000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 3362,
+        "rate": 4.9
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "1시간픽업"
+      ],
+      "variants": [
+        {
+          "variantProductNo": "1112689",
+          "originalProductNo": "1102703",
+          "requiredOption": false,
+          "variantName": "[정품벌크/쿨러미포함]",
+          "price": 231000
+        },
+        {
+          "variantProductNo": "1215660",
+          "originalProductNo": "1102703",
+          "requiredOption": false,
+          "variantName": "[밸류팩/쿨러포함]",
+          "price": 250000
+        },
+        {
+          "variantProductNo": "1102703",
+          "originalProductNo": "1102703",
+          "requiredOption": false,
+          "variantName": "[정품박스/쿨러포함]",
+          "price": 259000
+        }
+      ],
+      "flags": {
+        "isGroupProduct": true,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "1264260",
+      "idx": 18,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2033",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[AMD] 라이젠 스레드리퍼 PRO 9975WX (시마다 픽)(32코어/64스레드/4.0GHz/쿨러미포함/대리점정품/Threadripper) 멀티팩",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1264260&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2025/0724/1264260/1264260_600.jpg",
+      "summarySpecText": "스레드리퍼 5세대/sTR5/내장그래픽 무/박스 (쿨러미포함)/61MB 이상/5nm/도트리아콘타(32) 코어/4.0 ~ 4.9 GHz / 스톰 픽",
+      "pricing": {
+        "listPrice": 6497000,
+        "discountPrice": 6497000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 2,
+        "rate": 5
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "특송무료",
+        "기획전",
+        "1시간픽업"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    },
+    {
+      "productNo": "937112",
+      "idx": 19,
+      "supplierCategory": {
+        "bigDivNo": "4",
+        "mediumDivNo": "1012",
+        "divNo": "2033",
+        "sourceDivNo": "0"
+      },
+      "ourCategory": "CPU",
+      "name": "[AMD] 라이젠5 세잔 5600G (6코어/12스레드/3.9GHz/쿨러포함) [정품박스]",
+      "detailUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=937112&BigDivNo=&MediumDivNo=1012&DivNo=0",
+      "imageUrl": "https://image3.compuzone.co.kr/img/product_img/2022/0802/937112/937112_600.jpg",
+      "summarySpecText": "AMD(소켓AM4) / 4세대 (Zen 3) / 7nm / 헥사(6)코어 / 12쓰레드 / 기본 클럭: 3.9GHz / 최대 클럭: 4.4GHz / L3 캐시: 16MB / TDP: 65W / PCIe3.0 / 메모리 규격: DDR4 / 내장그래픽 : 탑재 / Wraith Stealth 포함",
+      "pricing": {
+        "listPrice": 209000,
+        "discountPrice": 209000,
+        "customPrice": 0,
+        "discountRate": 0
+      },
+      "review": {
+        "count": 1002,
+        "rate": 5
+      },
+      "badges": [
+        "네이버 포인트",
+        "토스페이",
+        "1시간픽업"
+      ],
+      "variants": [],
+      "flags": {
+        "isGroupProduct": false,
+        "isOptionRequired": false,
+        "isBuyable": true,
+        "hasCartButton": true
+      }
+    }
+  ],
+  "observations": {
+    "totalProducts": 20,
+    "buyableProducts": 20,
+    "groupOrVariantProducts": 10,
+    "priceMissingProducts": 0,
+    "detailPriceMismatches": []
+  }
+}

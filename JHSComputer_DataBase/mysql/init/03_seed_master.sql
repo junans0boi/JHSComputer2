@@ -1,3 +1,36 @@
+INSERT INTO `common_codes`
+  (`CODE_GROUP`, `CODE`, `CODE_NAME`, `CODE_NAME_KO`, `DESCRIPTION`, `SORT_ORDER`, `IS_ACTIVE`, `ATTRIBUTES_JSON`)
+VALUES
+  ('productStatus', 'AVAILABLE', 'Available', '구매가능', '주문 가능한 상품', 10, 'Y', JSON_OBJECT('color', 'green')),
+  ('productStatus', 'LOW_STOCK', 'Low stock', '재고부족', '재고가 적어 확인이 필요한 상품', 20, 'Y', JSON_OBJECT('color', 'amber')),
+  ('productStatus', 'OUT_OF_STOCK', 'Out of stock', '품절', '현재 구매 불가 상품', 30, 'Y', JSON_OBJECT('color', 'red')),
+  ('productStatus', 'ADMIN_CHECK_REQUIRED', 'Admin check required', '관리자 확인 필요', '재고/가격/스펙 검수가 필요한 상품', 40, 'Y', JSON_OBJECT('color', 'slate')),
+  ('badge', 'VALUE', 'Value', '가성비', '가격 대비 성능이 좋은 부품', 10, 'Y', JSON_OBJECT('tone', 'emerald')),
+  ('badge', 'GAME_RECOMMENDED', 'Game recommended', '게임 추천', '게이밍 견적에 추천', 20, 'Y', JSON_OBJECT('tone', 'teal')),
+  ('badge', 'LOW_NOISE', 'Low noise', '저소음', '소음이 낮은 구성에 추천', 30, 'Y', JSON_OBJECT('tone', 'blue')),
+  ('badge', 'WHITE_AESTHETIC', 'White aesthetic', '화이트 감성', '화이트/감성 구성에 추천', 40, 'Y', JSON_OBJECT('tone', 'zinc')),
+  ('badge', 'STOCK_STABLE', 'Stock stable', '재고안정', '품절 가능성이 낮은 후보', 50, 'Y', JSON_OBJECT('tone', 'green')),
+  ('CPUSocket', 'AM3', 'AM3', 'AM3', 'AMD AM3 소켓', 10, 'Y', NULL),
+  ('CPUSocket', 'AM4', 'AM4', 'AM4', 'AMD AM4 소켓', 20, 'Y', JSON_OBJECT('memoryType', 'DDR4')),
+  ('CPUSocket', 'AM5', 'AM5', 'AM5', 'AMD AM5 소켓', 30, 'Y', JSON_OBJECT('memoryType', 'DDR5')),
+  ('CPUSocket', 'LGA1155', 'LGA1155', 'LGA1155', 'Intel LGA1155 소켓', 40, 'Y', JSON_OBJECT('memoryType', 'DDR3')),
+  ('CPUSocket', 'LGA1700', 'LGA1700', 'LGA1700', 'Intel LGA1700 소켓', 50, 'Y', JSON_OBJECT('memoryTypes', JSON_ARRAY('DDR4', 'DDR5'))),
+  ('CPUSocket', 'LGA1800', 'LGA1800', 'LGA1800', 'Intel LGA1800 계열 소켓', 60, 'Y', JSON_OBJECT('memoryType', 'DDR5')),
+  ('RAMSocket', 'DDR3', 'DDR3', 'DDR3', 'DDR3 메모리 규격', 10, 'Y', NULL),
+  ('RAMSocket', 'DDR4', 'DDR4', 'DDR4', 'DDR4 메모리 규격', 20, 'Y', NULL),
+  ('RAMSocket', 'DDR5', 'DDR5', 'DDR5', 'DDR5 메모리 규격', 30, 'Y', NULL),
+  ('quoteCompatibilityStatus', 'PASS', 'Pass', '통과', '호환성 검사를 통과', 10, 'Y', JSON_OBJECT('color', 'green')),
+  ('quoteCompatibilityStatus', 'WARNING', 'Warning', '주의', '주문 전 확인 필요', 20, 'Y', JSON_OBJECT('color', 'amber')),
+  ('quoteCompatibilityStatus', 'FAIL', 'Fail', '실패', '주문 차단 대상', 30, 'Y', JSON_OBJECT('color', 'red')),
+  ('quoteCompatibilityStatus', 'UNKNOWN', 'Unknown', '확인필요', '스펙 데이터 부족', 40, 'Y', JSON_OBJECT('color', 'slate'))
+ON DUPLICATE KEY UPDATE
+  `CODE_NAME` = VALUES(`CODE_NAME`),
+  `CODE_NAME_KO` = VALUES(`CODE_NAME_KO`),
+  `DESCRIPTION` = VALUES(`DESCRIPTION`),
+  `SORT_ORDER` = VALUES(`SORT_ORDER`),
+  `IS_ACTIVE` = VALUES(`IS_ACTIVE`),
+  `ATTRIBUTES_JSON` = VALUES(`ATTRIBUTES_JSON`);
+
 INSERT INTO `part_categories`
   (`CATEGORY_CODE`, `CATEGORY_NAME`, `SORT_ORDER`, `IS_REQUIRED_FOR_BUILD`, `IS_ACTIVE`)
 VALUES

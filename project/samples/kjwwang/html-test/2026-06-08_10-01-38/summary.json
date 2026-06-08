@@ -1,0 +1,29 @@
+{
+  "collectedAt": "2026-06-08T10:01:40.163Z",
+  "args": {
+    "seedFile": "../data/pc_estimate.html",
+    "urls": "",
+    "limit": 2,
+    "delayMs": 500,
+    "out": "../project/samples/kjwwang/html-test"
+  },
+  "count": 2,
+  "results": [
+    {
+      "url": "https://kjwwang.com/shop/pc_estimate.html?action=view&es_sn=30289",
+      "estimateId": "30289",
+      "status": 200,
+      "ok": true,
+      "fileName": "estimate_30289.html",
+      "bytes": 518310
+    },
+    {
+      "url": "https://kjwwang.com/shop/pc_estimate.html?action=view&es_sn=30290",
+      "estimateId": "30290",
+      "status": 200,
+      "ok": true,
+      "fileName": "estimate_30290.html",
+      "bytes": 533749
+    }
+  ]
+}

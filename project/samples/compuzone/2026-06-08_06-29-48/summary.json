@@ -1,0 +1,37 @@
+{
+  "runId": "2026-06-08_06-29-48",
+  "runStartedAt": "2026-06-08T06:29:48.293Z",
+  "runFinishedAt": "2026-06-08T06:29:55.756Z",
+  "args": {
+    "preset": "minimal",
+    "categories": null,
+    "pages": 1,
+    "pageCount": 2,
+    "details": 2,
+    "delayMs": 1500,
+    "sort": "recommand",
+    "outDir": "../project/samples/compuzone"
+  },
+  "outputDir": "/Users/junzzang/**BACKUP**/JHSComputer2/project/samples/compuzone/2026-06-08_06-29-48",
+  "categories": [
+    {
+      "key": "CPU",
+      "name": "CPU",
+      "productCount": 20,
+      "observations": {
+        "totalProducts": 20,
+        "buyableProducts": 20,
+        "groupOrVariantProducts": 10,
+        "priceMissingProducts": 0,
+        "detailPriceMismatches": []
+      },
+      "outputFile": "CPU.json"
+    }
+  ],
+  "notes": [
+    "This is a low-volume DB-design sample crawler, not a production crawler.",
+    "List pages come from /product/product_list.php POST responses.",
+    "Detail pages are fetched only for the first N products per category.",
+    "External site terms and operational blocking risk must be reviewed before production use."
+  ]
+}

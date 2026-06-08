@@ -4,12 +4,19 @@
   "private": true,
   "scripts": {
     "crawl:compuzone:samples": "node compuzone/sample-crawl.mjs --out=../project/samples/compuzone",
+    "crawl:compuzone:full": "node compuzone/sample-crawl.mjs --out=../project/samples/compuzone --preset=all --pages=auto --max-pages=200 --page-count=20 --details=all --delay-ms=3500 --jitter-ms=2500 --retry=3 --rest-every-pages=10 --rest-ms=45000 --category-rest-ms=90000 --empty-stop=2",
+    "crawl:compuzone:progress": "node -e \"const fs=require('fs');const p='../project/samples/compuzone/_latest-progress.json';console.log(fs.existsSync(p)?fs.readFileSync(p,'utf8'):'No progress file yet')\"",
+    "sync:compuzone:db": "node compuzone/sync-to-db.mjs --root=../project/samples/compuzone --env=../JHSComputer_Server/.env",
+    "crawl:kjwwang:html": "node kjwwang/collect-estimate-html.mjs --seed-file=../data/pc_estimate.html --limit=30 --out=../project/samples/kjwwang/html",
+    "parse:kjwwang:html": "node kjwwang/parse-estimate-html.mjs --input=../data --out=../project/samples/kjwwang/parsed",
     "crawl:danawa:samples": "node danawa/sample-crawl.mjs --out=../project/samples/danawa",
     "analyze:samples": "node analysis/analyze-samples.mjs --compuzone-root=../project/samples/compuzone --danawa-root=../project/samples/danawa --out=../project/analysis/data-shape",
+    "sync:catalog": "node analysis/sync-catalog.mjs",
     "build": "node -e \"console.log('JHSComputer_Agent: no build step')\"",
     "typecheck": "node -e \"console.log('JHSComputer_Agent: no typecheck step')\""
   },
   "dependencies": {
-    "cheerio": "^1.2.0"
+    "cheerio": "^1.2.0",
+    "mysql2": "^3.14.3"
   }
 }

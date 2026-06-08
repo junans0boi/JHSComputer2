@@ -1,0 +1,46 @@
+{
+  "runId": "2026-06-08_06-59-09",
+  "runStartedAt": "2026-06-08T06:59:09.592Z",
+  "runFinishedAt": "2026-06-08T06:59:10.874Z",
+  "args": {
+    "preset": "minimal",
+    "categories": [
+      "CPU"
+    ],
+    "pages": 1,
+    "maxPages": 200,
+    "pageCount": 20,
+    "details": 0,
+    "delayMs": 100,
+    "jitterMs": 0,
+    "retry": 3,
+    "restEveryPages": 10,
+    "restMs": 30000,
+    "categoryRestMs": 0,
+    "emptyStop": 2,
+    "sort": "recommand",
+    "outDir": "../project/samples/compuzone"
+  },
+  "outputDir": "/Users/junzzang/**BACKUP**/JHSComputer2/project/samples/compuzone/2026-06-08_06-59-09",
+  "categories": [
+    {
+      "key": "CPU",
+      "name": "CPU",
+      "productCount": 20,
+      "observations": {
+        "totalProducts": 20,
+        "buyableProducts": 20,
+        "groupOrVariantProducts": 10,
+        "priceMissingProducts": 0,
+        "detailPriceMismatches": []
+      },
+      "outputFile": "CPU.json"
+    }
+  ],
+  "notes": [
+    "This crawler supports slow auto mode with retries, jitter, page rests, and category rests.",
+    "List pages come from /product/product_list.php POST responses.",
+    "Use --details=all carefully because detail image requests multiply traffic.",
+    "External site terms and operational blocking risk must be reviewed before production use."
+  ]
+}

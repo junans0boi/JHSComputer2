@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import { createHash } from 'node:crypto';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import iconv from 'iconv-lite';
 
@@ -58,15 +58,24 @@ const PRESETS = {
   minimal: ['CPU'],
   core: ['CPU', 'MAINBOARD', 'RAM', 'SSD', 'GPU', 'CASE', 'PSU', 'COOLER_AIR'],
   cpu: ['CPU', 'CPU_AMD', 'CPU_INTEL_OFFICIAL', 'CPU_INTEL_PARALLEL'],
+  all: ['CPU', 'MAINBOARD', 'RAM', 'SSD', 'GPU', 'CASE', 'PSU', 'COOLER_AIR'],
 };
 
 const DEFAULT_ARGS = {
   preset: 'minimal',
   categories: null,
   pages: 1,
+  maxPages: 200,
   pageCount: 20,
   details: 2,
   delayMs: 1500,
+  jitterMs: 1000,
+  retry: 3,
+  restEveryPages: 10,
+  restMs: 30000,
+  categoryRestMs: 60000,
+  emptyStop: 2,
+  reuseDetails: true,
   sort: 'recommand',
   outDir: 'project/samples/compuzone',
 };
@@ -78,10 +87,18 @@ function parseArgs(argv) {
     const [key, value = ''] = rawArg.replace(/^--/, '').split('=');
     if (key === 'categories') args.categories = value.split(',').map((item) => item.trim()).filter(Boolean);
     if (key === 'preset') args.preset = value;
-    if (key === 'pages') args.pages = Number(value);
+    if (key === 'pages') args.pages = value === 'auto' || value === 'all' ? value : Number(value);
+    if (key === 'max-pages') args.maxPages = Number(value);
     if (key === 'page-count') args.pageCount = Number(value);
-    if (key === 'details') args.details = Number(value);
+    if (key === 'details') args.details = value === 'all' ? value : Number(value);
     if (key === 'delay-ms') args.delayMs = Number(value);
+    if (key === 'jitter-ms') args.jitterMs = Number(value);
+    if (key === 'retry') args.retry = Number(value);
+    if (key === 'rest-every-pages') args.restEveryPages = Number(value);
+    if (key === 'rest-ms') args.restMs = Number(value);
+    if (key === 'category-rest-ms') args.categoryRestMs = Number(value);
+    if (key === 'empty-stop') args.emptyStop = Number(value);
+    if (key === 'reuse-details') args.reuseDetails = value !== 'false';
     if (key === 'sort') args.sort = value;
     if (key === 'out') args.outDir = value;
     if (key === 'help') args.help = true;
@@ -98,14 +115,23 @@ Usage:
   npm run crawl:compuzone:samples
   npm run crawl:compuzone:samples -- --categories=CPU,GPU --pages=1 --details=2
   npm run crawl:compuzone:samples -- --preset=core --pages=1 --details=0 --delay-ms=2000
+  npm run crawl:compuzone:full
 
 Options:
-  --preset=minimal|core|cpu      Category preset. Default: minimal
+  --preset=minimal|core|cpu|all  Category preset. Default: minimal
   --categories=CPU,GPU           Explicit category keys. Overrides preset
-  --pages=1                      Scroll pages per category. Keep small for sampling
+  --pages=1|auto                 Scroll pages per category. auto stops after empty pages
+  --max-pages=200                Safety limit for --pages=auto
   --page-count=20                Server page count hint
-  --details=2                    Detail pages to fetch per category
+  --details=2|all                Detail pages to fetch per category
   --delay-ms=1500                Delay between HTTP requests
+  --jitter-ms=1000               Random extra delay
+  --retry=3                      Retry count per request
+  --rest-every-pages=10          Rest after N list pages
+  --rest-ms=30000                Rest duration after page batch
+  --category-rest-ms=60000       Rest duration between categories
+  --empty-stop=2                 Stop auto mode after N empty pages
+  --reuse-details=false          Disable cached detail reuse
   --sort=recommand               recommand, sale_order, low_price, hi_price, used_count
   --out=project/samples/compuzone
 
@@ -154,6 +180,14 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function randomInt(max) {
+  return Math.floor(Math.random() * Math.max(0, max + 1));
+}
+
+async function politeSleep(args, multiplier = 1) {
+  await sleep(args.delayMs * multiplier + randomInt(args.jitterMs));
+}
+
 async function fetchEucKr(url, { method = 'GET', body, referer } = {}) {
   const headers = {
     Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -186,6 +220,24 @@ async function fetchEucKr(url, { method = 'GET', body, referer } = {}) {
     html,
     htmlHash: sha256(html),
   };
+}
+
+async function fetchEucKrWithRetry(url, options, args) {
+  let lastError;
+  for (let attempt = 1; attempt <= Math.max(1, args.retry); attempt += 1) {
+    try {
+      const result = await fetchEucKr(url, options);
+      if (result.ok || result.status < 500) return result;
+      lastError = new Error(`HTTP ${result.status}`);
+    } catch (error) {
+      lastError = error;
+    }
+
+    const waitMs = args.delayMs * attempt * 2 + randomInt(args.jitterMs);
+    console.log(`[sample] retry ${attempt}/${args.retry} wait=${waitMs}ms url=${url}`);
+    await sleep(waitMs);
+  }
+  throw lastError;
 }
 
 function buildListBody(category, { scrollPage, pageCount, sort }) {
@@ -325,23 +377,26 @@ function parseDetailHtml(html, productNo) {
   };
 }
 
-async function crawlCategory(category, args) {
+async function crawlCategory(category, args, detailCache = new Map()) {
   const listPages = [];
   const products = [];
   const seen = new Set();
+  const maxPages = args.pages === 'auto' || args.pages === 'all' ? args.maxPages : args.pages;
+  let emptyPages = 0;
 
-  for (let page = 1; page <= args.pages; page += 1) {
+  for (let page = 1; page <= maxPages; page += 1) {
     const body = buildListBody(category, {
       scrollPage: page,
       pageCount: args.pageCount,
       sort: args.sort,
     });
-    const result = await fetchEucKr(LIST_ENDPOINT, {
+    const result = await fetchEucKrWithRetry(LIST_ENDPOINT, {
       method: 'POST',
       body,
       referer: `${LIST_REFERER}?BigDivNo=${category.bigDivNo}&MediumDivNo=${category.mediumDivNo}&DivNo=${category.divNo}`,
-    });
+    }, args);
     const pageProducts = parseListHtml(result.html, category);
+    emptyPages = pageProducts.length === 0 ? emptyPages + 1 : 0;
 
     for (const product of pageProducts) {
       if (!seen.has(product.productNo)) {
@@ -358,23 +413,103 @@ async function crawlCategory(category, args) {
       parsedCount: pageProducts.length,
     });
 
-    await sleep(args.delayMs);
+    console.log(`[sample] ${category.key} page=${page} parsed=${pageProducts.length} total=${products.length}`);
+    await writeProgress(args, {
+      runStatus: 'RUNNING',
+      phase: 'list',
+      category: category.key,
+      categoryName: category.name,
+      page,
+      parsedOnPage: pageProducts.length,
+      categoryProducts: products.length,
+    });
+
+    if ((args.pages === 'auto' || args.pages === 'all') && emptyPages >= args.emptyStop) {
+      console.log(`[sample] ${category.key} auto stop after ${emptyPages} empty pages`);
+      break;
+    }
+
+    if (args.restEveryPages > 0 && page % args.restEveryPages === 0) {
+      console.log(`[sample] ${category.key} rest ${args.restMs}ms after ${page} pages`);
+      await sleep(args.restMs);
+    } else {
+      await politeSleep(args);
+    }
   }
 
-  const detailTargets = products.slice(0, Math.max(0, args.details));
-  for (const product of detailTargets) {
+  const detailTargets = args.details === 'all' ? products : products.slice(0, Math.max(0, args.details));
+  for (const [index, product] of detailTargets.entries()) {
     if (!product.detailUrl) continue;
 
-    const detailResult = await fetchEucKr(product.detailUrl, {
-      referer: `${LIST_REFERER}?BigDivNo=${category.bigDivNo}&MediumDivNo=${category.mediumDivNo}&DivNo=${category.divNo}`,
+    const cachedDetail = args.reuseDetails ? detailCache.get(product.productNo) : null;
+    if (cachedDetail) {
+      product.detailSample = cachedDetail;
+      console.log(`[sample] ${category.key} detail=${index + 1}/${detailTargets.length} productNo=${product.productNo} cached`);
+      await writeProgress(args, {
+        runStatus: 'RUNNING',
+        phase: 'detail',
+        category: category.key,
+        categoryName: category.name,
+        detailIndex: index + 1,
+        detailTotal: detailTargets.length,
+        productNo: product.productNo,
+        cached: true,
+        categoryProducts: products.length,
+      });
+      continue;
+    }
+
+    console.log(`[sample] ${category.key} detail=${index + 1}/${detailTargets.length} productNo=${product.productNo}`);
+    await writeProgress(args, {
+      runStatus: 'RUNNING',
+      phase: 'detail',
+      category: category.key,
+      categoryName: category.name,
+      detailIndex: index + 1,
+      detailTotal: detailTargets.length,
+      productNo: product.productNo,
+      cached: false,
+      categoryProducts: products.length,
     });
+
+    const detailResult = await fetchEucKrWithRetry(product.detailUrl, {
+      referer: `${LIST_REFERER}?BigDivNo=${category.bigDivNo}&MediumDivNo=${category.mediumDivNo}&DivNo=${category.divNo}`,
+    }, args);
+    
+    // Extract detail spec images from AJAX response
+    const ajaxUrls = [
+      `https://www.compuzone.co.kr/product/product_detail_ajax.php?actype=getProductDetail&productNo=${product.productNo}`,
+      `https://www.compuzone.co.kr/product/product_detail_ajax.php?actype=getGraphicProductDetail&productNo=${product.productNo}&DivNo=${category.divNo}`,
+      `https://www.compuzone.co.kr/product/product_detail_ajax.php?actype=getIworksProductDetail&productNo=${product.productNo}`
+    ];
+    
+    let detailImages = [];
+    for (const ajaxUrl of ajaxUrls) {
+      if (detailImages.length > 0) break;
+      try {
+        const ajaxResult = await fetchEucKrWithRetry(ajaxUrl, {}, args);
+        const imgMatches =
+          ajaxResult.html.match(
+            /https?:\/\/image\d*\.compuzone\.co\.kr\/img\/(?:product_img_detail|pr_early_image)\/[^'"\s>)]+\.(?:jpg|jpeg|png|gif|webp)/gi
+          ) || [];
+        if (imgMatches.length > 0) {
+          detailImages = [...new Set(imgMatches)];
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+
     product.detailSample = {
       status: detailResult.status,
       htmlHash: detailResult.htmlHash,
-      parsed: parseDetailHtml(detailResult.html, product.productNo),
+      parsed: {
+        ...parseDetailHtml(detailResult.html, product.productNo),
+        detailImages,
+      },
     };
 
-    await sleep(args.delayMs);
+    await politeSleep(args);
   }
 
   return {
@@ -414,6 +549,36 @@ function timestampForPath(date = new Date()) {
   return date.toISOString().replace(/[:.]/g, '-').replace('T', '_').slice(0, 19);
 }
 
+async function writeProgress(args, progress) {
+  await writeFile(
+    path.resolve(args.outDir, '_latest-progress.json'),
+    JSON.stringify({ ...progress, updatedAt: new Date().toISOString() }, null, 2),
+    'utf8',
+  ).catch(() => {});
+}
+
+async function loadDetailCache(outDir) {
+  const cache = new Map();
+  const dirs = (await readdir(outDir, { withFileTypes: true }).catch(() => []))
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => path.join(outDir, entry.name))
+    .sort();
+
+  for (const dir of dirs) {
+    const files = (await readdir(dir).catch(() => [])).filter((file) => file.endsWith('.json') && file !== 'summary.json');
+    for (const file of files) {
+      const data = JSON.parse(await readFile(path.join(dir, file), 'utf8').catch(() => '{}'));
+      for (const product of data.products ?? []) {
+        if (product.productNo && product.detailSample) {
+          cache.set(product.productNo, product.detailSample);
+        }
+      }
+    }
+  }
+
+  return cache;
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
@@ -426,16 +591,37 @@ async function main() {
   const runId = timestampForPath(runStartedAt);
   const outputDir = path.resolve(args.outDir, runId);
   await mkdir(outputDir, { recursive: true });
+  const detailCache = args.reuseDetails ? await loadDetailCache(path.resolve(args.outDir)) : new Map();
+  if (detailCache.size > 0) {
+    console.log(`[sample] loaded detail cache products=${detailCache.size}`);
+  }
 
   const results = [];
   for (const category of categories) {
     console.log(`[sample] ${category.key} ${category.name} start`);
-    const result = await crawlCategory(category, args);
+    const result = await crawlCategory(category, args, detailCache);
+    for (const product of result.products) {
+      if (product.productNo && product.detailSample) {
+        detailCache.set(product.productNo, product.detailSample);
+      }
+    }
     results.push(result);
     await writeFile(path.join(outputDir, `${category.key}.json`), JSON.stringify(result, null, 2), 'utf8');
     console.log(
       `[sample] ${category.key} products=${result.products.length} variants=${result.observations.groupOrVariantProducts}`,
     );
+    await writeProgress(args, {
+      runStatus: 'RUNNING',
+      phase: 'categoryDone',
+      category: category.key,
+      categoryName: category.name,
+      categoryProducts: result.products.length,
+      outputFile: path.join(outputDir, `${category.key}.json`),
+    });
+    if (args.categoryRestMs > 0) {
+      console.log(`[sample] category rest ${args.categoryRestMs}ms`);
+      await sleep(args.categoryRestMs);
+    }
   }
 
   const summary = {
@@ -452,14 +638,22 @@ async function main() {
       outputFile: `${result.category.key}.json`,
     })),
     notes: [
-      'This is a low-volume DB-design sample crawler, not a production crawler.',
+      'This crawler supports slow auto mode with retries, jitter, page rests, and category rests.',
       'List pages come from /product/product_list.php POST responses.',
-      'Detail pages are fetched only for the first N products per category.',
+      'Use --details=all carefully because detail image requests multiply traffic.',
       'External site terms and operational blocking risk must be reviewed before production use.',
     ],
   };
 
   await writeFile(path.join(outputDir, 'summary.json'), JSON.stringify(summary, null, 2), 'utf8');
+  await writeProgress(args, {
+    runStatus: 'DONE',
+    phase: 'done',
+    runId,
+    outputDir,
+    totalProducts: results.reduce((sum, result) => sum + result.products.length, 0),
+    categories: summary.categories,
+  });
   console.log(`[sample] done: ${outputDir}`);
 }
 

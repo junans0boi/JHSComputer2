@@ -1,0 +1,2941 @@
+{
+  "sourceFile": "/Users/junzzang/**BACKUP**/JHSComputer2/project/samples/kjwwang/html-test/2026-06-08_10-01-38/estimate_30289.html",
+  "estimateId": "30289",
+  "title": "2026년 6월 견적왕 월간 견적 - FHD 중급 게이밍 (7500F + RTX 5060)",
+  "parsedAt": "2026-06-08T10:02:51.692Z",
+  "parts": [
+    {
+      "category": "CPU",
+      "name": "메인보드"
+    },
+    {
+      "category": "메인보드",
+      "name": "메모리"
+    },
+    {
+      "category": "메모리",
+      "name": "SSD 데스크탑 HDD ODD"
+    },
+    {
+      "category": "그래픽카드",
+      "name": ": NVIDIA GeForce GTX 1050 Ti AMD Radeon RX 580 API : DirectX 12 저장공간 : 20GB 옵션단계하옵 < 중옵 < 최상옵 - 던전앤파이터 : 상옵으로 60 FPS 가능합니다. 최소사양- OS : 윈도우7 64비트 이상 -"
+    },
+    {
+      "category": "SSD",
+      "name": "데스크탑 HDD ODD"
+    },
+    {
+      "category": "케이스",
+      "name": "USB"
+    },
+    {
+      "category": "쿨러",
+      "name": "HYPER 212 SPECTRUM V3 ARGB입니다. 160만원대 FHD 게이밍용도로 맞출 수 있는 라이젠 7500F + RTX 5060 견적입니다.CPU는 140~200만원정도의 견적 구성 시 추후"
+    }
+  ],
+  "gameCount": 141,
+  "recordCount": 366,
+  "games": [
+    {
+      "gameName": "APEX 레전드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "Dragon Ball Sparking Zero",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "EA SPORTS FC™ 25",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "FC 24 (피파 24)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "GTA5",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "Metaphor",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "ReFantazio : 상옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "ReFantazio : 상옵 100 FPS"
+        },
+        "QHD": {
+          "optionPreset": "ReFantazio : 중옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "ReFantazio : 중옵 100 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "NBA 2K25",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "P의 거짓",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵 + DLSS",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 + DLSS 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵 + DLSS",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 + DLSS 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "shape of dreams (셰이프 오브 드림즈)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "W.O.W(월드오브워크레프트)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "갓 오브 워 라그나로크",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "건담 브레이커 4 (GUNDAM BREAKER 4)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "건파이어 리본(Gunfire Reborn)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "상옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "상옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "검은 신화",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "오공 : 최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "오공 : 최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "오공 : 하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "오공 : 하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "검은사막",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "최상옵 100 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "중옵 100 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "하옵 100 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "고스트 리콘",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "브레이크 포인트 : 최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "브레이크 포인트 : 최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "브레이크 포인트 : 상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "브레이크 포인트 : 상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "브레이크 포인트 : 중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "브레이크 포인트 : 중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "고스트 오브 쓰시마",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "그랑블루 판타지 리링크",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "나 혼자만 레벨업",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "ARISE OVERDRIVE : 상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "ARISE OVERDRIVE : 상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "ARISE OVERDRIVE : 중",
+          "fps": 60,
+          "playable": true,
+          "rawText": "ARISE OVERDRIVE : 중 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "ARISE OVERDRIVE : 하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "ARISE OVERDRIVE : 하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "나라카",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "블레이드포인트 : 상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "블레이드포인트 : 상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "블레이드포인트 : 중",
+          "fps": 60,
+          "playable": true,
+          "rawText": "블레이드포인트 : 중 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "블레이드포인트 : 하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "블레이드포인트 : 하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "나인 솔즈 (Nine Sols)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "노 레스트 포 더 위키드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "노 맨즈 스카이 (No Man‘s Sky)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "최상옵 100 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "상옵 100 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "다잉 라이트",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "더 비스트 : 상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "더 비스트 : 상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "더 비스트 : 하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "더 비스트 : 하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "다크 소울 3",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "더 파이널스",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "던전앤파이터",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "데드 바이 데이라이트",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 120,
+          "playable": true,
+          "rawText": "최상옵 120 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 120,
+          "playable": true,
+          "rawText": "최상옵 120 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 120,
+          "playable": true,
+          "rawText": "중옵 120 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "데드 아일랜드 2",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "데드록 (Deadlock)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "데몬 엑스 마키나",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "타이타닉 사이온 : 상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "타이타닉 사이온 : 상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "타이타닉 사이온 : 중",
+          "fps": 60,
+          "playable": true,
+          "rawText": "타이타닉 사이온 : 중 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "타이타닉 사이온 : 하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "타이타닉 사이온 : 하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "데스티니 가디언즈 2",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "데이브 더 다이브",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "도타 2",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "상옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "듄",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "어웨이크닝 : 상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "어웨이크닝 : 상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "어웨이크닝 : 상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "어웨이크닝 : 상 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "어웨이크닝 : 하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "어웨이크닝 : 하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "드래곤즈 도그마 2",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "중옵",
+          "fps": 30,
+          "playable": true,
+          "rawText": "중옵 30 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 30,
+          "playable": true,
+          "rawText": "하옵 30 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "디아블로2 레저렉션",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "상옵 100 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "상옵 100 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "중옵 100 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "디아블로4",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "풀옵(DLSS/FSR)",
+          "fps": 144,
+          "playable": true,
+          "rawText": "풀옵(DLSS/FSR) 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "풀옵(DLSS/FSR)",
+          "fps": 144,
+          "playable": true,
+          "rawText": "풀옵(DLSS/FSR) 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "디제이맥스 리스펙트 V",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "딥 락 갤럭틱",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "서바이벌 : 최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "서바이벌 : 최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "서바이벌 : 중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "서바이벌 : 중옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "서바이벌 : 하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "서바이벌 : 하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "라스트 에포크",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "레드 데드 리뎀션2",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "XBOX옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "XBOX옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "레디 오어 낫",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "레전드 오브 모탈(Legend of Mortal)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "로드나인",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "로블록스",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "로스트아크",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "리그오브레전드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "상옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "리스크 오브 레인 2 (Risk of Rain 2)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "리씰컴퍼니",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "림버스 컴퍼니 (Limbus Company)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "림월드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "마비노기",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "마운트 앤 블레이드 2",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "배너로드 : 중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "배너로드 : 중옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "배너로드 : 하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "배너로드 : 하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "마인크래프트",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "매너 로드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "메이플스토리",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "명조",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "워더링 웨이브 : (최상옵)",
+          "fps": 60,
+          "playable": true,
+          "rawText": "워더링 웨이브 : (최상옵) 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "워더링 웨이브 : (최상옵)",
+          "fps": 60,
+          "playable": true,
+          "rawText": "워더링 웨이브 : (최상옵) 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "몬스터 헌터 월드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "바이오하자드 RE",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "4 : 중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "4 : 중옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "4 : 하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "4 : 하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "발더스 게이트3",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "발로란트",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "배틀그라운드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "국옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "국옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "백 4 블러드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "벨라이트",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "붉은사막",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "빈딕투스",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "디파잉 페이트 : 최상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "디파잉 페이트 : 최상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "디파잉 페이트 : 하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "디파잉 페이트 : 하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "사이버펑크 2077",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "사일런트 힐 2 (SILENT HILL 2)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "새티스 팩토리(Satisfactory)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "샌드랜드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "서든어택",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 75,
+          "playable": true,
+          "rawText": "상옵 75 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 75,
+          "playable": true,
+          "rawText": "상옵 75 FPS"
+        },
+        "UHD": {
+          "optionPreset": "상옵",
+          "fps": 75,
+          "playable": true,
+          "rawText": "상옵 75 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "소울워커",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "쉐이프즈 2 (shapez 2)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "스타크래프트",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "스텔라 블레이드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "스플릿 픽션",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "심즈4",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "쓰론 앤 리버티 (TL)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "아레나 브레이크아웃",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "인피니티 : 최상옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "인피니티 : 최상옵 100 FPS"
+        },
+        "QHD": {
+          "optionPreset": "인피니티 : 중옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "인피니티 : 중옵 100 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "아머드 코어 6 루비콘의 화염",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "아스달 연대기 세 개의 세력",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "아이온",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "아이온2",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "아크레이더스",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "아크서바이벌 어센디드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "어쌔신 크리드 미라지",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "어쌔신 크리드 섀도우스",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "에이지 오브 미쏠로지 리톨드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "에일 ＆ 테일 태번 (Ale ＆ Tale Tavern)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "엘든 링",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "황금 나무의 그림자 : 상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "황금 나무의 그림자 : 상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "황금 나무의 그림자 : 상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "황금 나무의 그림자 : 상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "황금 나무의 그림자 : 중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "황금 나무의 그림자 : 중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "엘든링",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "오버워치2",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "상옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "PC방옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "PC방옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "용과 같이 8",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "워테일즈(Wartales)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "워프레임",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "워해머 40k 스페이스 마린 2",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "원스 휴먼(Once Human)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "원신",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "이스케이프 프롬 타르코프",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "중옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "중옵 100 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "하옵 100 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "이터널리턴",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "인슈라오디드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "인펙션 프리 존",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "잇 테익스 투 (It Takes Two)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "작혼",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "리치 마작 : 최상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "리치 마작 : 최상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "리치 마작 : 최상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "리치 마작 : 최상 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "리치 마작 : 최상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "리치 마작 : 최상 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "진삼국무쌍 ORIGINS",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "철권 7",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "철권 8",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "카타클리스모(Cataclismo)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "카트라이더",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "드리프트 : 상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "드리프트 : 상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "드리프트 : 상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "드리프트 : 상옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "드리프트 : 하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "드리프트 : 하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "컨커러스 블레이드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "컬트 오브 더 램 (Cult of the Lamb)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "코어 키퍼(Core Keeper)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "콜 오브 듀티",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "모던 워페어 II 2022 : 중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "모던 워페어 II 2022 : 중옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "모던 워페어 II 2022 : 하옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "모던 워페어 II 2022 : 하옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "크라임 씬 클리너(Crime Scene Cleaner)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "크루세이더 킹즈 3",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "클레르 옵스퀴르",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "33 원정대 : 상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "33 원정대 : 상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "33 원정대 : 상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "33 원정대 : 상 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "33 원정대 : 하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "33 원정대 : 하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "킹덤 컴",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "딜리버런스 2 : 상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "딜리버런스 2 : 상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "딜리버런스 2 : 하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "딜리버런스 2 : 하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "타이니 글레이드 (Tiny Glade)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "태양 제국의 죄악 II",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "토탈워 워해머3",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "(하옵",
+          "fps": 120,
+          "playable": true,
+          "rawText": "(하옵 120 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "트리 오브 세이비어",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "파이널 판타지 16",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "파티 애니멀즈 (Party Animals)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "패스 오브 엑자일 2 (Path of Exile 2)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "패스 오브 엑자일(P.O.E)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "권장옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "권장옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "팰월드(Palworld) / 팔월드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "퍼스트 디센던트",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "울트라RT",
+          "fps": 100,
+          "playable": true,
+          "rawText": "울트라RT 100 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "퍼스트 버서커",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "카잔 : 상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "카잔 : 상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "카잔 : 하",
+          "fps": 60,
+          "playable": true,
+          "rawText": "카잔 : 하 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "페르소나 3 리로드",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상(RT)",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상(RT) 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "페르소나5 더 로열",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "상옵 100 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 100,
+          "playable": true,
+          "rawText": "중옵 100 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "포르자 호라이즌5",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "풋볼매니저 2024",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "프로스트펑크 2 (Frostpunk 2)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "프로젝트 좀보이드 (Project Zomboid)",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "플래닛 주",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "피파온라인4",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상옵 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "중옵",
+          "fps": 144,
+          "playable": true,
+          "rawText": "중옵 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "하데스 2",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상 144 FPS"
+        },
+        "QHD": {
+          "optionPreset": "최상",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상 144 FPS"
+        },
+        "UHD": {
+          "optionPreset": "최상",
+          "fps": 144,
+          "playable": true,
+          "rawText": "최상 144 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "할로우 나이트",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "상",
+          "fps": 60,
+          "playable": true,
+          "rawText": "상 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "헬다이버즈2",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    },
+    {
+      "gameName": "호그와트 레거시",
+      "resolutions": {
+        "FHD": {
+          "optionPreset": "최상옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "최상옵 60 FPS"
+        },
+        "QHD": {
+          "optionPreset": "중옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "중옵 60 FPS"
+        },
+        "UHD": {
+          "optionPreset": "하옵",
+          "fps": 60,
+          "playable": true,
+          "rawText": "하옵 60 FPS"
+        }
+      }
+    }
+  ]
+}
