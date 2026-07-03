@@ -32,7 +32,7 @@ export class OrderItem {
   @JoinColumn({ name: 'SUPPLIER_OFFER_ID' })
   supplierOffer!: SupplierOffer | null;
 
-  @Column({ name: 'PART_NAME_SNAPSHOT', type: 'varchar', length: 255 })
+  @Column({ name: 'PART_NAME_SNAPSHOT', type: 'varchar', length: 700 })
   partNameSnapshot!: string;
 
   @Column({ name: 'SUPPLIER_CODE_SNAPSHOT', type: 'varchar', length: 40, nullable: true })

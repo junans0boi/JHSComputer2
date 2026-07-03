@@ -64,7 +64,7 @@ export function PartDetailModal({ part, onClose }: Props) {
         <div className="flex items-start justify-between gap-3 border-b border-line p-4">
           <div className="min-w-0">
             <p className="text-xs font-bold text-brand">{part.category} · 상품번호 {part.productNo}</p>
-            <h2 className="mt-1 line-clamp-2 text-sm font-black leading-5">{part.name}</h2>
+            <h2 className="part-name mt-1 text-sm">{part.name}</h2>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <a
@@ -101,9 +101,9 @@ export function PartDetailModal({ part, onClose }: Props) {
                   <div className="border-b border-line bg-slate-50 px-3 py-2 text-sm font-black">{section.title}</div>
                   <div className="grid">
                     {section.rows.map((row) => (
-                      <div className="grid grid-cols-[112px_1fr] border-t border-line first:border-t-0" key={`${section.title}-${row.label}`}>
+                      <div className="grid border-t border-line first:border-t-0 sm:grid-cols-[112px_minmax(0,1fr)]" key={`${section.title}-${row.label}`}>
                         <div className="bg-panel px-3 py-2 text-xs font-black text-slate-500">{row.label}</div>
-                        <div className="px-3 py-2">
+                        <div className="safe-break px-3 py-2">
                           <div className="text-sm font-bold">{row.value}</div>
                           {row.help && <div className="mt-1 text-[11px] leading-4 text-slate-500">{row.help}</div>}
                         </div>

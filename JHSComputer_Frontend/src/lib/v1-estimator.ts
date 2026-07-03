@@ -1,6 +1,7 @@
 import { getRecommendedPart } from './compuzone-catalog';
 import { getQuotePartAttributes } from './part-filters';
-import type { CatalogPart, ManualSelection, PartCategory, PerformanceResult, Priority, Purpose, Quote, QuoteInput, QuotePart, Resolution } from './v1-types';
+import type { CatalogPart, ManualQuantities, ManualSelection, PartCategory, PerformanceResult, Priority, Purpose, Quote, QuoteInput, QuotePart, Resolution } from './v1-types';
+import { getWindowsFee } from './windows-options';
 
 const gameBaseFps: Record<string, number> = {
   롤: 260,
@@ -20,7 +21,7 @@ const resolutionFactor: Record<Resolution, number> = {
 
 const tierMultiplier = [0.72, 0.9, 1, 1.16, 1.34];
 
-const categories: PartCategory[] = ['CPU', '쿨러', '메인보드', 'RAM', '그래픽카드', 'SSD', '파워', '케이스'];
+export const categories: PartCategory[] = ['CPU', '쿨러', '메인보드', 'RAM', '그래픽카드', 'SSD', '파워', '케이스'];
 
 const partCatalog: Record<number, Record<PartCategory, Omit<QuotePart, 'price' | 'supplier'> & { basePrice: number }>> = {
   0: {
@@ -81,7 +82,7 @@ export const defaultInput: QuoteInput = {
   games: ['배틀그라운드', '발로란트'],
   resolution: 'QHD',
   storage: '1TB',
-  windows: '포함',
+  windows: 'NONE',
   priority: '성능 우선',
 };
 
@@ -96,7 +97,7 @@ export function generateQuote(input: QuoteInput): Quote {
   const subtotal = parts.reduce((sum, part) => sum + part.price, 0);
   const assemblyFee = input.purpose === '사무' ? 30000 : 50000;
   const shippingFee = 10000;
-  const windowsFee = input.windows === '포함' ? 180000 : input.windows === '설치만' ? 30000 : 0;
+  const windowsFee = getWindowsFee(input.windows);
 
   return {
     id: `Q-${Date.now()}`,
@@ -105,7 +106,7 @@ export function generateQuote(input: QuoteInput): Quote {
     mode: 'AUTO',
     input,
     parts,
-    performance: input.games.map((game) => estimatePerformance(game, input.resolution, tier, input.priority)),
+    performance: [],
     compatibility: buildCompatibility(parts),
     subtotal,
     assemblyFee,
@@ -116,7 +117,7 @@ export function generateQuote(input: QuoteInput): Quote {
   };
 }
 
-function pickTier(input: QuoteInput) {
+export function pickTier(input: QuoteInput) {
   const purposeBoost: Record<Purpose, number> = {
     게임: 0,
     방송: 0,
@@ -135,18 +136,29 @@ function pickTier(input: QuoteInput) {
     '감성 우선': 0,
     '업그레이드 우선': 0,
   };
-  const budgetTier = input.budget < 130 ? 0 : input.budget < 190 ? 1 : input.budget < 280 ? 2 : input.budget < 390 ? 3 : 4;
+  
+  // Adjust budget brackets to be more sensitive to low-end inputs
+  let budgetTier = 0;
+  if (input.budget >= 390) budgetTier = 4;
+  else if (input.budget >= 280) budgetTier = 3;
+  else if (input.budget >= 160) budgetTier = 2; // Mid-range ~160-190
+  else if (input.budget >= 100) budgetTier = 1; // Low-mid ~100-130
+  else budgetTier = 0; // Entry level < 100
+
+  // Hard cap for low budgets: if they only have 90만원, we cannot force them into a tier 2 (160만원) build just because they selected '게임' or 'QHD'
+  if (input.budget < 100) return 0;
+  if (input.budget < 140) return Math.min(1, budgetTier);
+
   return Math.max(0, Math.min(4, budgetTier + purposeBoost[input.purpose] + resolutionBoost[input.resolution] + priorityBoost[input.priority]));
 }
 
-export function generateManualQuote(selection: ManualSelection, input: QuoteInput = defaultInput): Quote {
+export function generateManualQuote(selection: ManualSelection, input: QuoteInput = defaultInput, quantities: ManualQuantities = {}): Quote {
   const selectedParts = categories.flatMap((category) => (selection[category] ? [selection[category]] : []));
-  const parts = selectedParts.map(catalogPartToQuotePart);
+  const parts = selectedParts.map((part) => catalogPartToQuotePart(part, quantities[part.category] ?? 1));
   const subtotal = parts.reduce((sum, part) => sum + part.price, 0);
   const assemblyFee = 50000;
   const shippingFee = 10000;
-  const windowsFee = input.windows === '포함' ? 180000 : input.windows === '설치만' ? 30000 : 0;
-  const tier = Math.max(0, Math.min(4, Math.floor(parts.length / 2)));
+  const windowsFee = getWindowsFee(input.windows);
 
   return {
     id: `Q-M-${Date.now()}`,
@@ -155,7 +167,7 @@ export function generateManualQuote(selection: ManualSelection, input: QuoteInpu
     mode: 'MANUAL',
     input,
     parts,
-    performance: input.games.map((game) => estimatePerformance(game, input.resolution, tier, input.priority)),
+    performance: [],
     compatibility: buildCompatibility(parts),
     subtotal,
     assemblyFee,
@@ -202,12 +214,13 @@ function buildPart(category: PartCategory, tier: number, input: QuoteInput): Quo
   };
 }
 
-function catalogPartToQuotePart(part: CatalogPart): QuotePart {
+function catalogPartToQuotePart(part: CatalogPart, quantity = 1): QuotePart {
   return {
     category: part.category,
     name: part.name,
-    memo: part.spec || '컴퓨존 카탈로그 선택',
-    price: part.price,
+    memo: quantity > 1 ? `${part.spec || '컴퓨존 카탈로그 선택'} · 수량 ${quantity}개` : part.spec || '컴퓨존 카탈로그 선택',
+    price: part.price * quantity,
+    quantity,
     supplier: '컴퓨존 샘플 기준',
     productNo: part.productNo,
     imageUrl: part.imageUrl,
@@ -215,18 +228,94 @@ function catalogPartToQuotePart(part: CatalogPart): QuotePart {
   };
 }
 
-function estimatePerformance(game: string, resolution: Resolution, tier: number, priority: Priority): PerformanceResult {
+// Simple GPU tiering for delta calculation
+const gpuTiers: Record<string, number> = {
+  '5050': 0.8,
+  '4060': 1.0,
+  '5060': 1.1,
+  '4060 Ti': 1.2,
+  '4070': 1.5,
+  '5070': 1.7,
+  '4070 Ti': 1.6,
+  '4080': 2.0,
+  '5080': 2.3,
+  '4090': 2.5,
+};
+
+// Simple CPU tiering for bottleneck calculation
+const cpuTiers: Record<string, number> = {
+  '7500F': 0.9,
+  '12400F': 0.85,
+  '7600': 0.95,
+  '13600K': 1.05,
+  '14600K': 1.1,
+  '7800X3D': 1.3,
+  '9800X3D': 1.4,
+};
+
+function extractModelNumber(name: string, dictionary: Record<string, number>): number | null {
+  const upper = name.toUpperCase();
+  let bestMatch: { key: string; val: number } | null = null;
+  for (const [key, val] of Object.entries(dictionary)) {
+    if (upper.includes(key.toUpperCase())) {
+      if (!bestMatch || key.length > bestMatch.key.length) {
+        bestMatch = { key, val };
+      }
+    }
+  }
+  return bestMatch?.val ?? null;
+}
+
+export function estimatePerformance(game: string, resolution: Resolution, parts: QuotePart[], priority: Priority): PerformanceResult {
   const baseFps = gameBaseFps[game] ?? 150;
+  
+  const gpu = parts.find(p => p.category === '그래픽카드');
+  const cpu = parts.find(p => p.category === 'CPU');
+  
+  let gpuMultiplier = 0.9; // fallback tier 1
+  let cpuMultiplier = 0.9;
+  let isEstimated = false;
+
+  if (gpu) {
+    const extractedGpu = extractModelNumber(gpu.name, gpuTiers);
+    if (extractedGpu) {
+      gpuMultiplier = extractedGpu;
+    } else {
+      isEstimated = true; // No exact match, using fallback delta
+      // Try to guess from price? (Very rough fallback)
+      gpuMultiplier = Math.max(0.5, Math.min(3.0, gpu.price / 400000));
+    }
+  } else {
+    isEstimated = true;
+    gpuMultiplier = 0.4; // Internal GPU level
+  }
+
+  if (cpu) {
+    const extractedCpu = extractModelNumber(cpu.name, cpuTiers);
+    if (extractedCpu) {
+      cpuMultiplier = extractedCpu;
+    } else {
+      isEstimated = true;
+      cpuMultiplier = Math.max(0.5, Math.min(2.0, cpu.price / 250000));
+    }
+  } else {
+    isEstimated = true;
+  }
+
+  // CPU Bottleneck logic: If GPU is way stronger than CPU, performance is throttled
+  const bottleneckFactor = Math.min(1.0, cpuMultiplier / (gpuMultiplier * 0.8 + 0.1));
+  const finalMultiplier = gpuMultiplier * bottleneckFactor;
+
   const priorityFactor = priority === '성능 우선' ? 1.08 : priority === '가성비 우선' ? 0.94 : 1;
-  const average = Math.round(baseFps * resolutionFactor[resolution] * tierMultiplier[tier] * priorityFactor);
-  const fpsMin = Math.max(35, Math.round(average * 0.82));
+  const average = Math.round(baseFps * resolutionFactor[resolution] * finalMultiplier * priorityFactor);
+  const fpsMin = Math.max(30, Math.round(average * 0.82));
   const fpsMax = Math.round(average * 1.16);
   const grade = average >= 180 ? '쾌적' : average >= 120 ? '좋음' : average >= 75 ? '플레이 가능' : '비추천';
 
-  return { game, resolution, grade, fpsMin, fpsMax };
+  return { game, resolution, grade, fpsMin, fpsMax, isEstimated };
 }
 
-function buildCompatibility(parts: QuotePart[]) {
+export function buildCompatibility(parts: QuotePart[]) {
   const cpu = parts.find((part) => part.category === 'CPU');
   const board = parts.find((part) => part.category === '메인보드');
   const ram = parts.find((part) => part.category === 'RAM');

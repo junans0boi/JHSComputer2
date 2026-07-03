@@ -91,6 +91,53 @@ export class QuotesService {
     return this.quoteRepository.save(quote);
   }
 
+  async saveQuoteSnapshot(userId: string, snapshot: {
+    title?: string;
+    purpose?: string;
+    budget?: number;
+    subtotal?: number;
+    assemblyFee?: number;
+    shippingFee?: number;
+    windowsFee?: number;
+    total?: number;
+    parts?: any[];
+    input?: any;
+    compatibility?: string[];
+  }) {
+    const quoteData = {
+      userId,
+      status: QuoteStatus.DRAFT,
+      budgetAmount: snapshot.budget ?? snapshot.input?.budget ?? 0,
+      budgetScope: BudgetScope.BODY_ONLY,
+      purpose: (snapshot.purpose ?? snapshot.input?.purpose ?? Purpose.GAME) as Purpose,
+      resolution: (snapshot.input?.resolution ?? null) as Resolution | null,
+      targetGamesJson: snapshot.input?.games ?? null,
+      windowsOption: normalizeWindowsOption(snapshot.input?.windows),
+      priorityType: PriorityType.VALUE,
+      subtotalPartsPrice: snapshot.subtotal ?? 0,
+      assemblyFee: snapshot.assemblyFee ?? 50000,
+      windowsFee: snapshot.windowsFee ?? 0,
+      shippingFee: snapshot.shippingFee ?? 10000,
+      totalPrice: snapshot.total ?? 0,
+      snapshotJson: snapshot,
+    };
+    const quote = this.quoteRepository.create(quoteData as Partial<Quote>);
+
+    const saved = await this.quoteRepository.save(quote);
+    return { quoteId: saved.id };
+  }
+
+  async getMyQuotes(userId: string, page = 1, limit = 20) {
+    const [items, total] = await this.quoteRepository.findAndCount({
+      where: { userId },
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return { items, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
   async estimateQuote(data: any) {
     let user = await this.userRepository.findOne({ order: { id: 'ASC' } });
     if (!user) {
@@ -131,13 +178,13 @@ export class QuotesService {
       purpose: data.purpose || Purpose.GAME,
       resolution: data.resolution || Resolution.QHD,
       targetGamesJson: data.games || null,
-      windowsOption: data.windowsOption || WindowsOption.NONE,
+      windowsOption: normalizeWindowsOption(data.windowsOption),
       priorityType: data.priorityType || PriorityType.PERFORMANCE,
       subtotalPartsPrice: subtotal,
       assemblyFee: 50000,
       shippingFee: 10000,
-      windowsFee: data.windowsOption === WindowsOption.LICENSE_AND_INSTALL ? 180000 : 0,
-      totalPrice: subtotal + 50000 + 10000 + (data.windowsOption === WindowsOption.LICENSE_AND_INSTALL ? 180000 : 0),
+      windowsFee: getWindowsFee(data.windowsOption),
+      totalPrice: subtotal + 50000 + 10000 + getWindowsFee(data.windowsOption),
     });
 
     const savedQuote = await this.quoteRepository.save(quote);
@@ -201,4 +248,19 @@ export class QuotesService {
 
     return { orderId: savedOrder.id, orderNo: savedOrder.orderNo };
   }
+}
+
+function normalizeWindowsOption(value?: string | null) {
+  if (value === WindowsOption.WINDOWS_11_HOME_FPP || value === WindowsOption.WINDOWS_11_PRO_FPP) return value;
+  if (value === WindowsOption.INSTALL_ONLY || value === '설치만') return WindowsOption.INSTALL_ONLY;
+  if (value === WindowsOption.LICENSE_AND_INSTALL || value === '포함') return WindowsOption.WINDOWS_11_HOME_FPP;
+  return WindowsOption.NONE;
+}
+
+function getWindowsFee(value?: string | null) {
+  const normalizedValue = normalizeWindowsOption(value);
+  if (normalizedValue === WindowsOption.WINDOWS_11_HOME_FPP) return 205000;
+  if (normalizedValue === WindowsOption.WINDOWS_11_PRO_FPP) return 324600;
+  if (normalizedValue === WindowsOption.INSTALL_ONLY) return 30000;
+  return 0;
 }

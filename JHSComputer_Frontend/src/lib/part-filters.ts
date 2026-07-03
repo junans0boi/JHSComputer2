@@ -82,10 +82,122 @@ export function getFilterOptions(parts: CatalogPart[]) {
   };
 }
 
+/**
+ * Checks compatibility and returns a reason if incompatible.
+ * Returns null if compatible.
+ */
+export function getIncompatibilityReason(part: CatalogPart, selection: ManualSelection): string | null {
+  const selectedCpu = selection.CPU;
+  const selectedMainboard = selection['메인보드'];
+  const partAttrs = getPartAttributes(part);
+  const cpuAttrs = selectedCpu ? getPartAttributes(selectedCpu) : undefined;
+  const boardAttrs = selectedMainboard ? getPartAttributes(selectedMainboard) : undefined;
+  const requiredSocket = cpuAttrs?.sockets[0];
+  const requiredMemory = getRequiredMemoryType(selection);
+
+  if (part.category === '메인보드' && requiredSocket && !partAttrs.sockets.includes(requiredSocket)) {
+    return `CPU 소켓(${requiredSocket})과 호환되지 않는 메인보드입니다.`;
+  }
+  if (part.category === 'RAM' && requiredMemory && !partAttrs.memoryTypes.includes(requiredMemory)) {
+    return `지원하지 않는 메모리 규격(${requiredMemory} 필요)입니다.`;
+  }
+  if (part.category === '쿨러' && requiredSocket && !partAttrs.sockets.includes(requiredSocket)) {
+    return `CPU 소켓(${requiredSocket}) 쿨러 장착 브라켓을 지원하지 않습니다.`;
+  }
+  if (part.category === 'CPU' && boardAttrs?.sockets.length && !partAttrs.sockets.some((socket) => boardAttrs.sockets.includes(socket))) {
+    return `선택한 메인보드 소켓(${boardAttrs.sockets[0]})과 맞지 않는 CPU입니다.`;
+  }
+  if (part.category === 'CPU' && boardAttrs?.memoryTypes.length) {
+    const cpuMemory = memoryTypeFromSocket(partAttrs.sockets[0]);
+    if (cpuMemory && !boardAttrs.memoryTypes.includes(cpuMemory)) {
+      return `선택한 메인보드의 메모리 규격(${boardAttrs.memoryTypes[0]})과 CPU 지원 규격이 다릅니다.`;
+    }
+  }
+  
+  if (part.category === '케이스') {
+    const selectedGpu = selection['그래픽카드'];
+    const selectedCooler = selection['쿨러'];
+    const selectedBoard = selection['메인보드'];
+    
+    if (selectedGpu) {
+      const gpuLength = getPartAttributes(selectedGpu).gpuLengthMm;
+      if (gpuLength && partAttrs.maxGpuLengthMm && gpuLength > partAttrs.maxGpuLengthMm) {
+        return `그래픽카드 길이(${gpuLength}mm)가 케이스 최대 허용치(${partAttrs.maxGpuLengthMm}mm)보다 깁니다.`;
+      }
+    }
+    if (selectedCooler) {
+      const coolerHeight = getPartAttributes(selectedCooler).coolerHeightMm;
+      if (coolerHeight && partAttrs.maxCoolerHeightMm && coolerHeight > partAttrs.maxCoolerHeightMm) {
+        return `쿨러 높이(${coolerHeight}mm)가 케이스 최대 허용치(${partAttrs.maxCoolerHeightMm}mm)를 초과합니다.`;
+      }
+    }
+    if (selectedBoard) {
+      const boardForm = getPartAttributes(selectedBoard).formFactors[0];
+      if (boardForm && partAttrs.formFactors.length && !partAttrs.formFactors.includes(boardForm)) {
+        return `메인보드 규격(${boardForm})을 지원하지 않는 케이스입니다.`;
+      }
+    }
+  }
+
+  if (part.category === '그래픽카드' && selection['케이스']) {
+    const maxGpuLength = getPartAttributes(selection['케이스']).maxGpuLengthMm;
+    if (maxGpuLength && partAttrs.gpuLengthMm && partAttrs.gpuLengthMm > maxGpuLength) {
+      return `케이스의 그래픽카드 최대 허용 길이(${maxGpuLength}mm)를 초과합니다.`;
+    }
+  }
+  
+  if (part.category === '쿨러' && selection['케이스']) {
+    const maxCoolerHeight = getPartAttributes(selection['케이스']).maxCoolerHeightMm;
+    if (maxCoolerHeight && partAttrs.coolerHeightMm && partAttrs.coolerHeightMm > maxCoolerHeight) {
+      return `케이스의 쿨러 최대 허용 높이(${maxCoolerHeight}mm)를 초과합니다.`;
+    }
+  }
+
+  // TDP Check against Power Supply (Basic estimation)
+  // If we are looking at a Power Supply, check if it meets the minimum wattage for CPU + GPU + buffer
+  if (part.category === '파워') {
+    let estimatedSystemWattage = 150; // Base system wattage (MB, RAM, drives, fans)
+    const selectedGpu = selection['그래픽카드'];
+    if (selectedGpu) {
+      const gpuTdp = getPartAttributes(selectedGpu).wattage || 300; // rough guess if not found
+      estimatedSystemWattage += gpuTdp;
+    } else {
+       estimatedSystemWattage += 50; // igpu buffer
+    }
+    const selectedCpu = selection.CPU;
+    if (selectedCpu) {
+      const cpuTdp = getPartAttributes(selectedCpu).wattage || 100; // rough guess
+      estimatedSystemWattage += cpuTdp;
+    }
+    
+    // Add 100W buffer
+    const recommendedWattage = estimatedSystemWattage + 100;
+    
+    if (partAttrs.wattage && partAttrs.wattage < recommendedWattage) {
+       // We only return a reason if we are sure it's lower.
+       // However, to not block users completely based on rough estimates, we could be lenient,
+       // but since it's a guard, we should block clearly inadequate PSUs.
+       // Let's only block if the PSU is significantly lower than estimated (e.g. less than GPU+CPU raw TDP).
+       if (partAttrs.wattage < estimatedSystemWattage) {
+         return `선택한 시스템의 예상 소비 전력(${estimatedSystemWattage}W 이상)보다 파워 용량이 부족합니다.`;
+       }
+    }
+  }
+
+  return null;
+}
+
+export function isCompatibleWithSelection(part: CatalogPart, selection: ManualSelection) {
+  return getIncompatibilityReason(part, selection) === null;
+}
+
 export function filterParts(parts: CatalogPart[], filters: PartFilterState, selection: ManualSelection) {
   return parts.filter((part) => {
     const attrs = getPartAttributes(part);
+    
+    // 호환되는 부품만 보기 옵션이 켜져 있으면, 호환 안 되는 부품은 아예 숨김
     if (filters.compatibleOnly && !isCompatibleWithSelection(part, selection)) return false;
+    
     if (filters.manufacturers.length && !filters.manufacturers.includes(attrs.manufacturer)) return false;
     if (filters.sockets.length && !attrs.sockets.some((socket) => filters.sockets.includes(socket))) return false;
     if (filters.memoryTypes.length && !attrs.memoryTypes.some((type) => filters.memoryTypes.includes(type))) return false;
@@ -96,51 +208,6 @@ export function filterParts(parts: CatalogPart[], filters: PartFilterState, sele
     if (filters.maxWatt && (!attrs.wattage || attrs.wattage > Number(filters.maxWatt))) return false;
     return true;
   });
-}
-
-export function isCompatibleWithSelection(part: CatalogPart, selection: ManualSelection) {
-  const selectedCpu = selection.CPU;
-  const selectedMainboard = selection['메인보드'];
-  const partAttrs = getPartAttributes(part);
-  const cpuAttrs = selectedCpu ? getPartAttributes(selectedCpu) : undefined;
-  const boardAttrs = selectedMainboard ? getPartAttributes(selectedMainboard) : undefined;
-  const requiredSocket = cpuAttrs?.sockets[0];
-  const requiredMemory = getRequiredMemoryType(selection);
-
-  if (part.category === '메인보드' && requiredSocket && !partAttrs.sockets.includes(requiredSocket)) return false;
-  if (part.category === 'RAM' && requiredMemory && !partAttrs.memoryTypes.includes(requiredMemory)) return false;
-  if (part.category === '쿨러' && requiredSocket && !partAttrs.sockets.includes(requiredSocket)) return false;
-  if (part.category === 'CPU' && boardAttrs?.sockets.length && !partAttrs.sockets.some((socket) => boardAttrs.sockets.includes(socket))) return false;
-  if (part.category === 'CPU' && boardAttrs?.memoryTypes.length) {
-    const cpuMemory = memoryTypeFromSocket(partAttrs.sockets[0]);
-    if (cpuMemory && !boardAttrs.memoryTypes.includes(cpuMemory)) return false;
-  }
-  if (part.category === '케이스') {
-    const selectedGpu = selection['그래픽카드'];
-    const selectedCooler = selection['쿨러'];
-    const selectedBoard = selection['메인보드'];
-    if (selectedGpu) {
-      const gpuLength = getPartAttributes(selectedGpu).gpuLengthMm;
-      if (gpuLength && partAttrs.maxGpuLengthMm && gpuLength > partAttrs.maxGpuLengthMm) return false;
-    }
-    if (selectedCooler) {
-      const coolerHeight = getPartAttributes(selectedCooler).coolerHeightMm;
-      if (coolerHeight && partAttrs.maxCoolerHeightMm && coolerHeight > partAttrs.maxCoolerHeightMm) return false;
-    }
-    if (selectedBoard) {
-      const boardForm = getPartAttributes(selectedBoard).formFactors[0];
-      if (boardForm && partAttrs.formFactors.length && !partAttrs.formFactors.includes(boardForm)) return false;
-    }
-  }
-  if (part.category === '그래픽카드' && selection['케이스']) {
-    const maxGpuLength = getPartAttributes(selection['케이스']).maxGpuLengthMm;
-    if (maxGpuLength && partAttrs.gpuLengthMm && partAttrs.gpuLengthMm > maxGpuLength) return false;
-  }
-  if (part.category === '쿨러' && selection['케이스']) {
-    const maxCoolerHeight = getPartAttributes(selection['케이스']).maxCoolerHeightMm;
-    if (maxCoolerHeight && partAttrs.coolerHeightMm && partAttrs.coolerHeightMm > maxCoolerHeight) return false;
-  }
-  return true;
 }
 
 export function getCompatibilityHint(category: PartCategory, selection: ManualSelection) {

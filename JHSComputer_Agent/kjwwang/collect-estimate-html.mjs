@@ -14,7 +14,10 @@ function parseArgs(argv) {
     out: '../project/samples/kjwwang/html',
   };
   for (const rawArg of argv) {
-    const [key, value = ''] = rawArg.replace(/^--/, '').split('=');
+    const normalizedArg = rawArg.replace(/^--/, '');
+    const separatorIndex = normalizedArg.indexOf('=');
+    const key = separatorIndex >= 0 ? normalizedArg.slice(0, separatorIndex) : normalizedArg;
+    const value = separatorIndex >= 0 ? normalizedArg.slice(separatorIndex + 1) : '';
     if (key === 'seed-file') args.seedFile = value;
     if (key === 'urls') args.urls = value;
     if (key === 'limit') args.limit = Number(value);

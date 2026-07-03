@@ -1,16 +1,24 @@
 'use client';
 
-import { Plus, Search, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { AppShell } from '@/components/AppShell';
 import { PartDetailModal } from '@/components/PartDetailModal';
+import { ComparePartsPanel } from '@/components/parts/ComparePartsPanel';
+import { PartProductCard } from '@/components/parts/PartProductCard';
+import { Button, LinkButton } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { PageStack, PanelCard, SectionHeader } from '@/components/ui/PanelCard';
+import { SelectInput } from '@/components/ui/FormField';
 import { compuzoneCatalog, partCategories } from '@/lib/compuzone-catalog';
-import { getPartBadges, getProductStatus, statusClass } from '@/lib/common-codes';
-import { emptyPartFilters, filterParts, getCompatibilityHint, getFilterOptions, getPartAttributes, type PartFilterState } from '@/lib/part-filters';
+import { emptyPartFilters, filterParts, getCompatibilityHint, getFilterOptions, type PartFilterState } from '@/lib/part-filters';
+import { syncCartQuoteToServer } from '@/lib/server-cart';
 import { loadServerCatalog } from '@/lib/server-parts';
-import { loadManualSelection, selectManualPart } from '@/lib/v1-storage';
-import type { CatalogPart, ManualSelection, PartCategory } from '@/lib/v1-types';
+import { withDbPerformance } from '@/lib/server-performance';
+import { addQuoteToCart, loadManualQuantities, loadManualSelection, saveManualQuantities, selectManualPart } from '@/lib/v1-storage';
+import { buildCompatibility, defaultInput } from '@/lib/v1-estimator';
+import type { CatalogPart, ManualSelection, PartCategory, Quote } from '@/lib/v1-types';
 
 const filterLayout: Record<
   PartCategory,
@@ -37,6 +45,8 @@ const chipLabels = {
   formFactors: '규격',
 };
 
+type SortOrder = 'POPULAR' | 'PRICE_LOW' | 'PRICE_HIGH' | 'NEW' | 'REVIEW';
+
 export default function PartsPage() {
   const [selectedCategory, setSelectedCategory] = useState<PartCategory>('CPU');
   const [keyword, setKeyword] = useState('');
@@ -47,6 +57,9 @@ export default function PartsPage() {
   const [detailPart, setDetailPart] = useState<CatalogPart | null>(null);
   const [catalog, setCatalog] = useState<CatalogPart[]>(compuzoneCatalog);
   const [catalogSource, setCatalogSource] = useState<'DB' | 'LOCAL'>('LOCAL');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('POPULAR');
+  const [quantityByPartId, setQuantityByPartId] = useState<Record<string, number>>({});
+  const [cartMessage, setCartMessage] = useState('');
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -72,14 +85,41 @@ export default function PartsPage() {
 
   const parts = useMemo(() => {
     const normalizedKeyword = keyword.trim().toLowerCase();
-    return filterParts(categoryParts, filters, manualSelection)
-      .filter((part) => !normalizedKeyword || `${part.name} ${part.spec}`.toLowerCase().includes(normalizedKeyword))
-      .sort((a, b) => a.price - b.price);
-  }, [categoryParts, filters, keyword, manualSelection]);
+    const filtered = filterParts(categoryParts, filters, manualSelection)
+      .filter((part) => !normalizedKeyword || `${part.name} ${part.spec}`.toLowerCase().includes(normalizedKeyword));
+      
+    return filtered.sort((a, b) => {
+      switch (sortOrder) {
+        case 'PRICE_LOW': return a.price - b.price;
+        case 'PRICE_HIGH': return b.price - a.price;
+        case 'REVIEW': return b.reviewCount - a.reviewCount;
+        case 'NEW': return Number(b.productNo) - Number(a.productNo);
+        case 'POPULAR': return b.reviewCount - a.reviewCount;
+        default: return 0;
+      }
+    });
+  }, [categoryParts, filters, keyword, manualSelection, sortOrder]);
 
-  const handleAdd = (part: CatalogPart) => {
-    setManualSelection(selectManualPart(part));
+  const handleAdd = async (part: CatalogPart) => {
+    const nextSelection = selectManualPart(part);
+    const quantity = quantityByPartId[part.id] ?? 1;
+    const nextQuantities = { ...quantityByPartId, [part.id]: quantity };
+    saveManualQuantities({ ...loadManualQuantities(), [part.category]: quantity });
+    setManualSelection(nextSelection);
     setLastAdded(part.id);
+    setQuantityByPartId(nextQuantities);
+
+    const quote = await withDbPerformance(buildPartsCartQuote(nextSelection, nextQuantities));
+    addQuoteToCart(quote);
+    await syncCartQuoteToServer(quote).catch(() => false);
+    setCartMessage(`${part.name} ${quantity}개를 장바구니에 담았습니다.`);
+
+    const currentIndex = partCategories.indexOf(part.category);
+    const nextCategory = partCategories[currentIndex + 1];
+    if (nextCategory) {
+      setSelectedCategory(nextCategory);
+      window.history.replaceState(null, '', `/parts?category=${encodeURIComponent(nextCategory)}`);
+    }
   };
 
   const selectedCount = Object.keys(manualSelection).length;
@@ -93,18 +133,14 @@ export default function PartsPage() {
   return (
     <AppShell>
       {detailPart && <PartDetailModal part={detailPart} onClose={() => setDetailPart(null)} />}
-      <section className="grid gap-5">
-        <div className="rounded-2xl border border-line bg-white p-4 shadow-soft md:p-5">
+      <PageStack>
+        <PanelCard>
           <div className="flex flex-col justify-between gap-4 border-b border-line pb-4 md:flex-row md:items-end">
-            <div>
-              <h2 className="text-2xl font-black">카테고리별 부품</h2>
-              <p className="mt-1 text-sm text-slate-600">
-                {catalogSource === 'DB' ? 'DB에 적재된 컴퓨존 최신 수집 가격 기준입니다.' : '컴퓨존 수집 샘플 가격 기준입니다.'}
-              </p>
-            </div>
-            <Link className="rounded-xl bg-brand px-4 py-3 text-sm font-black text-white hover:bg-ink" href="/quote?mode=manual">
-              수동 견적 보기
-            </Link>
+            <SectionHeader
+              action={<LinkButton href="/quote?mode=manual">수동 견적 보기</LinkButton>}
+              description={catalogSource === 'DB' ? 'DB에 적재된 컴퓨존 최신 수집 가격 기준입니다.' : '컴퓨존 수집 샘플 가격 기준입니다.'}
+              title="카테고리별 부품"
+            />
           </div>
 
           <div className="mt-5 grid gap-4">
@@ -112,7 +148,7 @@ export default function PartsPage() {
               {partCategories.map((category) => (
                 <button
                   className={`rounded-xl border px-4 py-2 text-sm font-black transition ${
-                    selectedCategory === category ? 'border-brand bg-teal-50 text-brand' : 'border-line bg-white hover:border-brand'
+                    selectedCategory === category ? 'border-brand bg-teal-50 text-brand shadow-sm' : 'border-line bg-white text-slate-600 hover:border-brand'
                   }`}
                   key={category}
                   onClick={() => {
@@ -126,10 +162,10 @@ export default function PartsPage() {
               ))}
             </div>
 
-            <label className="flex h-12 items-center gap-2 rounded-xl border border-line bg-panel px-3">
+            <label className="flex h-12 items-center gap-2 rounded-xl border border-line bg-panel px-3 focus-within:border-brand focus-within:ring-1 focus-within:ring-brand/20 transition">
               <Search className="text-slate-400" size={18} />
               <input
-                className="h-full flex-1 bg-transparent outline-none"
+                className="h-full flex-1 bg-transparent outline-none font-bold placeholder-slate-400"
                 onChange={(event) => setKeyword(event.target.value)}
                 placeholder={`${selectedCategory} 안에서 검색`}
                 value={keyword}
@@ -140,60 +176,59 @@ export default function PartsPage() {
               <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
                 <div>
                   <h3 className="font-black">{selectedCategory} 필터</h3>
-                  <p className="mt-1 text-sm text-slate-600">
-                    {selectedCount ? getCompatibilityHint(selectedCategory, manualSelection) : '제조사, 소켓, 메모리, 가격, W 수로 좁혀보세요.'}
+                  <p className="mt-1 text-xs text-slate-600">
+                    {selectedCount ? getCompatibilityHint(selectedCategory, manualSelection) : '필터를 적용하여 원하는 부품을 빠르게 찾아보세요.'}
                   </p>
                 </div>
-                <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-black">
-                  <input
-                    checked={filters.compatibleOnly}
-                    className="accent-teal-700"
-                    onChange={(event) => setFilters({ ...filters, compatibleOnly: event.target.checked })}
-                    type="checkbox"
-                  />
-                  수동 견적 호환만
-                </label>
+                <div className="flex items-center gap-3">
+                  <button className="text-xs font-black text-brand hover:underline" onClick={() => setFilters(emptyPartFilters)} type="button">
+                    필터 초기화
+                  </button>
+                  <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-black shadow-sm border border-line cursor-pointer hover:border-brand transition">
+                    <input
+                      checked={filters.compatibleOnly}
+                      className="accent-teal-700 w-4 h-4 cursor-pointer"
+                      onChange={(event) => setFilters({ ...filters, compatibleOnly: event.target.checked })}
+                      type="checkbox"
+                    />
+                    수동 견적 호환만
+                  </label>
+                </div>
               </div>
 
-              <div className="mt-4 grid gap-4">
-                <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
-                  <div className="grid gap-3">
-                    {currentFilterLayout.chips.map((key) => (
-                      <FilterChips
-                        key={key}
-                        label={chipLabels[key]}
-                        options={options[key]}
-                        selected={filters[key]}
-                        onChange={(selected) => setFilters({ ...filters, [key]: selected })}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="grid gap-3 rounded-xl bg-white p-3">
-                    {currentFilterLayout.price && (
-                      <div className="grid grid-cols-2 gap-2">
-                        <NumberInput label="최소 가격" value={filters.minPrice} onChange={(minPrice) => setFilters({ ...filters, minPrice })} />
-                        <NumberInput label="최대 가격" value={filters.maxPrice} onChange={(maxPrice) => setFilters({ ...filters, maxPrice })} />
-                      </div>
-                    )}
-                    {currentFilterLayout.watt && (
-                      <div className="grid grid-cols-2 gap-2">
-                        <NumberInput label="최소 W" value={filters.minWatt} onChange={(minWatt) => setFilters({ ...filters, minWatt })} />
-                        <NumberInput label="최대 W" value={filters.maxWatt} onChange={(maxWatt) => setFilters({ ...filters, maxWatt })} />
-                      </div>
-                    )}
-                    <div className="rounded-lg bg-panel px-3 py-2 text-xs font-bold text-slate-600">
-                      {categoryFilterTip(selectedCategory)}
-                    </div>
-                  </div>
+              <div className="mt-4 flex flex-col lg:flex-row gap-4">
+                {/* 칩 필터 영역 */}
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {currentFilterLayout.chips.map((key) => (
+                    <FilterDropdown
+                      key={key}
+                      label={chipLabels[key]}
+                      options={options[key]}
+                      selected={filters[key]}
+                      onChange={(selected) => setFilters({ ...filters, [key]: selected })}
+                    />
+                  ))}
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                {/* 가격/W 입력 영역 (더 콤팩트하게) */}
+                <div className="flex flex-col gap-3 min-w-[280px]">
+                  {currentFilterLayout.price && (
+                    <div className="grid grid-cols-2 gap-2 bg-white p-2 rounded-xl border border-line">
+                      <NumberInput label="최소 가격" value={filters.minPrice} onChange={(minPrice) => setFilters({ ...filters, minPrice })} />
+                      <NumberInput label="최대 가격" value={filters.maxPrice} onChange={(maxPrice) => setFilters({ ...filters, maxPrice })} />
+                    </div>
+                  )}
+                  {currentFilterLayout.watt && (
+                    <div className="grid grid-cols-2 gap-2 bg-white p-2 rounded-xl border border-line">
+                      <NumberInput label="최소 W" value={filters.minWatt} onChange={(minWatt) => setFilters({ ...filters, minWatt })} />
+                      <NumberInput label="최대 W" value={filters.maxWatt} onChange={(maxWatt) => setFilters({ ...filters, maxWatt })} />
+                    </div>
+                  )}
                   {options.wattages.length > 0 && selectedCategory === '파워' && (
-                    <>
-                      {options.wattages.slice(0, 8).map((wattage) => (
+                    <div className="flex flex-wrap gap-1.5 mt-1">
+                      {options.wattages.slice(0, 5).map((wattage) => (
                         <button
-                          className="rounded-full border border-line bg-white px-3 py-1.5 text-xs font-black hover:border-brand hover:text-brand"
+                          className="rounded-lg bg-white border border-line px-2 py-1 text-[11px] font-black hover:border-brand hover:text-brand transition"
                           key={wattage}
                           onClick={() => setFilters({ ...filters, minWatt: String(wattage), maxWatt: '' })}
                           type="button"
@@ -201,141 +236,111 @@ export default function PartsPage() {
                           {wattage}W 이상
                         </button>
                       ))}
-                    </>
+                    </div>
                   )}
                 </div>
-
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-bold text-slate-600">
-                    {parts.length.toLocaleString()}개 표시 / 전체 {categoryParts.length.toLocaleString()}개
-                  </span>
-                  <button className="text-sm font-black text-brand" onClick={() => setFilters(emptyPartFilters)} type="button">
-                    필터 초기화
-                  </button>
-                </div>
               </div>
             </div>
           </div>
-        </div>
+        </PanelCard>
 
-        {compareParts.length > 0 && (
-          <div className="rounded-2xl border border-brand bg-white p-4 shadow-soft">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h3 className="font-black">부품 비교</h3>
-                <p className="mt-1 text-sm text-slate-600">최대 3개까지 가격, 재고, 주요 스펙을 비교합니다.</p>
-              </div>
-              <button className="rounded-xl border border-line px-3 py-2 text-sm font-black text-slate-500" onClick={() => setCompareParts([])} type="button">
-                비우기
-              </button>
-            </div>
-            <div className="mt-4 grid gap-3 md:grid-cols-3">
-              {compareParts.map((part) => {
-                const status = getProductStatus(part);
-                return (
-                  <div className="rounded-xl border border-line bg-panel p-3" key={part.id}>
-                    <div className="flex items-start justify-between gap-2">
-                      <strong className="line-clamp-2 text-sm">{part.name}</strong>
-                      <button className="text-slate-400" onClick={() => toggleCompare(part)} type="button">
-                        <X size={16} />
-                      </button>
-                    </div>
-                    <div className="mt-3 text-xl font-black text-brand">{part.price.toLocaleString()}원</div>
-                    <span className={`mt-2 inline-flex rounded-full border px-2 py-1 text-xs font-black ${statusClass(status.code)}`}>{status.nameKo}</span>
-                    <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-600">{part.spec}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+        <ComparePartsPanel onClear={() => setCompareParts([])} onToggle={toggleCompare} parts={compareParts} />
+
+        {cartMessage && (
+          <PanelCard className="border-emerald-200 bg-emerald-50 text-sm font-black text-emerald-700">
+            {cartMessage}
+            <Link className="ml-2 underline underline-offset-2" href="/mypage/cart">
+              장바구니 보기
+            </Link>
+          </PanelCard>
         )}
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+          <span className="text-sm font-bold text-slate-600">
+            <strong className="text-slate-900">{parts.length.toLocaleString()}개</strong> 표시 / 전체 {categoryParts.length.toLocaleString()}개
+          </span>
+          <SelectInput
+            className="h-10 cursor-pointer text-slate-700 hover:border-brand"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as SortOrder)}
+          >
+            <option value="POPULAR">인기상품순</option>
+            <option value="PRICE_LOW">낮은 가격순</option>
+            <option value="PRICE_HIGH">높은 가격순</option>
+            <option value="NEW">신상품순</option>
+            <option value="REVIEW">상품평 많은 순</option>
+          </SelectInput>
+        </div>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {parts.map((part) => {
-            const status = getProductStatus(part);
-            const badges = getPartBadges(part);
             const compared = compareParts.some((item) => item.id === part.id);
             return (
-            <article className="overflow-hidden rounded-2xl border border-line bg-white shadow-soft" key={part.id}>
-              <div className="grid grid-cols-[120px_1fr] gap-4 p-4">
-                <div className="grid h-28 place-items-center rounded-xl bg-panel p-2">
-                  <img alt={part.name} className="max-h-full max-w-full object-contain" src={part.imageUrl} />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-black text-brand">{part.category}</span>
-                    <span className="text-xs text-slate-500">상품번호 {part.productNo}</span>
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    <span className={`rounded-full border px-2 py-1 text-[11px] font-black ${statusClass(status.code)}`}>{status.nameKo}</span>
-                    {badges.map((badge) => (
-                      <span className="rounded-full bg-amber-50 px-2 py-1 text-[11px] font-black text-amber-700" key={badge.code}>
-                        {badge.nameKo}
-                      </span>
-                    ))}
-                  </div>
-                  <h3 className="mt-2 line-clamp-2 text-sm font-black leading-5">{part.name}</h3>
-                  <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-600">{part.spec}</p>
-                  <SpecBadges part={part} />
-                </div>
-              </div>
-
-              <div className="border-t border-line bg-panel p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-xs text-slate-500">컴퓨존 기준가</div>
-                    <div className="text-xl font-black text-brand">{part.price.toLocaleString()}원</div>
-                  </div>
-                  <div className="text-right text-xs text-slate-500">
-                    후기 {part.reviewCount.toLocaleString()}개
-                    <br />
-                    평점 {part.reviewRate || '-'}
-                  </div>
-                </div>
-                <div className="mt-4 grid grid-cols-3 gap-2">
-                  <button
-                    className="flex h-10 items-center justify-center gap-2 rounded-xl border border-line bg-white text-sm font-black hover:border-brand hover:text-brand"
-                    onClick={() => setDetailPart(part)}
-                    type="button"
-                  >
-                    상세 스펙
-                  </button>
-                  <button
-                    className={`flex h-10 items-center justify-center rounded-xl border text-sm font-black ${
-                      compared ? 'border-brand bg-teal-50 text-brand' : 'border-line bg-white hover:border-brand hover:text-brand'
-                    }`}
-                    onClick={() => toggleCompare(part)}
-                    type="button"
-                  >
-                    비교
-                  </button>
-                  <button
-                    className={`flex h-10 items-center justify-center gap-2 rounded-xl text-sm font-black text-white transition ${
-                      lastAdded === part.id ? 'bg-accent' : 'bg-ink hover:bg-brand'
-                    }`}
-                    onClick={() => handleAdd(part)}
-                    type="button"
-                  >
-                    <Plus size={15} />
-                    {lastAdded === part.id ? '담김' : '수동 견적 담기'}
-                  </button>
-                </div>
-              </div>
-            </article>
+              <PartProductCard
+                compared={compared}
+                key={part.id}
+                lastAdded={lastAdded === part.id}
+                onAdd={handleAdd}
+                onCompare={toggleCompare}
+                onDetail={setDetailPart}
+                onQuantityChange={(quantity) => setQuantityByPartId((current) => ({ ...current, [part.id]: quantity }))}
+                part={part}
+                quantity={quantityByPartId[part.id] ?? 1}
+              />
             );
           })}
         </div>
         {!parts.length && (
-          <div className="rounded-2xl border border-dashed border-line bg-white p-10 text-center text-slate-600">
-            조건에 맞는 부품이 없습니다. 필터를 줄이거나 `수동 견적 호환만`을 꺼보세요.
-          </div>
+          <EmptyState
+            action={<Button onClick={() => setFilters(emptyPartFilters)} type="button" variant="outline">필터 초기화</Button>}
+            description="필터를 줄이거나 `수동 견적 호환만`을 꺼보세요."
+            icon={<Search size={32} />}
+            title="조건에 맞는 부품이 없습니다."
+          />
         )}
-      </section>
+      </PageStack>
     </AppShell>
   );
 }
 
-function FilterChips({
+function buildPartsCartQuote(selection: ManualSelection, quantities: Record<string, number>): Quote {
+  const parts = partCategories.flatMap((category) => {
+    const part = selection[category];
+    if (!part) return [];
+    const quantity = quantities[part.id] ?? 1;
+    return [{
+      category: part.category,
+      name: part.name,
+      memo: quantity > 1 ? `${part.spec || '컴퓨존 카탈로그 선택'} · 수량 ${quantity}개` : part.spec || '컴퓨존 카탈로그 선택',
+      price: part.price * quantity,
+      quantity,
+      supplier: '컴퓨존 샘플 기준',
+      productNo: part.productNo,
+      imageUrl: part.imageUrl,
+      detailUrl: part.detailUrl,
+    }];
+  });
+  const subtotal = parts.reduce((sum, part) => sum + part.price, 0);
+  const shippingFee = subtotal > 0 ? 10000 : 0;
+  return {
+    id: 'Q-PARTS-ACTIVE',
+    createdAt: new Date().toISOString(),
+    title: `부품 쇼핑 · ${parts.length}개 품목`,
+    mode: 'MANUAL',
+    input: defaultInput,
+    parts,
+    performance: [],
+    compatibility: buildCompatibility(parts),
+    subtotal,
+    assemblyFee: 0,
+    shippingFee,
+    windowsFee: 0,
+    total: subtotal + shippingFee,
+    status: 'DRAFT',
+  };
+}
+
+function FilterDropdown({
   label,
   options,
   selected,
@@ -348,79 +353,61 @@ function FilterChips({
 }) {
   if (!options.length) return null;
   return (
-    <div className="grid gap-2">
-      <span className="text-sm font-black">{label}</span>
-      <div className="flex flex-wrap gap-2">
-        {options.map((option) => {
-          const active = selected.includes(option);
-          return (
-            <button
-              className={`rounded-full border px-3 py-1.5 text-xs font-black transition ${
-                active ? 'border-brand bg-teal-50 text-brand' : 'border-line bg-white hover:border-brand'
-              }`}
-              key={option}
-              onClick={() => onChange(active ? selected.filter((item) => item !== option) : [...selected, option])}
-              type="button"
-            >
-              {option}
-            </button>
-          );
-        })}
+    <div className="grid gap-1.5">
+      <span className="text-[11px] font-black text-slate-500 ml-1">{label}</span>
+      <div className="relative">
+        <select 
+          className="w-full h-10 appearance-none rounded-xl border border-line bg-white px-3 pr-8 text-xs font-bold text-slate-700 outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition cursor-pointer"
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === '') onChange([]);
+            else if (!selected.includes(val)) onChange([...selected, val]);
+          }}
+          value=""
+        >
+          <option value="">{selected.length ? `${selected.length}개 선택됨 (+ 추가)` : '전체 보기'}</option>
+          {options.map(opt => (
+            <option key={opt} value={opt} disabled={selected.includes(opt)}>{opt}</option>
+          ))}
+        </select>
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+          <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+          </svg>
+        </div>
       </div>
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mt-1">
+          {selected.map((option) => (
+            <span key={option} className="inline-flex items-center gap-1 rounded-md bg-teal-50 px-2 py-1 text-[10px] font-black text-brand border border-brand/20">
+              {option}
+              <button 
+                type="button" 
+                className="hover:text-red-500 transition-colors"
+                onClick={() => onChange(selected.filter(item => item !== option))}
+              >
+                <X size={10} />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
 function NumberInput({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
   return (
-    <label className="grid gap-2">
-      <span className="text-sm font-black">{label}</span>
+    <div className="flex items-center gap-2">
+      <span className="text-[11px] font-black text-slate-500 whitespace-nowrap min-w-[36px]">{label}</span>
       <input
-        className="h-11 rounded-xl border border-line bg-white px-3 outline-none focus:border-brand"
+        className="h-8 flex-1 w-full rounded-lg border border-line bg-slate-50 px-2 text-xs font-bold outline-none focus:border-brand focus:bg-white transition"
         min={0}
         onChange={(event) => onChange(event.target.value)}
-        placeholder="전체"
+        placeholder="입력"
         type="number"
         value={value}
       />
-    </label>
-  );
-}
-
-function SpecBadges({ part }: { part: CatalogPart }) {
-  const attrs = getPartAttributes(part);
-  const badges = [
-    ...attrs.sockets,
-    ...attrs.memoryTypes,
-    ...attrs.formFactors,
-    attrs.wattage ? `${attrs.wattage}W` : undefined,
-    attrs.gpuLengthMm ? `GPU ${attrs.gpuLengthMm}mm` : undefined,
-    attrs.coolerHeightMm ? `쿨러 ${attrs.coolerHeightMm}mm` : undefined,
-    attrs.maxGpuLengthMm ? `VGA ${attrs.maxGpuLengthMm}mm` : undefined,
-    attrs.maxCoolerHeightMm ? `쿨러 ${attrs.maxCoolerHeightMm}mm` : undefined,
-  ].filter(Boolean);
-  if (!badges.length) return null;
-  return (
-    <div className="mt-2 flex flex-wrap gap-1">
-      {badges.slice(0, 4).map((badge) => (
-        <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-bold text-slate-600" key={badge}>
-          {badge}
-        </span>
-      ))}
     </div>
   );
-}
-
-function categoryFilterTip(category: PartCategory) {
-  const tips: Record<PartCategory, string> = {
-    CPU: 'CPU는 제조사와 소켓 중심으로 고르면 됩니다.',
-    메인보드: 'CPU를 먼저 담으면 같은 소켓과 메모리 규격만 추천됩니다.',
-    RAM: '메인보드/CPU 선택 후 DDR4·DDR5가 자동으로 좁혀집니다.',
-    그래픽카드: '케이스를 먼저 담으면 장착 가능한 길이만 남깁니다.',
-    SSD: 'M.2, SATA 같은 폼팩터와 가격 중심으로 확인하세요.',
-    파워: '그래픽카드 권장 파워보다 여유 있게 선택하세요.',
-    케이스: '그래픽카드 길이, CPU 쿨러 높이, 보드 규격을 함께 봅니다.',
-    쿨러: 'CPU 소켓과 케이스 쿨러 높이를 함께 확인합니다.',
-  };
-  return tips[category];
 }

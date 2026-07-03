@@ -35,7 +35,7 @@ export default function QuoteDetailPage() {
 
   return (
     <main className="min-h-screen px-5 py-6 text-ink md:px-8 bg-gray-50">
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-5">
+      <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-5">
         <header className="flex flex-col justify-between gap-4 border-b border-line pb-5 md:flex-row md:items-end">
           <div>
             <h1 className="mt-1 text-2xl font-bold tracking-normal md:text-3xl">AI 맞춤 견적 결과</h1>
@@ -48,12 +48,12 @@ export default function QuoteDetailPage() {
           <h2 className="text-lg font-bold mb-4">구성 부품</h2>
           <div className="grid gap-3">
             {quote.items?.map((item: any) => (
-              <div key={item.id} className="flex justify-between items-center p-3 border border-line rounded-md bg-panel">
-                <div>
+              <div key={item.id} className="grid gap-3 p-3 border border-line rounded-md bg-panel sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+                <div className="min-w-0">
                   <span className="text-xs font-bold text-brand block mb-1">{item.partCategory?.categoryName}</span>
-                  <span className="font-semibold text-sm">{item.part?.canonicalName}</span>
+                  <span className="part-name text-sm">{item.part?.canonicalName}</span>
                 </div>
-                <div className="font-bold text-sm">
+                <div className="shrink-0 font-bold text-sm sm:text-right">
                   {item.currentPublicPrice.toLocaleString()}원
                 </div>
               </div>

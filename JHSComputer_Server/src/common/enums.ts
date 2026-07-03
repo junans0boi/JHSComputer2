@@ -81,6 +81,8 @@ export enum BudgetScope {
 
 export enum WindowsOption {
   LICENSE_AND_INSTALL = 'LICENSE_AND_INSTALL',
+  WINDOWS_11_HOME_FPP = 'WINDOWS_11_HOME_FPP',
+  WINDOWS_11_PRO_FPP = 'WINDOWS_11_PRO_FPP',
   INSTALL_ONLY = 'INSTALL_ONLY',
   NONE = 'NONE',
 }

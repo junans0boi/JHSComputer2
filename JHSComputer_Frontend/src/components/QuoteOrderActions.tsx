@@ -2,19 +2,19 @@
 
 import { ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { recommendedBuildToQuote, type RecommendedBuild } from '@/lib/recommended-builds';
 import { addQuoteToCart, saveQuote } from '@/lib/v1-storage';
+import type { Quote } from '@/lib/v1-types';
 
-export function RecommendationActions({ build }: { build: RecommendedBuild }) {
+export function QuoteOrderActions({ quote }: { quote: Quote }) {
   const router = useRouter();
 
   const orderNow = () => {
-    saveQuote(recommendedBuildToQuote(build));
+    saveQuote(quote);
     router.push('/order');
   };
 
   const addToCart = () => {
-    addQuoteToCart(recommendedBuildToQuote(build));
+    addQuoteToCart(quote);
     router.push('/mypage/cart');
   };
 

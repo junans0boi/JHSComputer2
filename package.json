@@ -26,6 +26,10 @@
     "crawl:compuzone:samples": "node JHSComputer_Agent/compuzone/sample-crawl.mjs",
     "crawl:danawa:samples": "node JHSComputer_Agent/danawa/sample-crawl.mjs",
     "analyze:samples": "node JHSComputer_Agent/analysis/analyze-samples.mjs",
+    "generate:jhs-recommendations": "npm run generate:jhs-recommendations -w @jhs-computer/agent",
+    "generate:jhs-real-db-posts": "npm run generate:jhs-real-db-posts -w @jhs-computer/agent",
+    "analyze:jhs-youtube": "npm run analyze:jhs-youtube -w @jhs-computer/agent",
+    "agent:auto": "bash scripts/agent-automation.sh",
     "start:infra": "npm run db:up && docker compose up -d redis",
     "stop:infra": "npm run db:down && docker compose down"
   },

@@ -11,3 +11,7 @@ docker-data
 *.tsbuildinfo
 outputs/db-definition/MonitoringRealtimeProcessMonitoring_*.csv
 project/samples/**/trash/
+
+# External vendor crawl/extracted data
+data/
+project/samples/

@@ -2,6 +2,7 @@ export type Purpose = '게임' | '방송' | '영상편집' | '사무' | 'AI';
 export type Resolution = 'FHD' | 'QHD' | '4K';
 export type Priority = '성능 우선' | '가성비 우선' | '감성 우선' | '업그레이드 우선';
 export type PartCategory = 'CPU' | '메인보드' | 'RAM' | '그래픽카드' | 'SSD' | '파워' | '케이스' | '쿨러';
+export type WindowsOptionValue = 'INSTALL_ONLY' | 'WINDOWS_11_HOME_FPP' | 'WINDOWS_11_PRO_FPP' | 'NONE';
 
 export type CatalogPart = {
   id: string;
@@ -24,7 +25,7 @@ export type QuoteInput = {
   games: string[];
   resolution: Resolution;
   storage: '500GB' | '1TB' | '2TB';
-  windows: '포함' | '설치만' | '미포함';
+  windows: WindowsOptionValue;
   priority: Priority;
 };
 
@@ -33,6 +34,7 @@ export type QuotePart = {
   name: string;
   memo: string;
   price: number;
+  quantity?: number;
   supplier: string;
   productNo?: string;
   imageUrl?: string;
@@ -45,6 +47,10 @@ export type PerformanceResult = {
   grade: '쾌적' | '좋음' | '플레이 가능' | '비추천';
   fpsMin: number;
   fpsMax: number;
+  isEstimated?: boolean;
+  isResolutionAdjusted?: boolean;
+  sampleCount?: number;
+  bestQuality?: string;
 };
 
 export type Quote = {
@@ -65,6 +71,7 @@ export type Quote = {
 };
 
 export type ManualSelection = Partial<Record<PartCategory, CatalogPart>>;
+export type ManualQuantities = Partial<Record<PartCategory, number>>;
 
 export type CartQuote = {
   id: string;
@@ -100,6 +107,10 @@ export type Order = {
   deliveryMemo: string;
   trackingCompany?: string;
   trackingNo?: string;
+  paymentBankName?: string;
+  paymentAccountNo?: string;
+  paymentAccountHolder?: string;
+  paymentAmount?: number;
   histories: Array<{
     status: OrderStatus;
     message: string;

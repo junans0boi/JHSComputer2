@@ -33,15 +33,16 @@ export class Order {
   @JoinColumn({ name: 'USER_ID' })
   user!: User;
 
-  @Column({ name: 'QUOTE_ID', type: 'bigint' })
-  quoteId!: string;
+  @Column({ name: 'QUOTE_ID', type: 'bigint', nullable: true })
+  quoteId!: string | null;
 
   @ManyToOne(() => Quote, (quote) => quote.orders, {
-    onDelete: 'RESTRICT',
+    nullable: true,
+    onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'QUOTE_ID' })
-  quote!: Quote;
+  quote!: Quote | null;
 
   @Column({
     name: 'STATUS',
@@ -90,6 +91,12 @@ export class Order {
     nullable: true,
   })
   deliveryMemo!: string | null;
+
+  @Column({ name: 'TRACKING_COMPANY', type: 'varchar', length: 40, nullable: true })
+  trackingCompany!: string | null;
+
+  @Column({ name: 'TRACKING_NO', type: 'varchar', length: 80, nullable: true })
+  trackingNo!: string | null;
 
   @Column({ name: 'SUBTOTAL_PARTS_PRICE', type: 'int', default: 0 })
   subtotalPartsPrice!: number;

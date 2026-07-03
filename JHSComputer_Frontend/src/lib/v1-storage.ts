@@ -1,9 +1,11 @@
-import type { CartQuote, CatalogPart, ManualSelection, Order, OrderStatus, PartCategory, Quote } from './v1-types';
+import type { CartQuote, CatalogPart, ManualQuantities, ManualSelection, Order, OrderStatus, PartCategory, Quote } from './v1-types';
+import { bankTransferInfo } from './payment-config';
 
 const quoteKey = 'jhscomputer.v1.quotes';
 const orderKey = 'jhscomputer.v1.orders';
 const cartKey = 'jhscomputer.v1.cartQuotes';
 const manualSelectionKey = 'jhscomputer.v1.manualSelection';
+const manualQuantitiesKey = 'jhscomputer.v1.manualQuantities';
 
 export const statusLabels: Record<OrderStatus, string> = {
   ADMIN_REVIEW: '관리자 검토',
@@ -21,7 +23,6 @@ export const statusLabels: Record<OrderStatus, string> = {
 };
 
 export const orderFlow: OrderStatus[] = [
-  'ADMIN_REVIEW',
   'WAITING_DEPOSIT',
   'DEPOSIT_CONFIRMED',
   'PARTS_ORDERING',
@@ -54,6 +55,18 @@ export function loadManualSelection(): ManualSelection {
   return readJson<ManualSelection>(manualSelectionKey, {});
 }
 
+export function saveManualSelection(selection: ManualSelection) {
+  writeJson(manualSelectionKey, selection);
+}
+
+export function loadManualQuantities(): ManualQuantities {
+  return readJson<ManualQuantities>(manualQuantitiesKey, {});
+}
+
+export function saveManualQuantities(quantities: ManualQuantities) {
+  writeJson(manualQuantitiesKey, quantities);
+}
+
 export function selectManualPart(part: CatalogPart) {
   const selection = loadManualSelection();
   selection[part.category] = part;
@@ -70,6 +83,7 @@ export function removeManualPart(category: PartCategory) {
 
 export function clearManualSelection() {
   writeJson(manualSelectionKey, {});
+  writeJson(manualQuantitiesKey, {});
 }
 
 export function loadCartQuotes(): CartQuote[] {
@@ -77,15 +91,31 @@ export function loadCartQuotes(): CartQuote[] {
 }
 
 export function addQuoteToCart(quote: Quote) {
-  const cartQuote: CartQuote = {
-    id: `C-${Date.now()}`,
-    quote,
-    addedAt: new Date().toISOString(),
-  };
-  const cartQuotes = [cartQuote, ...loadCartQuotes()].slice(0, 30);
+  const currentCartQuotes = loadCartQuotes();
+  const existingCartQuote = currentCartQuotes.find((item) => isSameCartQuote(item.quote.id, quote.id));
+  const cartQuote: CartQuote = existingCartQuote
+    ? { ...existingCartQuote, quote, addedAt: new Date().toISOString() }
+    : {
+        id: `C-${Date.now()}`,
+        quote,
+        addedAt: new Date().toISOString(),
+      };
+  const cartQuotes = [
+    cartQuote,
+    ...currentCartQuotes.filter((item) => item.id !== cartQuote.id && !isSameCartQuote(item.quote.id, quote.id)),
+  ].slice(0, 30);
   writeJson(cartKey, cartQuotes);
   saveQuote(quote);
   return cartQuote;
+}
+
+function isSameCartQuote(leftQuoteId: string, rightQuoteId: string) {
+  if (leftQuoteId === rightQuoteId) return true;
+  return isPartsShoppingQuote(leftQuoteId) && isPartsShoppingQuote(rightQuoteId);
+}
+
+function isPartsShoppingQuote(quoteId: string) {
+  return quoteId === 'Q-PARTS-ACTIVE' || quoteId.startsWith('Q-PARTS-');
 }
 
 export function removeCartQuote(cartQuoteId: string) {
@@ -114,13 +144,17 @@ export function createOrderFromQuote(
     id: `O-${Date.now()}`,
     orderNo,
     quote: { ...quote, status: 'ORDERED' },
-    status: 'ADMIN_REVIEW',
+    status: 'WAITING_DEPOSIT',
     createdAt: now,
+    paymentBankName: bankTransferInfo.bankName,
+    paymentAccountNo: bankTransferInfo.accountNo,
+    paymentAccountHolder: bankTransferInfo.accountHolder,
+    paymentAmount: quote.total,
     ...delivery,
     histories: [
       {
-        status: 'ADMIN_REVIEW',
-        message: '주문이 접수되었습니다. 운영자가 가격과 재고를 확인합니다.',
+        status: 'WAITING_DEPOSIT',
+        message: '주문이 접수되었습니다. 안내된 계좌로 입금해주시면 확인 후 조립을 시작합니다.',
         at: now,
       },
     ],

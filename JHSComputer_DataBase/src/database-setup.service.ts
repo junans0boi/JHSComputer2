@@ -69,7 +69,15 @@ export class DatabaseSetupService {
       username: target.username,
       password: target.password,
     });
-    const orderedFiles = ['01_schema.sql', '02_indexes.sql', '03_seed_master.sql', '04_seed_games.sql'];
+    const orderedFiles = [
+      '01_schema.sql',
+      '02_indexes.sql',
+      '03_seed_master.sql',
+      '04_seed_games.sql',
+      '05_benchmark_schema.sql',
+      '06_cart_schema.sql',
+      '07_recommendation_posts.sql',
+    ];
 
     try {
       for (const fileName of orderedFiles) {

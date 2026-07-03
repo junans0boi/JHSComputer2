@@ -7,6 +7,11 @@ import { QuotesModule } from './quotes/quotes.module';
 import { OrdersModule } from './orders/orders.module';
 import { UsersModule } from './users/users.module';
 import { CommonCodesModule } from './common-codes/common-codes.module';
+import { BenchmarksModule } from './benchmarks/benchmarks.module';
+import { AuthModule } from './auth/auth.module';
+import { CartModule } from './cart/cart.module';
+import { AiModule } from './ai/ai.module';
+import { RecommendationsModule } from './recommendations/recommendations.module';
 
 @Module({
   imports: [
@@ -35,6 +40,11 @@ import { CommonCodesModule } from './common-codes/common-codes.module';
     OrdersModule,
     UsersModule,
     CommonCodesModule,
+    BenchmarksModule,
+    AuthModule,
+    CartModule,
+    AiModule,
+    RecommendationsModule,
   ],
   controllers: [HealthController],
 })

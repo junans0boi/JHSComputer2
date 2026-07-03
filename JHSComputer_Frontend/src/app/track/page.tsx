@@ -1,15 +1,36 @@
 'use client';
 
 import { Search, Truck } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { AppShell } from '@/components/AppShell';
+import { StatusBadge } from '@/components/ui/Badge';
+import { Button, LinkButton } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { FormField, TextInput } from '@/components/ui/FormField';
+import { IconTitle, PanelCard } from '@/components/ui/PanelCard';
+import { getCjTrackingUrl, getTrackingCompanyLabel } from '@/lib/delivery-tracking';
+import { bankTransferInfo } from '@/lib/payment-config';
 import { loadOrders, orderFlow, statusLabels } from '@/lib/v1-storage';
 import type { Order } from '@/lib/v1-types';
+
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:6002/api';
+
+type ServerTrackOrder = {
+  id: string;
+  orderNo: string;
+  status: string;
+  recipientName: string;
+  address1: string;
+  address2?: string | null;
+  totalPrice: number;
+  trackingCompany?: string | null;
+  trackingNo?: string | null;
+};
 
 export default function TrackPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [keyword, setKeyword] = useState('');
+  const [serverOrder, setServerOrder] = useState<ServerTrackOrder | null>(null);
 
   useEffect(() => {
     const currentOrders = loadOrders();
@@ -23,34 +44,50 @@ export default function TrackPage() {
     return orders.find((order) => order.orderNo.toLowerCase() === normalizedKeyword) ?? orders[0];
   }, [keyword, orders]);
 
-  const currentStep = selectedOrder ? orderFlow.indexOf(selectedOrder.status) : -1;
+  useEffect(() => {
+    const orderNo = keyword.trim();
+    if (!orderNo) {
+      setServerOrder(null);
+      return;
+    }
+    let cancelled = false;
+    fetch(`${apiBaseUrl}/orders/track/${encodeURIComponent(orderNo)}`)
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => { if (!cancelled) setServerOrder(data); })
+      .catch(() => { if (!cancelled) setServerOrder(null); });
+    return () => { cancelled = true; };
+  }, [keyword]);
+
+  const currentStatus = (serverOrder?.status ?? selectedOrder?.status) as Order['status'] | undefined;
+  const currentStep = currentStatus ? orderFlow.indexOf(currentStatus) : -1;
+  const trackingCompany = serverOrder?.trackingCompany ?? selectedOrder?.trackingCompany;
+  const trackingNo = serverOrder?.trackingNo ?? selectedOrder?.trackingNo;
+  const totalPrice = serverOrder?.totalPrice ?? selectedOrder?.quote.total ?? 0;
+  const address = serverOrder ? `${serverOrder.address1} ${serverOrder.address2 ?? ''}` : selectedOrder ? `${selectedOrder.address1} ${selectedOrder.address2}` : '';
 
   return (
     <AppShell>
-      <section className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="rounded-2xl border border-line bg-white p-4 shadow-soft md:p-5">
-          <div className="flex items-center justify-between gap-3 border-b border-line pb-4">
-            <div>
-              <h2 className="text-xl font-black">주문·배송 조회</h2>
-              <p className="mt-1 text-sm text-slate-600">주문번호로 접수부터 배송 완료까지 확인합니다.</p>
-            </div>
-            <Truck className="text-brand" />
-          </div>
+      <section className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+        <PanelCard>
+          <IconTitle
+            description="주문번호로 접수부터 배송 완료까지 확인합니다."
+            icon={<Truck />}
+            title="주문·배송 조회"
+          />
 
-          <label className="mt-5 grid gap-2">
-            <span className="text-sm font-black">주문번호</span>
+          <FormField className="mt-5" label="주문번호">
             <div className="flex gap-2">
-              <input
-                className="h-12 flex-1 rounded-xl border border-line bg-white px-3 outline-none transition focus:border-brand"
+              <TextInput
+                className="h-12 flex-1"
                 onChange={(event) => setKeyword(event.target.value)}
                 placeholder="JHS-..."
                 value={keyword}
               />
-              <button className="flex h-12 w-12 items-center justify-center rounded-xl bg-ink text-white" type="button">
+              <Button className="h-12 w-12 px-0" type="button" variant="dark">
                 <Search size={18} />
-              </button>
+              </Button>
             </div>
-          </label>
+          </FormField>
 
           <div className="mt-5 grid gap-2">
             {orders.map((order) => (
@@ -71,31 +108,47 @@ export default function TrackPage() {
           </div>
 
           {!orders.length && (
-            <div className="mt-5 rounded-xl border border-dashed border-line p-5 text-center text-sm text-slate-600">
-              아직 주문이 없습니다. 먼저 견적을 만들고 주문을 접수해보세요.
-              <Link className="mt-3 block font-black text-brand" href="/quote">
-                견적 만들기
-              </Link>
+            <div className="mt-5">
+              <EmptyState
+                action={<LinkButton href="/quote">견적 만들기</LinkButton>}
+                description="먼저 견적을 만들고 주문을 접수해보세요."
+                title="아직 주문이 없습니다."
+              />
             </div>
           )}
-        </div>
+        </PanelCard>
 
-        <div className="rounded-2xl border border-line bg-white p-4 shadow-soft md:p-5">
-          {selectedOrder ? (
+        <PanelCard>
+          {serverOrder || selectedOrder ? (
             <>
               <div className="flex flex-col justify-between gap-3 border-b border-line pb-4 md:flex-row md:items-end">
                 <div>
-                  <p className="text-sm font-bold text-brand">{selectedOrder.orderNo}</p>
-                  <h2 className="mt-1 text-2xl font-black">{statusLabels[selectedOrder.status]}</h2>
+                  <p className="text-sm font-bold text-brand">{serverOrder?.orderNo ?? selectedOrder?.orderNo}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
+                    <h2 className="text-2xl font-black">{currentStatus ? statusLabels[currentStatus] ?? currentStatus : '조회 중'}</h2>
+                    {currentStatus && <StatusBadge label={statusLabels[currentStatus] ?? currentStatus} status={currentStatus} />}
+                  </div>
                   <p className="mt-1 text-sm text-slate-600">
-                    {selectedOrder.address1} {selectedOrder.address2}
+                    {address}
                   </p>
                 </div>
                 <div className="rounded-xl bg-panel px-4 py-3 text-sm">
                   <div className="text-slate-500">총 결제 예정금액</div>
-                  <div className="text-xl font-black text-brand">{selectedOrder.quote.total.toLocaleString()}원</div>
+                  <div className="text-xl font-black text-brand">{totalPrice.toLocaleString()}원</div>
                 </div>
               </div>
+
+              {currentStatus === 'WAITING_DEPOSIT' && (
+                <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                  <h3 className="font-black text-amber-900">입금 안내</h3>
+                  <div className="mt-3 grid gap-2 text-sm">
+                    <PaymentLine label="입금금액" value={`${totalPrice.toLocaleString()}원`} />
+                    <PaymentLine label="입금은행" value={selectedOrder?.paymentBankName ?? bankTransferInfo.bankName} />
+                    <PaymentLine label="계좌번호" value={selectedOrder?.paymentAccountNo ?? bankTransferInfo.accountNo} />
+                    <PaymentLine label="예금주" value={selectedOrder?.paymentAccountHolder ?? bankTransferInfo.accountHolder} />
+                  </div>
+                </div>
+              )}
 
               <div className="mt-5 grid gap-3">
                 {orderFlow.map((status, index) => {
@@ -112,21 +165,40 @@ export default function TrackPage() {
                 })}
               </div>
 
-              {(selectedOrder.trackingCompany || selectedOrder.trackingNo) && (
+              {(trackingCompany || trackingNo) && (
                 <div className="mt-5 rounded-xl border border-line bg-panel p-4">
                   <div className="text-sm text-slate-500">운송장</div>
                   <div className="mt-1 font-black">
-                    {selectedOrder.trackingCompany} · {selectedOrder.trackingNo}
+                    {getTrackingCompanyLabel(trackingCompany)} · {trackingNo}
                   </div>
+                  {trackingNo && (
+                    <a
+                      className="mt-3 inline-flex rounded-xl bg-ink px-4 py-2 text-sm font-black text-white hover:bg-brand"
+                      href={getCjTrackingUrl(trackingNo)}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      CJ대한통운 배송 현황 보기
+                    </a>
+                  )}
                 </div>
               )}
             </>
           ) : (
             <div className="grid min-h-80 place-items-center text-center text-slate-600">조회할 주문을 기다리는 중입니다.</div>
           )}
-        </div>
+        </PanelCard>
       </section>
     </AppShell>
+  );
+}
+
+function PaymentLine({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-xl bg-white/70 px-3 py-2">
+      <span className="text-amber-900/70">{label}</span>
+      <span className="text-right font-black text-slate-950">{value}</span>
+    </div>
   );
 }
 

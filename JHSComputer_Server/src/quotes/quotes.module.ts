@@ -10,9 +10,10 @@ import { PartCategory } from '../parts/part-category.entity';
 import { User } from '../users/user.entity';
 import { Order } from '../orders/order.entity';
 import { OrderItem } from '../orders/order-item.entity';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Quote, QuoteItem, QuoteTemplate, Part, PartCategory, User, Order, OrderItem])],
+  imports: [TypeOrmModule.forFeature([Quote, QuoteItem, QuoteTemplate, Part, PartCategory, User, Order, OrderItem]), AuthModule],
   controllers: [QuotesController],
   providers: [QuotesService],
   exports: [QuotesService],

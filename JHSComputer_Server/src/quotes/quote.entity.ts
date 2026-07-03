@@ -66,8 +66,8 @@ export class Quote {
   })
   budgetScope!: BudgetScope;
 
-  @Column({ name: 'PURPOSE', type: 'varchar', length: 30 })
-  purpose!: Purpose;
+  @Column({ name: 'PURPOSE', type: 'varchar', length: 30, nullable: true })
+  purpose!: Purpose | null;
 
   @Column({ name: 'RESOLUTION', type: 'varchar', length: 30, nullable: true })
   resolution!: Resolution | null;
@@ -124,6 +124,9 @@ export class Quote {
 
   @Column({ name: 'TOTAL_PRICE', type: 'int', default: 0 })
   totalPrice!: number;
+
+  @Column({ name: 'SNAPSHOT_JSON', type: 'json', nullable: true })
+  snapshotJson!: any | null;
 
   @Column({ name: 'LAST_PRICE_CHECKED_DT', type: 'datetime', nullable: true })
   lastPriceCheckedAt!: Date | null;

@@ -1,235 +1,372 @@
 'use client';
 
-import { RefreshCcw, Settings, ShieldCheck } from 'lucide-react';
+import { AlertCircle, Package, RefreshCcw, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/AppShell';
-import { compuzoneCatalog } from '@/lib/compuzone-catalog';
-import { getProductStatus } from '@/lib/common-codes';
-import { getPartAttributes } from '@/lib/part-filters';
-import { loadServerCatalog } from '@/lib/server-parts';
-import { loadOrders, orderFlow, statusLabels, updateOrderStatus } from '@/lib/v1-storage';
-import type { CatalogPart, Order, OrderStatus } from '@/lib/v1-types';
+import { RecommendationPostManager } from '@/components/admin/RecommendationPostManager';
+import { StatusBadge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { TextInput } from '@/components/ui/FormField';
+import { PanelCard } from '@/components/ui/PanelCard';
+import { getSession } from '@/lib/auth-client';
+import { getCjTrackingUrl, getTrackingCompanyLabel } from '@/lib/delivery-tracking';
+import { orderFlow, statusLabels } from '@/lib/v1-storage';
+import type { OrderStatus } from '@/lib/v1-types';
+
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:6002/api';
+
+type ServerOrder = {
+  id: string;
+  orderNo: string;
+  status: string;
+  recipientName: string;
+  recipientPhone: string;
+  address1: string;
+  address2?: string;
+  deliveryMemo?: string;
+  trackingCompany?: string | null;
+  trackingNo?: string | null;
+  totalPrice: number;
+  subtotalPartsPrice: number;
+  assemblyFee: number;
+  windowsFee: number;
+  shippingFee: number;
+  items: Array<{ categoryCode: string; partNameSnapshot: string; quantity: number; publicPrice: number }>;
+  statusHistories: Array<{ toStatus: string; memo?: string; createdAt: string }>;
+  createdAt: string;
+};
 
 export default function AdminPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [selectedId, setSelectedId] = useState<string>();
-  const [specQueue, setSpecQueue] = useState<CatalogPart[]>(compuzoneCatalog);
-  const [specSource, setSpecSource] = useState<'DB' | 'LOCAL'>('LOCAL');
-  const selectedOrder = useMemo(() => orders.find((order) => order.id === selectedId) ?? orders[0], [orders, selectedId]);
+  const router = useRouter();
+  const [serverOrders, setServerOrders] = useState<ServerOrder[]>([]);
+  const [selectedServerOrder, setSelectedServerOrder] = useState<ServerOrder | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [tab, setTab] = useState<'orders' | 'recommendations'>('orders');
+  const [mounted, setMounted] = useState(false);
+  const [session, setSession] = useState<ReturnType<typeof getSession>>(null);
+  const isAdmin = mounted && session?.user?.role === 'ADMIN';
 
-  const refresh = () => {
-    const nextOrders = loadOrders();
-    setOrders(nextOrders);
-    setSelectedId((currentId) => currentId ?? nextOrders[0]?.id);
+  const fetchServerOrders = async (accessToken = session?.accessToken) => {
+    if (!accessToken) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${apiBaseUrl}/orders?page=1&limit=50`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setServerOrders(data.items ?? []);
+        if (data.items?.length > 0) setSelectedServerOrder(data.items[0]);
+      }
+    } catch {
+      // 서버 연결 실패 시 무시
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    refresh();
-    loadServerCatalog()
-      .then((items) => {
-        if (!items.length) return;
-        setSpecQueue(items);
-        setSpecSource('DB');
-      })
-      .catch(() => setSpecSource('LOCAL'));
+    setSession(getSession());
+    setMounted(true);
   }, []);
 
-  const handleStatusChange = (status: OrderStatus) => {
-    if (!selectedOrder) return;
-    updateOrderStatus(selectedOrder.id, status);
-    refresh();
+  useEffect(() => {
+    if (!mounted) return;
+    if (session?.user?.role !== 'ADMIN') {
+      router.push('/login');
+      return;
+    }
+    void fetchServerOrders(session.accessToken);
+  }, [mounted, session?.accessToken, session?.user?.role]);
+
+  const handleServerStatusChange = async (orderId: string, status: string) => {
+    if (!session?.accessToken) return;
+    try {
+      await fetch(`${apiBaseUrl}/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+      await fetchServerOrders();
+    } catch {
+      alert('상태 변경에 실패했습니다.');
+    }
   };
+
+  const handleServerShippingUpdate = async (orderId: string, trackingNo: string) => {
+    if (!session?.accessToken) return;
+    try {
+      await fetch(`${apiBaseUrl}/orders/${orderId}/shipping`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        body: JSON.stringify({ trackingCompany: 'CJ', trackingNo }),
+      });
+      await fetchServerOrders();
+    } catch {
+      alert('운송장 등록에 실패했습니다.');
+    }
+  };
+
+  if (!mounted) {
+    return (
+      <AppShell>
+        <div className="flex min-h-[400px] items-center justify-center">
+          <div className="text-center">
+            <ShieldCheck className="mx-auto animate-pulse text-slate-300" size={48} />
+            <p className="mt-4 font-black text-slate-600">관리자 권한을 확인하는 중입니다.</p>
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <AppShell>
+        <div className="flex min-h-[400px] items-center justify-center">
+          <div className="text-center">
+            <AlertCircle className="mx-auto text-red-400" size={48} />
+            <p className="mt-4 font-black text-slate-600">관리자 권한이 필요합니다.</p>
+            <Link className="mt-4 inline-block rounded-xl bg-brand px-6 py-3 font-black text-white" href="/login">
+              로그인
+            </Link>
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>
-      <section className="grid gap-5 lg:grid-cols-[0.82fr_1.18fr]">
-        <div className="rounded-2xl border border-line bg-white p-4 shadow-soft md:p-5">
-          <div className="flex items-center justify-between gap-3 border-b border-line pb-4">
+      <div className="grid gap-5">
+        {/* 헤더 */}
+        <PanelCard className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+              <ShieldCheck size={20} />
+            </div>
             <div>
-              <h2 className="text-xl font-black">관리자 주문 목록</h2>
-              <p className="mt-1 text-sm text-slate-600">접수된 주문을 확인하고 진행 상태를 변경합니다.</p>
+              <h2 className="text-xl font-black">관리자 대시보드</h2>
+              <p className="text-sm text-slate-500">주문 관리 및 상태 변경</p>
             </div>
-            <button className="rounded-xl border border-line p-3 text-slate-600 hover:border-brand hover:text-brand" onClick={refresh} type="button">
-              <RefreshCcw size={18} />
-            </button>
           </div>
-
-          <div className="mt-5 grid gap-2">
-            {orders.map((order) => (
-              <button
-                className={`rounded-xl border p-3 text-left transition ${
-                  selectedOrder?.id === order.id ? 'border-brand bg-teal-50' : 'border-line bg-white hover:border-brand'
-                }`}
-                key={order.id}
-                onClick={() => setSelectedId(order.id)}
-                type="button"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <strong>{order.orderNo}</strong>
-                  <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-brand">{statusLabels[order.status]}</span>
-                </div>
-                <div className="mt-2 text-sm text-slate-600">
-                  {order.recipientName} · {order.quote.input.games.join(', ')} · {order.quote.total.toLocaleString()}원
-                </div>
-              </button>
-            ))}
+          <div className="flex gap-2">
+            <Button
+              onClick={() => { void fetchServerOrders(); }}
+              type="button"
+              variant="outline"
+            >
+              <RefreshCcw size={15} />
+              새로고침
+            </Button>
           </div>
+        </PanelCard>
 
-          {!orders.length && (
-            <div className="mt-5 rounded-xl border border-dashed border-line p-5 text-center text-sm text-slate-600">
-              아직 관리할 주문이 없습니다.
-              <Link className="mt-3 block font-black text-brand" href="/order">
-                테스트 주문 만들기
-              </Link>
-            </div>
-          )}
+        {/* 탭 전환 */}
+        <div className="flex rounded-2xl border border-line bg-white p-1 shadow-soft w-fit">
+          <button
+            className={`rounded-xl px-5 py-2 text-sm font-black transition ${tab === 'orders' ? 'bg-brand text-white' : 'text-slate-600 hover:bg-slate-50'}`}
+            onClick={() => setTab('orders')}
+            type="button"
+          >
+            주문 ({serverOrders.length})
+          </button>
+          <button
+            className={`rounded-xl px-5 py-2 text-sm font-black transition ${tab === 'recommendations' ? 'bg-brand text-white' : 'text-slate-600 hover:bg-slate-50'}`}
+            onClick={() => setTab('recommendations')}
+            type="button"
+          >
+            추천 게시글
+          </button>
         </div>
 
-        <div className="rounded-2xl border border-line bg-white p-4 shadow-soft md:p-5">
-          {selectedOrder ? (
-            <>
-              <div className="flex flex-col justify-between gap-3 border-b border-line pb-4 md:flex-row md:items-end">
-                <div>
-                  <p className="text-sm font-bold text-brand">{selectedOrder.orderNo}</p>
-                  <h2 className="mt-1 text-2xl font-black">{selectedOrder.recipientName}님 주문</h2>
-                  <p className="mt-1 text-sm text-slate-600">
-                    {selectedOrder.recipientPhone} · {selectedOrder.address1} {selectedOrder.address2}
-                  </p>
-                </div>
-                <Settings className="text-brand" />
-              </div>
-
-              <div className="mt-5 grid gap-5">
-                <div className="grid gap-2 rounded-xl border border-line bg-panel p-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">현재 상태</span>
-                    <strong>{statusLabels[selectedOrder.status]}</strong>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">주문 금액</span>
-                    <strong>{selectedOrder.quote.total.toLocaleString()}원</strong>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">배송 메모</span>
-                    <strong>{selectedOrder.deliveryMemo || '없음'}</strong>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-black">상태 변경</h3>
-                  <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-3">
-                    {[...orderFlow, 'ON_HOLD', 'CANCELLED'].map((status) => (
-                      <button
-                        className={`rounded-xl border px-3 py-2 text-sm font-bold transition ${
-                          selectedOrder.status === status ? 'border-brand bg-teal-50 text-brand' : 'border-line bg-white hover:border-brand'
-                        }`}
-                        key={status}
-                        onClick={() => handleStatusChange(status as OrderStatus)}
-                        type="button"
-                      >
-                        {statusLabels[status as OrderStatus]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-black">주문 부품</h3>
-                  <div className="mt-3 overflow-hidden rounded-xl border border-line">
-                    {selectedOrder.quote.parts.map((part) => (
-                      <div className="grid grid-cols-[80px_1fr_auto] gap-3 border-t border-line px-3 py-3 first:border-t-0" key={part.category}>
-                        <div className="font-black text-brand">{part.category}</div>
-                        <div>
-                          <div className="font-bold">{part.name}</div>
-                          <div className="text-xs text-slate-500">{part.memo}</div>
-                        </div>
-                        <div className="font-bold">{part.price.toLocaleString()}원</div>
+        {tab === 'recommendations' ? (
+          <RecommendationPostManager accessToken={session?.accessToken} />
+        ) : (
+          <section className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+            <PanelCard>
+              {loading ? (
+                <div className="flex h-32 items-center justify-center text-slate-500">로딩 중...</div>
+              ) : serverOrders.length > 0 ? (
+                <div className="grid gap-2">
+                  {serverOrders.map((order) => (
+                    <button
+                      className={`rounded-xl border p-3 text-left transition ${
+                        selectedServerOrder?.id === order.id ? 'border-brand bg-teal-50' : 'border-line hover:border-brand'
+                      }`}
+                      key={order.id}
+                      onClick={() => setSelectedServerOrder(order)}
+                      type="button"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <strong className="text-sm">{order.orderNo}</strong>
+                        <StatusBadge label={statusLabels[order.status as OrderStatus] ?? order.status} status={order.status} />
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-black">상태 이력</h3>
-                  <div className="mt-3 grid gap-2">
-                    {selectedOrder.histories.map((history) => (
-                      <div className="rounded-xl border border-line bg-panel p-3 text-sm" key={`${history.status}-${history.at}`}>
-                        <strong>{statusLabels[history.status]}</strong>
-                        <p className="mt-1 text-slate-600">{history.message}</p>
-                        <p className="mt-1 text-xs text-slate-400">{new Date(history.at).toLocaleString('ko-KR')}</p>
+                      <div className="mt-1 text-xs text-slate-500">
+                        {order.recipientName} · {order.totalPrice.toLocaleString()}원
                       </div>
-                    ))}
-                  </div>
+                    </button>
+                  ))}
                 </div>
-              </div>
-            </>
-          ) : (
-            <div className="grid min-h-96 place-items-center text-center text-slate-600">주문을 선택하면 상세 관리 화면이 열립니다.</div>
-          )}
-        </div>
-      </section>
-
-      <section className="mt-5 grid gap-5 lg:grid-cols-[1fr_0.9fr]">
-        <div className="rounded-2xl border border-line bg-white p-4 shadow-soft md:p-5">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="text-brand" />
-            <div>
-              <h2 className="text-xl font-black">스펙 검수 큐</h2>
-              <p className="mt-1 text-sm text-slate-600">
-                {specSource === 'DB' ? 'DB 적재 상품의 소켓/메모리/길이/높이 값을 검수합니다.' : '샘플 카탈로그의 소켓/메모리/길이/높이 값을 검수합니다.'}
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 overflow-hidden rounded-xl border border-line">
-            {specQueue.slice(0, 8).map((part) => {
-              const attrs = getPartAttributes(part);
-              const status = getProductStatus(part);
-              return (
-                <div className="grid gap-3 border-t border-line p-3 first:border-t-0 md:grid-cols-[100px_1fr_160px]" key={part.id}>
-                  <strong className="text-brand">{part.category}</strong>
+              ) : (
+                <div className="flex h-40 items-center justify-center text-center text-slate-500">
                   <div>
-                    <div className="line-clamp-1 font-bold">{part.name}</div>
-                    <div className="mt-1 flex flex-wrap gap-1 text-xs text-slate-500">
-                      {[...attrs.sockets, ...attrs.memoryTypes, ...attrs.formFactors, attrs.wattage ? `${attrs.wattage}W` : undefined, attrs.maxGpuLengthMm ? `VGA ${attrs.maxGpuLengthMm}mm` : undefined]
-                        .filter(Boolean)
-                        .map((item) => (
-                          <span className="rounded-full bg-panel px-2 py-1" key={item}>
-                            {item}
-                          </span>
-                        ))}
+                    <Package size={32} className="mx-auto text-slate-300" />
+                    <p className="mt-2 text-sm">아직 DB에 저장된 주문이 없습니다.</p>
+                  </div>
+                </div>
+              )}
+            </PanelCard>
+            <PanelCard>
+              {selectedServerOrder ? (
+                <div className="grid gap-4">
+                  <div className="border-b border-line pb-4">
+                    <p className="text-sm font-bold text-brand">{selectedServerOrder.orderNo}</p>
+                    <h2 className="mt-1 text-xl font-black">{selectedServerOrder.recipientName}님 주문</h2>
+                    <p className="text-sm text-slate-500">{selectedServerOrder.recipientPhone} · {selectedServerOrder.address1}</p>
+                  </div>
+
+                  <div className="grid gap-2 rounded-xl bg-slate-50 p-3 text-sm sm:grid-cols-2">
+                    <div>현재 상태</div>
+                    <div className="text-right font-black text-brand">
+                      {statusLabels[selectedServerOrder.status as OrderStatus] ?? selectedServerOrder.status}
+                    </div>
+                    <div>총 금액</div>
+                    <div className="text-right font-black">{selectedServerOrder.totalPrice.toLocaleString()}원</div>
+                    {selectedServerOrder.deliveryMemo && (
+                      <>
+                        <div>배송 메모</div>
+                        <div className="text-right">{selectedServerOrder.deliveryMemo}</div>
+                      </>
+                    )}
+                    {selectedServerOrder.trackingNo && (
+                      <>
+                        <div>운송장</div>
+                        <div className="text-right font-black">
+                          {getTrackingCompanyLabel(selectedServerOrder.trackingCompany)} · {selectedServerOrder.trackingNo}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  <ShippingEditor
+                    currentTrackingNo={selectedServerOrder.trackingNo ?? ''}
+                    onSubmit={(trackingNo) => handleServerShippingUpdate(selectedServerOrder.id, trackingNo)}
+                  />
+
+                  <div>
+                    <h3 className="font-black">상태 변경</h3>
+                    <div className="mt-2 grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+                      {[...orderFlow, 'ON_HOLD', 'CANCELLED'].map((status) => (
+                        <button
+                          className={`rounded-xl border px-3 py-2 text-sm font-bold transition ${
+                            selectedServerOrder.status === status
+                              ? 'border-brand bg-teal-50 text-brand'
+                              : 'border-line hover:border-brand'
+                          }`}
+                          key={status}
+                          onClick={() => handleServerStatusChange(selectedServerOrder.id, status)}
+                          type="button"
+                        >
+                          {statusLabels[status as OrderStatus] ?? status}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                  <span className="text-sm font-black text-slate-600">{status.nameKo}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
 
-        <div className="rounded-2xl border border-line bg-white p-4 shadow-soft md:p-5">
-          <h2 className="text-xl font-black">공통코드 운영 메모</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            `common_codes`는 상품 상태, 추천 배지, CPU 소켓, RAM 규격, 호환성 상태처럼 화면과 DB가 공유해야 하는 값을 관리합니다.
-            서버 API는 `/api/common-codes`, `/api/common-codes/:group` 형태로 준비했습니다.
-          </p>
-          <div className="mt-4 grid gap-2 text-sm">
-            <CodeRow label="productStatus" value="구매가능 · 재고부족 · 품절 · 관리자 확인 필요" />
-            <CodeRow label="badge" value="가성비 · 게임 추천 · 저소음 · 화이트 감성 · 재고안정" />
-            <CodeRow label="CPUSocket" value="AM3 · AM4 · AM5 · LGA1155 · LGA1700 · LGA1800" />
-            <CodeRow label="RAMSocket" value="DDR3 · DDR4 · DDR5" />
-          </div>
-        </div>
-      </section>
+                  {selectedServerOrder.items?.length > 0 && (
+                    <div>
+                      <h3 className="font-black">주문 부품</h3>
+                      <div className="mt-2 overflow-hidden rounded-xl border border-line">
+                        {selectedServerOrder.items.map((item, i) => (
+                          <div className="flex flex-col gap-2 border-t border-line px-3 py-2.5 text-sm first:border-t-0 sm:flex-row sm:items-center sm:justify-between" key={i}>
+                            <div className="min-w-0 safe-break">
+                            <span className="font-black text-brand mr-2">{item.categoryCode}</span>
+                            <span className="part-name text-sm">
+                              {item.partNameSnapshot}
+                            </span>
+                            </div>
+                            <div className="font-bold shrink-0">{item.publicPrice.toLocaleString()}원</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedServerOrder.statusHistories?.length > 0 && (
+                    <div>
+                      <h3 className="font-black">상태 이력</h3>
+                      <div className="mt-2 grid gap-1.5">
+                        {selectedServerOrder.statusHistories.map((h, i) => (
+                          <div className="rounded-xl border border-line bg-slate-50 p-3 text-sm" key={i}>
+                            <strong>{statusLabels[h.toStatus as OrderStatus] ?? h.toStatus}</strong>
+                            {h.memo && <p className="mt-1 text-slate-500">{h.memo}</p>}
+                            <p className="mt-1 text-xs text-slate-400">{new Date(h.createdAt).toLocaleString('ko-KR')}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex min-h-64 items-center justify-center text-slate-500">주문을 선택하세요</div>
+              )}
+            </PanelCard>
+          </section>
+        )}
+      </div>
     </AppShell>
   );
 }
 
-function CodeRow({ label, value }: { label: string; value: string }) {
+function ShippingEditor({
+  currentTrackingNo,
+  onSubmit,
+}: {
+  currentTrackingNo: string;
+  onSubmit: (trackingNo: string) => void;
+}) {
+  const [trackingNo, setTrackingNo] = useState(currentTrackingNo);
+
+  useEffect(() => {
+    setTrackingNo(currentTrackingNo);
+  }, [currentTrackingNo]);
+
   return (
-    <div className="rounded-xl border border-line bg-panel p-3">
-      <div className="font-black text-brand">{label}</div>
-      <div className="mt-1 text-slate-600">{value}</div>
+    <div className="rounded-xl border border-line bg-white p-3">
+      <h3 className="font-black">CJ대한통운 송장 등록</h3>
+      <div className="mt-2 grid gap-2 sm:grid-cols-[1fr_auto]">
+        <TextInput
+          onChange={(event) => setTrackingNo(event.target.value)}
+          placeholder="송장번호 숫자 입력"
+          value={trackingNo}
+        />
+        <Button
+          onClick={() => onSubmit(trackingNo)}
+          type="button"
+          variant="dark"
+        >
+          저장
+        </Button>
+      </div>
+      {trackingNo && (
+        <a
+          className="mt-2 inline-flex text-xs font-black text-brand hover:underline"
+          href={getCjTrackingUrl(trackingNo)}
+          rel="noreferrer"
+          target="_blank"
+        >
+          CJ 공식 배송현황 확인 →
+        </a>
+      )}
     </div>
   );
 }
