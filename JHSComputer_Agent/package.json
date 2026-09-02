@@ -19,11 +19,20 @@
     "crawl:danawa:samples": "node danawa/sample-crawl.mjs --out=../project/samples/danawa",
     "analyze:samples": "node analysis/analyze-samples.mjs --compuzone-root=../project/samples/compuzone --danawa-root=../project/samples/danawa --out=../project/analysis/data-shape",
     "sync:catalog": "node analysis/sync-catalog.mjs",
+    "run:crawl:compuzone":        "node run-agent.mjs crawl:compuzone:samples",
+    "run:crawl:compuzone:full":   "node run-agent.mjs crawl:compuzone:full",
+    "run:sync:compuzone":         "node run-agent.mjs sync:compuzone:db",
+    "run:sync:benchmark":         "node run-agent.mjs sync:kjwwang:benchmark-db",
+    "run:crawl:wanggapc":         "node run-agent.mjs crawl:wanggapc:html",
+    "run:sync:wanggapc":          "node run-agent.mjs sync:wanggapc:builds-db",
+    "run:generate:posts":         "node run-agent.mjs generate:jhs-recommendations",
+    "run:sync:catalog":           "node run-agent.mjs sync:catalog",
     "build": "node -e \"console.log('JHSComputer_Agent: no build step')\"",
     "typecheck": "node -e \"console.log('JHSComputer_Agent: no typecheck step')\""
   },
   "dependencies": {
     "cheerio": "^1.2.0",
-    "mysql2": "^3.14.3"
+    "dotenv": "^17.4.1",
+    "mysql2": "^3.24.3"
   }
 }

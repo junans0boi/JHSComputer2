@@ -13,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import { CartModule } from './cart/cart.module';
 import { AiModule } from './ai/ai.module';
 import { RecommendationsModule } from './recommendations/recommendations.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { RecommendationsModule } from './recommendations/recommendations.module'
     CartModule,
     AiModule,
     RecommendationsModule,
+    AdminModule,
   ],
   controllers: [HealthController],
 })

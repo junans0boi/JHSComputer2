@@ -43,7 +43,7 @@ export default function AdminPage() {
   const [serverOrders, setServerOrders] = useState<ServerOrder[]>([]);
   const [selectedServerOrder, setSelectedServerOrder] = useState<ServerOrder | null>(null);
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState<'orders' | 'recommendations'>('orders');
+  const [tab, setTab] = useState<'orders' | 'recommendations' | 'agents'>('orders');
   const [mounted, setMounted] = useState(false);
   const [session, setSession] = useState<ReturnType<typeof getSession>>(null);
   const isAdmin = mounted && session?.user?.role === 'ADMIN';
@@ -186,9 +186,18 @@ export default function AdminPage() {
           >
             추천 게시글
           </button>
+          <button
+            className={`rounded-xl px-5 py-2 text-sm font-black transition ${tab === 'agents' ? 'bg-brand text-white' : 'text-slate-600 hover:bg-slate-50'}`}
+            onClick={() => setTab('agents')}
+            type="button"
+          >
+            에이전트
+          </button>
         </div>
 
-        {tab === 'recommendations' ? (
+        {tab === 'agents' ? (
+          <AgentRunner accessToken={session?.accessToken} />
+        ) : tab === 'recommendations' ? (
           <RecommendationPostManager accessToken={session?.accessToken} />
         ) : (
           <section className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
@@ -324,6 +333,99 @@ export default function AdminPage() {
         )}
       </div>
     </AppShell>
+  );
+}
+
+const AGENTS = [
+  { scriptName: 'sync:kjwwang:benchmark-db',    label: '게임 벤치마크 → DB',  emoji: '🎮' },
+  { scriptName: 'crawl:compuzone:samples',       label: '컴퓀존 샘플 크롤링',  emoji: '🕷️' },
+  { scriptName: 'sync:compuzone:db',             label: '컴퓀존 → DB 동기화', emoji: '🗄️' },
+  { scriptName: 'crawl:wanggapc:html',           label: '왕가PC 수집',         emoji: '📥' },
+  { scriptName: 'sync:wanggapc:builds-db',       label: '왕가PC → DB 동기화', emoji: '🗄️' },
+  { scriptName: 'generate:jhs-recommendations',  label: '추천 포스트 생성',    emoji: '✍️' },
+  { scriptName: 'sync:catalog',                  label: '카탈로그 동기화',     emoji: '🔄' },
+] as const;
+
+type AgentStatus = 'idle' | 'running' | 'done' | 'error';
+
+function AgentRunner({ accessToken }: { accessToken?: string }) {
+  const [statuses, setStatuses] = useState<Record<string, AgentStatus>>({});
+  const [jobIds, setJobIds] = useState<Record<string, string>>({});
+
+  const pollStatus = async (scriptName: string, jobId: string) => {
+    if (!accessToken) return;
+    try {
+      const res = await fetch(`${apiBaseUrl}/admin/agents/jobs`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!res.ok) return;
+      const jobs = await res.json() as Array<{ jobId: string; scriptName: string; status: AgentStatus }>;
+      const job = jobs.find(j => j.jobId === jobId);
+      if (!job) return;
+      setStatuses(prev => ({ ...prev, [scriptName]: job.status }));
+      if (job.status === 'running') {
+        setTimeout(() => { void pollStatus(scriptName, jobId); }, 3000);
+      }
+    } catch {}
+  };
+
+  const run = async (scriptName: string) => {
+    if (!accessToken || statuses[scriptName] === 'running') return;
+    setStatuses(prev => ({ ...prev, [scriptName]: 'running' }));
+    try {
+      const res = await fetch(`${apiBaseUrl}/admin/agents/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({ scriptName }),
+      });
+      if (!res.ok) { setStatuses(prev => ({ ...prev, [scriptName]: 'error' })); return; }
+      const { jobId } = await res.json() as { jobId: string };
+      setJobIds(prev => ({ ...prev, [scriptName]: jobId }));
+      setTimeout(() => { void pollStatus(scriptName, jobId); }, 2000);
+    } catch {
+      setStatuses(prev => ({ ...prev, [scriptName]: 'error' }));
+    }
+  };
+
+  const statusColor: Record<AgentStatus, string> = {
+    idle: 'bg-slate-100 text-slate-500',
+    running: 'bg-amber-50 text-amber-600 animate-pulse',
+    done: 'bg-green-50 text-green-700',
+    error: 'bg-red-50 text-red-600',
+  };
+  const statusLabel: Record<AgentStatus, string> = {
+    idle: '대기', running: '실행 중', done: '완료', error: '실패',
+  };
+
+  return (
+    <div className="grid gap-3">
+      <p className="text-sm text-slate-500">실행 결과 상세는 Discord 알림으로 확인하세요.</p>
+      {AGENTS.map(({ scriptName, label, emoji }) => {
+        const st: AgentStatus = statuses[scriptName] ?? 'idle';
+        return (
+          <div key={scriptName} className="flex items-center justify-between rounded-xl border border-line bg-white p-4">
+            <div>
+              <span className="mr-2">{emoji}</span>
+              <span className="font-bold">{label}</span>
+              <div className="mt-0.5 text-xs text-slate-400">{scriptName}</div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className={`rounded-full px-2.5 py-1 text-xs font-black ${statusColor[st]}`}>
+                {statusLabel[st]}
+              </span>
+              <Button
+                disabled={st === 'running'}
+                onClick={() => { void run(scriptName); }}
+                type="button"
+                variant="outline"
+              >
+                실행
+              </Button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
