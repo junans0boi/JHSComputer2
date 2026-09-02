@@ -11,6 +11,8 @@ const ALLOWED_SCRIPTS = [
   'sync:wanggapc:builds-db',
   'generate:jhs-recommendations',
   'sync:catalog',
+  'pipeline:samples',
+  'pipeline:full',
 ] as const;
 
 type AgentStatus = 'running' | 'done' | 'error';
@@ -47,7 +49,12 @@ export class AdminController {
     const jobId = `${scriptName}-${Date.now()}`;
     this.jobs.set(jobId, { scriptName, status: 'running', startTime: Date.now() });
 
-    const child = spawn('node', ['run-agent.mjs', scriptName], {
+    const isPipeline = scriptName.startsWith('pipeline:');
+    const spawnArgs = isPipeline
+      ? ['pipeline.mjs', `--mode=${scriptName.split(':')[1]}`]
+      : ['run-agent.mjs', scriptName];
+
+    const child = spawn('node', spawnArgs, {
       cwd: this.agentDir,
       stdio: 'ignore',
       detached: true,

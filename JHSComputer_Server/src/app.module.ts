@@ -34,7 +34,7 @@ import { AdminModule } from './admin/admin.module';
         autoLoadEntities: true,
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: config.get<string>('DB_SYNC') === 'true',
-        charset: 'utf8mb4_unicode_ci',
+        charset: 'utf8mb4',
       }),
     }),
     DiscordModule,
