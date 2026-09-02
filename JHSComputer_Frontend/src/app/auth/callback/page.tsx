@@ -22,7 +22,7 @@ function CallbackHandler() {
       accessToken: token,
       user: {
         id: params.get('id') ?? '',
-        loginId: params.get('loginId') ?? null,
+        loginId: params.get('loginId') ?? '',
         name: params.get('name') ?? '',
         nickname: params.get('nickname') || null,
         email: params.get('email') || null,
