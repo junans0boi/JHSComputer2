@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DiscordModule } from './discord/discord.module';
 import { HealthController } from './health/health.controller';
 import { PartsModule } from './parts/parts.module';
 import { QuotesModule } from './quotes/quotes.module';
@@ -35,6 +36,7 @@ import { RecommendationsModule } from './recommendations/recommendations.module'
         charset: 'utf8mb4_unicode_ci',
       }),
     }),
+    DiscordModule,
     PartsModule,
     QuotesModule,
     OrdersModule,

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { DiscordService } from '../discord/discord.service';
 import { Order } from './order.entity';
 import { OrderItem } from './order-item.entity';
 import { OrderStatus } from '../common/enums';
@@ -15,6 +16,7 @@ export class OrdersService {
     private orderItemRepository: Repository<OrderItem>,
     @InjectRepository(OrderStatusHistory)
     private historyRepository: Repository<OrderStatusHistory>,
+    private discordService: DiscordService,
   ) {}
 
   async getOrders(params: { userId?: number; page: number; limit: number }) {
@@ -85,6 +87,8 @@ export class OrdersService {
     });
     await this.historyRepository.save(history);
 
+    void this.discordService.sendStatusNotification(order.orderNo, status, memo);
+
     return order;
   }
 
@@ -154,6 +158,21 @@ export class OrdersService {
       memo: '주문이 접수되었습니다. 안내된 계좌로 입금해주시면 확인 후 조립을 시작합니다.',
     });
     await this.historyRepository.save(history);
+
+    void this.discordService.sendOrderNotification({
+      orderNo: savedOrder.orderNo,
+      recipientName: data.recipientName,
+      recipientPhone: data.recipientPhone,
+      address1: data.address1,
+      address2: data.address2,
+      totalPrice: data.totalPrice,
+      assemblyFee: data.assemblyFee,
+      parts: data.parts.map((p) => ({
+        partNameSnapshot: p.partName,
+        quantity: p.quantity,
+        publicPrice: p.price,
+      })),
+    });
 
     return { orderId: savedOrder.id, orderNo: savedOrder.orderNo, synced: true };
   }

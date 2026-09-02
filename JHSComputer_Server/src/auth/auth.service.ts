@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { UserStatus } from '../common/enums';
 import { User } from '../users/user.entity';
@@ -24,7 +25,9 @@ export class AuthService {
     }
 
     const stored = user.passwordText ?? '';
-    const passwordMatch = stored === password;
+    const passwordMatch = stored.startsWith('$2')
+      ? await bcrypt.compare(password, stored)
+      : stored === password;
 
     if (user.status !== UserStatus.ACTIVE || !passwordMatch) {
       throw new UnauthorizedException('아이디 또는 비밀번호가 올바르지 않습니다.');
@@ -54,9 +57,10 @@ export class AuthService {
 
     const { UserRole, UserStatus } = await import('../common/enums');
 
+    const hashedPassword = await bcrypt.hash(data.password, 10);
     const user = this.userRepository.create({
       loginId: data.loginId,
-      passwordText: data.password,
+      passwordText: hashedPassword,
       name: data.name,
       email: data.email ?? null,
       nickname: data.nickname ?? null,
