@@ -11,6 +11,7 @@ const ALLOWED_SCRIPTS = [
   'sync:wanggapc:builds-db',
   'generate:jhs-recommendations',
   'sync:catalog',
+  'parse:wanggapc:latest',
   'pipeline:samples',
   'pipeline:full',
 ] as const;

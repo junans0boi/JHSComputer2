@@ -29,6 +29,7 @@ const PIPELINE_STEPS = [
   'sync:compuzone:db',
   'sync:kjwwang:benchmark-db',
   'crawl:wanggapc:html',
+  'parse:wanggapc:latest',
   'sync:wanggapc:builds-db',
   'generate:jhs-recommendations',
 ];
