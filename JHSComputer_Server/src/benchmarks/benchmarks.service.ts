@@ -239,14 +239,18 @@ export class BenchmarksService {
       return { items: [], total: 0, combo: null, reason: 'CPU/GPU 모델명을 인식하지 못했습니다.' };
     }
 
-    const combo = (cpuKeywords.length && gpuKeywords.length ? await this.findBestCombo(cpuKeywords, gpuKeywords) : null)
-      ?? await this.findNearestCombo(cpuKeywords, gpuKeywords);
+    // Do not attach a different build's measured FPS to this quote. A nearest
+    // CPU/GPU family can be useful for a future explicitly-labelled estimate,
+    // but it is not an exact benchmark result for the selected parts.
+    const combo = cpuKeywords.length && gpuKeywords.length
+      ? await this.findBestCombo(cpuKeywords, gpuKeywords)
+      : null;
     if (!combo) {
       return {
         items: [],
         total: 0,
         combo: null,
-        reason: '해당 CPU/GPU 조합의 벤치마크 DB가 없습니다.',
+        reason: '선택한 CPU/GPU 조합의 실측 벤치마크 DB가 없습니다.',
       };
     }
 
@@ -258,11 +262,11 @@ export class BenchmarksService {
       limit: params.limit,
     });
 
+    const items = normalizeQuotePerformanceRows(rows);
     return {
-      items: normalizeQuotePerformanceRows(rows),
-      total: rows.length,
+      items,
+      total: items.length,
       combo,
-      source: 'benchmark_combo_game_results',
     };
   }
 
@@ -290,12 +294,14 @@ export class BenchmarksService {
       WHERE ${where.join(' AND ')}
       GROUP BY b.COMBO_KEY
       ORDER BY buildSampleCount DESC, gameCount DESC, comboKey ASC
-      LIMIT 1
       `,
       values,
     );
 
-    return rows[0] ?? null;
+    return rows.find((row: any) => (
+      matchesExactModel(row.cpuModel, row.cpuName, cpuKeywords)
+      && matchesExactModel(row.gpuModel, row.gpuName, gpuKeywords)
+    )) ?? null;
   }
 
   private async findNearestCombo(cpuKeywords: string[], gpuKeywords: string[]) {
@@ -367,6 +373,9 @@ export class BenchmarksService {
     }
 
     const normalizedGames = params.games.map((game) => game.trim()).filter(Boolean);
+    if (!normalizedGames.length) return [];
+    baseWhere.push(`(${normalizedGames.map(() => 'g.GAME_NAME LIKE ?').join(' OR ')})`);
+    baseValues.push(...normalizedGames.map((game) => `%${game}%`));
     return this.queryComboGameRows({
       where: baseWhere,
       values: baseValues,
@@ -389,6 +398,7 @@ export class BenchmarksService {
         g.GAME_NAME AS gameName,
         r.RESOLUTION AS resolution,
         r.SAMPLE_COUNT AS sampleCount,
+        r.RAW_FPS_AVG AS rawFpsAvg,
         r.DISPLAY_FPS_MIN AS displayFpsMin,
         r.DISPLAY_FPS_MAX AS displayFpsMax,
         r.RAW_FPS_MIN AS rawFpsMin,
@@ -549,6 +559,22 @@ function normalizeModelText(value: string) {
     .trim();
 }
 
+function matchesExactModel(model: unknown, name: unknown, keywords: string[]) {
+  const candidates = [model, name]
+    .filter((value): value is string => typeof value === 'string' && Boolean(value.trim()))
+    .map(compactModelText);
+  return keywords.some((keyword) => {
+    const compactKeyword = compactModelText(keyword);
+    return compactKeyword.length >= 3 && candidates.some((candidate) => (
+      candidate === compactKeyword || candidate.endsWith(compactKeyword)
+    ));
+  });
+}
+
+function compactModelText(value: string) {
+  return normalizeModelText(value).toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
 function normalizeBenchmarkResolution(resolution?: string) {
   if (!resolution) return undefined;
   if (resolution === '4K') return 'UHD';
@@ -559,20 +585,24 @@ function normalizeBenchmarkResolution(resolution?: string) {
 function mapQuotePerformanceRow(row: any) {
   const fpsMin = safeFps(row.displayFpsMin ?? row.rawFpsMin);
   const fpsMax = safeFps(row.displayFpsMax ?? row.rawFpsMax ?? fpsMin);
+  const evidence = benchmarkEvidence(row);
   return {
     game: row.gameName,
     resolution: row.resolution === 'UHD' ? '4K' : row.resolution,
     grade: mapComfortGrade(row.comfortGrade, fpsMin),
     fpsMin,
     fpsMax: Math.max(fpsMin, fpsMax),
-    isEstimated: false,
+    isEstimated: evidence.isEstimated,
     sampleCount: Number(row.sampleCount ?? 0),
     bestQuality: row.bestQuality,
+    evidenceType: evidence.evidenceType,
+    confidence: evidence.confidence,
+    evidenceNote: evidence.evidenceNote,
   };
 }
 
 function normalizeQuotePerformanceRows(rows: any[]) {
-  const items = rows.map(mapQuotePerformanceRow);
+  const items = rows.filter(hasMeasuredFps).map(mapQuotePerformanceRow);
   const groupMap = new Map<string, typeof items>();
 
   items.forEach((item) => {
@@ -595,9 +625,18 @@ function normalizeQuotePerformanceRows(rows: any[]) {
       grade: mapComfortGrade(item.grade, fpsMin),
       fpsMin,
       fpsMax,
+      isEstimated: true,
       isResolutionAdjusted: item.resolution !== 'FHD',
+      evidenceType: 'DERIVED',
+      confidence: 'LOW',
+      evidenceNote: '해상도별 독립 실측값이 없어 FHD 기준 보정값입니다.',
     };
   });
+}
+
+function hasMeasuredFps(row: any) {
+  return [row.displayFpsMin, row.displayFpsMax, row.rawFpsMin, row.rawFpsMax]
+    .some((value) => value !== null && value !== undefined && Number.isFinite(Number(value)) && Number(value) > 0);
 }
 
 function shouldAdjustResolutionBuckets(group: ReturnType<typeof mapQuotePerformanceRow>[]) {
@@ -625,4 +664,33 @@ function mapComfortGrade(comfortGrade: string | null | undefined, fpsMin: number
   if (['GOOD', 'OK'].includes(grade) || fpsMin >= 60) return '좋음';
   if (['PLAYABLE', 'LOW'].includes(grade) || fpsMin >= 35) return '플레이 가능';
   return '비추천';
+}
+
+function benchmarkEvidence(row: any) {
+  const sampleCount = Number(row.sampleCount ?? 0);
+  const rawAvg = Number(row.rawFpsAvg ?? 0);
+  const rawMin = Number(row.rawFpsMin ?? 0);
+  const rawMax = Number(row.rawFpsMax ?? 0);
+  const displayMin = Number(row.displayFpsMin ?? 0);
+  const displayMax = Number(row.displayFpsMax ?? 0);
+  const hasSyntheticDisplayRange = rawAvg > 0
+    && rawMin === rawMax
+    && displayMin === Math.round(rawAvg * 0.85)
+    && displayMax === Math.round(rawAvg * 1.15);
+
+  if (hasSyntheticDisplayRange || sampleCount <= 1) {
+    return {
+      isEstimated: true,
+      evidenceType: 'SOURCE_REPORTED',
+      confidence: 'LOW',
+      evidenceNote: '게임당 평균 보고값이며 해상도별 독립 실측을 확인할 수 없습니다.',
+    };
+  }
+
+  return {
+    isEstimated: false,
+    evidenceType: 'MEASURED',
+    confidence: sampleCount >= 3 ? 'MEDIUM' : 'LOW',
+    evidenceNote: '원본 FPS 집계값입니다. 테스트 조건을 함께 확인해주세요.',
+  };
 }

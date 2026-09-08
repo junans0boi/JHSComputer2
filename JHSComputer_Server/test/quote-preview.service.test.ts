@@ -3,6 +3,7 @@ import test from 'node:test';
 import type { ConfigService } from '@nestjs/config';
 import { BadRequestException } from '@nestjs/common';
 import type { Repository } from 'typeorm';
+import type { BenchmarksService } from '../src/benchmarks/benchmarks.service';
 import { QuotePreviewService } from '../src/quotes/quote-preview.service';
 import { QUOTE_RULESET_VERSION } from '../src/quotes/quote-profile';
 
@@ -17,7 +18,19 @@ test('preview service loads only active sellable catalog units and returns candi
     sourcePart('case', 'CASE', { caseSpec: { supportedBoardFormsJson: ['ATX'], maxGpuLengthMm: '400', maxCoolerHeightMm: '170' } }),
     sourcePart('cooler', 'CPU_COOLER', { coolerSpec: { supportedSocketsJson: ['AM5'], heightMm: '160' } }),
   ];
-  const service = new QuotePreviewService(fakeRepository(sourceParts), fakeConfig());
+  const service = new QuotePreviewService(fakeRepository(sourceParts), fakeConfig(), fakeBenchmarks({
+    items: [{
+      game: 'APEX',
+      resolution: 'QHD',
+      fpsMin: 90,
+      fpsMax: 120,
+      sampleCount: 3,
+      evidenceType: 'MEASURED',
+      confidence: 'MEDIUM',
+      evidenceNote: '원본 FPS 집계값입니다.',
+    }],
+    total: 1,
+  }));
 
   const result = await service.preview({
     profileVersion: 2,
@@ -32,10 +45,13 @@ test('preview service loads only active sellable catalog units and returns candi
   assert.equal(result.status, 'READY');
   assert.equal(result.candidates[0].parts.length, 8);
   assert.equal(result.candidates[0].parts[0].externalProductId, 'product-cpu');
+  assert.equal(result.candidates[0].performanceEvidence.evidenceType, 'MEASURED');
+  assert.equal(result.candidates[0].performanceEvidence.sampleCount, 3);
+  assert.equal(result.candidates[0].performanceEvidence.results[0]?.game, 'APEX');
 });
 
 test('preview service rejects an invalid profile at the API seam', async () => {
-  const service = new QuotePreviewService(fakeRepository([]), fakeConfig());
+  const service = new QuotePreviewService(fakeRepository([]), fakeConfig(), fakeBenchmarks());
   await assert.rejects(
     service.preview({ profileVersion: 1 }),
     (error: unknown) => error instanceof BadRequestException,
@@ -47,7 +63,7 @@ test('does not expose a paused supplier product as a sellable catalog unit', asy
     sourcePart('cpu', 'CPU', { cpuSpec: { socket: 'AM5', tdpW: 65, coreCount: 6, threadCount: 12, boostClockGhz: '4.5' } }),
   ];
   sourceParts[0].supplierOffers[0].product.supplier.status = 'PAUSED';
-  const service = new QuotePreviewService(fakeRepository(sourceParts), fakeConfig());
+  const service = new QuotePreviewService(fakeRepository(sourceParts), fakeConfig(), fakeBenchmarks());
 
   const result = await service.preview(validProfile());
 
@@ -70,6 +86,10 @@ function fakeRepository(parts: unknown[]) {
 
 function fakeConfig() {
   return { get: (key: string) => key === 'NODE_ENV' ? 'development' : undefined } as unknown as ConfigService;
+}
+
+function fakeBenchmarks(response = { items: [], total: 0, reason: 'no exact combo' }) {
+  return { getQuotePerformance: async () => response } as unknown as BenchmarksService;
 }
 
 function validProfile() {

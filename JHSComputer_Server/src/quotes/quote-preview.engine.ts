@@ -43,6 +43,27 @@ export type QuoteCandidatePart = CatalogOffer & {
   partName: string;
 };
 
+export type PerformanceEvidenceType = 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
+
+export type PerformanceEvidenceResult = {
+  game: string;
+  resolution: string;
+  fpsMin: number | null;
+  fpsMax: number | null;
+  sampleCount: number;
+  evidenceType: Exclude<PerformanceEvidenceType, 'NONE'>;
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+  evidenceNote: string;
+};
+
+export type PerformanceEvidence = {
+  evidenceType: PerformanceEvidenceType;
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
+  sampleCount: number;
+  results: PerformanceEvidenceResult[];
+  note: string;
+};
+
 export type CompatibilityCheck = {
   rule: string;
   passed: boolean;
@@ -63,10 +84,7 @@ export type QuoteCandidate = {
   selectionReasons: string[];
   unmetConditions: string[];
   compatibility: CompatibilityCheck[];
-  performanceEvidence: {
-    evidenceType: 'NONE';
-    note: string;
-  };
+  performanceEvidence: PerformanceEvidence;
 };
 
 export type QuotePreviewResult = {
@@ -79,6 +97,30 @@ export type QuotePreviewResult = {
     relaxations: string[];
   };
 };
+
+export function emptyPerformanceEvidence(note = '선택한 CPU/GPU 조합의 성능 근거가 없습니다.'): PerformanceEvidence {
+  return { evidenceType: 'NONE', confidence: 'NONE', sampleCount: 0, results: [], note };
+}
+
+export function summarizePerformanceEvidence(results: PerformanceEvidenceResult[]): PerformanceEvidence {
+  if (!results.length) return emptyPerformanceEvidence();
+  const evidenceType = results.some((result) => result.evidenceType === 'DERIVED')
+    ? 'DERIVED'
+    : results.some((result) => result.evidenceType === 'SOURCE_REPORTED')
+      ? 'SOURCE_REPORTED'
+      : 'MEASURED';
+  const confidenceRank = { LOW: 1, MEDIUM: 2, HIGH: 3 } as const;
+  const confidence = results.reduce<'LOW' | 'MEDIUM' | 'HIGH'>((lowest, result) => (
+    confidenceRank[result.confidence] < confidenceRank[lowest] ? result.confidence : lowest
+  ), 'HIGH');
+  return {
+    evidenceType,
+    confidence,
+    sampleCount: results.reduce((sum, result) => sum + result.sampleCount, 0),
+    results,
+    note: [...new Set(results.map((result) => result.evidenceNote))].join(' '),
+  };
+}
 
 type WorkloadDemand = {
   minCpuCores: number;
@@ -612,7 +654,7 @@ function toCandidate(profile: QuoteProfileV2, strategy: QuotePreviewStrategy, pl
         : ['목표 예산과 호환성·성능의 균형을 우선했습니다.'],
     unmetConditions: [],
     compatibility: plan.compatibility,
-    performanceEvidence: { evidenceType: 'NONE', note: 'exact CPU/GPU 성능 근거는 다음 benchmark seam에서 연결합니다.' },
+    performanceEvidence: emptyPerformanceEvidence('exact CPU/GPU 성능 근거는 benchmark DB에 exact combo가 있을 때만 연결합니다.'),
   };
 }
 

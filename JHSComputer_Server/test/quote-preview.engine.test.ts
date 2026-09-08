@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { generateQuotePreview, type CatalogOffer, type CatalogPart } from '../src/quotes/quote-preview.engine';
+import {
+  generateQuotePreview,
+  summarizePerformanceEvidence,
+  type CatalogOffer,
+  type CatalogPart,
+} from '../src/quotes/quote-preview.engine';
 import { QUOTE_RULESET_VERSION, type QuoteProfileV2 } from '../src/quotes/quote-profile';
 
 const profile: QuoteProfileV2 = {
@@ -28,6 +33,37 @@ test('returns up to three distinct ready candidates from exact sellable units', 
     assert.equal(candidate.performanceEvidence.evidenceType, 'NONE');
   }
   assert.equal(new Set(result.candidates.map((candidate) => candidate.parts.map((part) => part.offerId).join('|'))).size, 3);
+});
+
+test('summarizes evidence without hiding derived or low-confidence results', () => {
+  const result = summarizePerformanceEvidence([
+    {
+      game: 'APEX',
+      resolution: 'QHD',
+      fpsMin: 90,
+      fpsMax: 120,
+      sampleCount: 3,
+      evidenceType: 'MEASURED',
+      confidence: 'MEDIUM',
+      evidenceNote: '원본 FPS 집계값입니다.',
+    },
+    {
+      game: 'Cyberpunk 2077',
+      resolution: '4K',
+      fpsMin: 50,
+      fpsMax: 65,
+      sampleCount: 1,
+      evidenceType: 'DERIVED',
+      confidence: 'LOW',
+      evidenceNote: '해상도별 독립 실측값이 없어 보정했습니다.',
+    },
+  ]);
+
+  assert.equal(result.evidenceType, 'DERIVED');
+  assert.equal(result.confidence, 'LOW');
+  assert.equal(result.sampleCount, 4);
+  assert.match(result.note, /원본 FPS/);
+  assert.match(result.note, /보정했습니다/);
 });
 
 test('returns REVIEW_REQUIRED instead of inventing parts when the budget cannot fit', () => {

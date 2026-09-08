@@ -9,6 +9,7 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
+import { StockStatus } from '../common/enums';
 import { BooleanTransformer } from '../common/transformers';
 import { OrderItem } from '../orders/order-item.entity';
 import { QuoteItem } from '../quotes/quote-item.entity';
@@ -87,6 +88,23 @@ export class SupplierOffer {
     transformer: BooleanTransformer,
   })
   isActive!: boolean;
+
+  @Column({ name: 'CURRENT_PUBLIC_PRICE', type: 'int', nullable: true })
+  currentPublicPrice!: number | null;
+
+  @Column({ name: 'CURRENT_BENEFIT_PRICE', type: 'int', nullable: true })
+  currentBenefitPrice!: number | null;
+
+  @Column({
+    name: 'CURRENT_STOCK_STATUS',
+    type: 'varchar',
+    length: 30,
+    default: StockStatus.UNKNOWN,
+  })
+  currentStockStatus!: StockStatus;
+
+  @Column({ name: 'CURRENT_PRICE_DT', type: 'datetime', nullable: true })
+  currentPriceDt!: Date | null;
 
   @Column({ name: 'LAST_SEEN_DT', type: 'datetime', nullable: true })
   lastSeenDt!: Date | null;

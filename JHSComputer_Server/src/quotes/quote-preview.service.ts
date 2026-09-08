@@ -5,8 +5,16 @@ import { Repository } from 'typeorm';
 import { Part } from '../parts/part.entity';
 import { SupplierOffer } from '../parts/supplier-offer.entity';
 import { SupplierStatus } from '../common/enums';
+import { BenchmarksService } from '../benchmarks/benchmarks.service';
 import { normalizeQuoteProfile, validateQuoteProfile } from './quote-profile';
-import { generateQuotePreview, type CatalogPart, type CatalogSpec } from './quote-preview.engine';
+import {
+  emptyPerformanceEvidence,
+  generateQuotePreview,
+  summarizePerformanceEvidence,
+  type CatalogPart,
+  type CatalogSpec,
+  type PerformanceEvidenceResult,
+} from './quote-preview.engine';
 
 const REQUIRED_QUOTE_CATEGORIES = ['CPU', 'MAINBOARD', 'RAM', 'GPU', 'SSD', 'PSU', 'CASE', 'CPU_COOLER'];
 
@@ -20,12 +28,57 @@ export class QuotePreviewService {
     @InjectRepository(Part)
     private readonly partRepository: Repository<Part>,
     private readonly config: ConfigService,
+    private readonly benchmarksService: BenchmarksService,
   ) {}
 
   async preview(rawProfile: unknown) {
     const profile = this.normalizeProfile(rawProfile);
     const catalog = await this.loadCatalog();
-    return generateQuotePreview(profile, catalog);
+    const preview = generateQuotePreview(profile, catalog);
+    return this.attachPerformanceEvidence(preview, profile);
+  }
+
+  private async attachPerformanceEvidence(preview: ReturnType<typeof generateQuotePreview>, profile: ReturnType<typeof normalizeQuoteProfile>) {
+    const gamingWorkload = profile.workloadProfile.workloads
+      .filter((workload) => workload.type === 'GAMING')
+      .sort((left, right) => right.weight - left.weight)[0];
+    const games = gamingWorkload && Array.isArray(gamingWorkload.details.games)
+      ? [...new Set(gamingWorkload.details.games.filter((game): game is string => typeof game === 'string' && Boolean(game.trim())).map((game) => game.trim()))]
+      : [];
+    if (!games.length) {
+      return {
+        ...preview,
+        candidates: preview.candidates.map((candidate) => ({
+          ...candidate,
+          performanceEvidence: emptyPerformanceEvidence('선택한 게임이 없어 게임별 성능 근거를 조회하지 않았습니다.'),
+        })),
+      };
+    }
+
+    const resolution = typeof gamingWorkload?.details.resolution === 'string' ? gamingWorkload.details.resolution : undefined;
+    const candidates = await Promise.all(preview.candidates.map(async (candidate) => {
+      try {
+        const result = await this.benchmarksService.getQuotePerformance({
+          parts: candidate.parts.map((part) => ({ category: part.category, name: part.partName })),
+          games,
+          resolution,
+          limit: 200,
+        });
+        const evidenceResults = (result.items ?? []).map(toPerformanceEvidenceResult).filter((item): item is PerformanceEvidenceResult => item !== null);
+        return {
+          ...candidate,
+          performanceEvidence: evidenceResults.length
+            ? summarizePerformanceEvidence(evidenceResults)
+            : emptyPerformanceEvidence(result.reason ?? '선택한 CPU/GPU 조합의 exact benchmark 결과가 없습니다.'),
+        };
+      } catch {
+        return {
+          ...candidate,
+          performanceEvidence: emptyPerformanceEvidence('성능 근거 저장소를 조회할 수 없어 실측값을 표시하지 않았습니다.'),
+        };
+      }
+    }));
+    return { ...preview, candidates };
   }
 
   private normalizeProfile(rawProfile: unknown) {
@@ -149,6 +202,28 @@ export class QuotePreviewService {
     return this.config.get<string>('PUBLIC_PART_APPROVAL_REQUIRED') === 'true'
       || this.config.get<string>('NODE_ENV') === 'production';
   }
+}
+
+function toPerformanceEvidenceResult(item: Record<string, unknown>): PerformanceEvidenceResult | null {
+  const evidenceType = item.evidenceType;
+  if (!['MEASURED', 'SOURCE_REPORTED', 'DERIVED'].includes(String(evidenceType))) return null;
+  const confidence = item.confidence;
+  return {
+    game: String(item.game ?? item.gameName ?? ''),
+    resolution: String(item.resolution ?? ''),
+    fpsMin: nullableNumber(item.fpsMin),
+    fpsMax: nullableNumber(item.fpsMax),
+    sampleCount: Math.max(0, Math.floor(Number(item.sampleCount ?? 0) || 0)),
+    evidenceType: evidenceType as PerformanceEvidenceResult['evidenceType'],
+    confidence: ['HIGH', 'MEDIUM', 'LOW'].includes(String(confidence)) ? confidence as PerformanceEvidenceResult['confidence'] : 'LOW',
+    evidenceNote: String(item.evidenceNote ?? '벤치마크 근거의 상세 설명이 없습니다.'),
+  };
+}
+
+function nullableNumber(value: unknown) {
+  if (value === null || value === undefined || value === '') return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
 }
 
 function isSellableOffer(offer: SupplierOffer) {
