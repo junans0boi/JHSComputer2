@@ -1,5 +1,8 @@
 import { Controller, Get, Param, Query, Post, Body, Headers, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Public } from '../auth';
+import { QuotePreviewDto } from './dto/quote-preview.dto';
+import { QuotePreviewService } from './quote-preview.service';
 import { QuotesService } from './quotes.service';
 
 @Controller('quotes')
@@ -7,6 +10,7 @@ export class QuotesController {
   constructor(
     private readonly quotesService: QuotesService,
     private readonly jwtService: JwtService,
+    private readonly quotePreviewService: QuotePreviewService,
   ) {}
 
   private getUserIdFromAuth(auth: string): string {
@@ -36,6 +40,12 @@ export class QuotesController {
   @Get('templates')
   async getTemplates() {
     return this.quotesService.getTemplates();
+  }
+
+  @Post('preview')
+  @Public()
+  async previewQuote(@Body() data: QuotePreviewDto) {
+    return this.quotePreviewService.preview(data.profile);
   }
 
   @Post('estimate')

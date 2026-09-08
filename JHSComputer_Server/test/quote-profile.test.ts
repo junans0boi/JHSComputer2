@@ -158,3 +158,17 @@ test('rejects missing conditional details and unknown Windows options', () => {
   });
   assert.throws(() => validateQuoteProfile(profile), /AI workload의 mode 조건이 필요합니다/);
 });
+
+test('requires Windows budget inclusion to match the selected option', () => {
+  const profile = normalizeQuoteProfile({
+    profileVersion: 2,
+    rulesetVersion: QUOTE_RULESET_VERSION,
+    workloadProfile: { workloads: [{ type: 'OFFICE', weight: 100, details: { multitasking: 'STANDARD' } }] },
+    budgetProfile: { minimumWon: 1_000_000, targetWon: 1_500_000, maximumWon: 2_000_000, includes: ['PARTS'] },
+    preferenceProfile: { preset: 'BALANCED', performance: 25, value: 25, aesthetics: 25, upgradeability: 25 },
+    storageDemand: { systemGb: 1024, activeProjectGb: 0, archiveGb: 0, growthGbPerYear: 0, redundancy: 'NONE' },
+    windowsOption: 'WINDOWS_11_HOME_FPP',
+  });
+
+  assert.throws(() => validateQuoteProfile(profile), /Windows 옵션과 예산 포함 항목/);
+});

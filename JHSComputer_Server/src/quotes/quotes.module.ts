@@ -11,11 +11,12 @@ import { User } from '../users/user.entity';
 import { Order } from '../orders/order.entity';
 import { OrderItem } from '../orders/order-item.entity';
 import { AuthModule } from '../auth/auth.module';
+import { QuotePreviewService } from './quote-preview.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Quote, QuoteItem, QuoteTemplate, Part, PartCategory, User, Order, OrderItem]), AuthModule],
   controllers: [QuotesController],
-  providers: [QuotesService],
+  providers: [QuotesService, QuotePreviewService],
   exports: [QuotesService],
 })
 export class QuotesModule {}

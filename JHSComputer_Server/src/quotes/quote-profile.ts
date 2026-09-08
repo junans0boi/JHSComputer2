@@ -201,6 +201,10 @@ export function validateQuoteProfile(profile: QuoteProfileV2): void {
   if (!budget.includes.length || budget.includes.some((item) => !budgetIncludes.has(item))) {
     throw new Error('예산 포함 항목이 올바르지 않습니다.');
   }
+  const windowsIncluded = budget.includes.includes('WINDOWS');
+  if (windowsIncluded !== (profile.windowsOption !== 'NONE')) {
+    throw new Error('Windows 옵션과 예산 포함 항목이 일치하지 않습니다.');
+  }
 
   const preference = profile.preferenceProfile;
   if (!preferencePresets.has(preference.preset)) throw new Error('선호 프리셋이 올바르지 않습니다.');
