@@ -18,7 +18,7 @@ import { defaultInput, generateManualQuote, generateQuote, priorities, purposes,
 import { generateDynamicQuote } from '@/lib/dynamic-engine';
 import { getSession } from '@/lib/auth-client';
 import { syncCartQuoteToServer } from '@/lib/server-cart';
-import { addQuoteToCart, loadLatestQuote, loadManualQuantities, loadManualSelection, saveQuote } from '@/lib/v1-storage';
+import { addQuoteToCart, loadLatestQuote, loadLatestQuoteProfile, loadManualQuantities, loadManualSelection, loadQuoteProfile, quoteInputToV2Profile, saveQuote, saveQuoteProfile } from '@/lib/v1-storage';
 import { applyWindowsOptionToQuote, normalizeWindowsOption, windowsOptions } from '@/lib/windows-options';
 import type { CatalogPart, ManualQuantities, ManualSelection, PartCategory, Priority, Purpose, Quote, QuoteInput, QuotePart, Resolution, WindowsOptionValue } from '@/lib/v1-types';
 
@@ -56,11 +56,12 @@ export default function QuotePage() {
     if (modeParam === 'manual') return;
 
     const latestQuote = loadLatestQuote();
-    if (!latestQuote && modeParam !== 'manual') {
-      // Use fallback static generator on initial load if no catalog is ready
-      void hydrateAndSetQuote(generateQuote(updatedInput), { showResult: false, persist: false });
-    } else if (latestQuote) {
-      void hydrateAndSetQuote(normalizeQuoteWindows(latestQuote), { showResult: true });
+    const latestProfile = loadLatestQuoteProfile();
+    if (latestQuote && latestProfile) {
+      const restoredQuote = latestProfile.legacyInput
+        ? { ...latestQuote, input: latestProfile.legacyInput }
+        : latestQuote;
+      void hydrateAndSetQuote(normalizeQuoteWindows(restoredQuote), { showResult: true });
     }
   }, []);
 
@@ -93,7 +94,10 @@ export default function QuotePage() {
     options: { showResult?: boolean; persist?: boolean } = {},
   ) => {
     const hydratedQuote = await withDbPerformance(nextQuote);
-    if (options.persist !== false) saveQuote(hydratedQuote);
+    if (options.persist !== false) {
+      saveQuote(hydratedQuote);
+      saveQuoteProfile(hydratedQuote.id, loadQuoteProfile(hydratedQuote.id) ?? quoteInputToV2Profile(hydratedQuote.input));
+    }
     setQuote(hydratedQuote);
     if (options.showResult !== undefined) setShowResult(options.showResult);
     return hydratedQuote;

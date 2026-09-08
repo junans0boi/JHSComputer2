@@ -6,7 +6,8 @@
     "dev": "next dev --webpack --port 6001",
     "build": "next build",
     "start": "next start --port 6001",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:quote-profile": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"CommonJS\"}' node --test --require ts-node/register/transpile-only test/quote-profile.test.ts"
   },
   "dependencies": {
     "@uiw/react-md-editor": "^4.1.1",

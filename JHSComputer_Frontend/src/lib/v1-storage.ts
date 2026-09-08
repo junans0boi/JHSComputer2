@@ -1,5 +1,6 @@
-import type { CartQuote, CatalogPart, ManualQuantities, ManualSelection, Order, OrderStatus, PartCategory, Quote } from './v1-types';
+import type { CartQuote, CatalogPart, ManualQuantities, ManualSelection, Order, OrderStatus, PartCategory, Quote, QuoteInput } from './v1-types';
 import { bankTransferInfo } from './payment-config';
+import { quoteInputToProfile, QUOTE_RULESET_VERSION, WORKLOAD_TYPES, type QuoteProfileV2 } from './quote-profile';
 
 const quoteKey = 'jhscomputer.v1.quotes';
 const orderKey = 'jhscomputer.v1.orders';
@@ -39,12 +40,43 @@ export function loadQuotes(): Quote[] {
 }
 
 export function saveQuote(quote: Quote) {
-  const quotes = [quote, ...loadQuotes().filter((item) => item.id !== quote.id)].slice(0, 20);
+  const existingQuotes = loadQuotes() as StoredQuote[];
+  const existingProfile = existingQuotes.find((item) => item.id === quote.id)?.profile;
+  const quoteToStore: StoredQuote = existingProfile && !(quote as StoredQuote).profile
+    ? { ...quote, profile: existingProfile }
+    : quote as StoredQuote;
+  const quotes = [quoteToStore, ...existingQuotes.filter((item) => item.id !== quote.id)].slice(0, 20);
   writeJson(quoteKey, quotes);
 }
 
 export function loadLatestQuote() {
   return loadQuotes()[0];
+}
+
+/** Returns the profile associated with the latest quote, migrating its v1 input when needed. */
+export function loadLatestQuoteProfile(): QuoteProfileV2 | undefined {
+  const latestQuote = loadLatestQuote() as StoredQuote | undefined;
+  if (!latestQuote) return undefined;
+  return loadQuoteProfile(latestQuote.id) ?? quoteInputToProfile(latestQuote.input);
+}
+
+export function loadQuoteProfile(quoteId: string): QuoteProfileV2 | undefined {
+  const quote = (loadQuotes() as StoredQuote[]).find((item) => item.id === quoteId);
+  const storedProfile = quote?.profile as unknown;
+  return isQuoteProfileV2(storedProfile) ? storedProfile : undefined;
+}
+
+export function saveQuoteProfile(quoteId: string, profile: QuoteProfileV2) {
+  const quotes = loadQuotes() as StoredQuote[];
+  if (!quotes.some((quote) => quote.id === quoteId)) return;
+  writeJson(
+    quoteKey,
+    quotes.map((quote) => quote.id === quoteId ? { ...quote, profile } : quote),
+  );
+}
+
+export function quoteInputToV2Profile(input: QuoteInput) {
+  return quoteInputToProfile(input);
 }
 
 export function setActiveQuote(quote: Quote) {
@@ -206,4 +238,122 @@ function readJson<T>(key: string, fallback: T): T {
 function writeJson<T>(key: string, value: T) {
   if (typeof window === 'undefined') return;
   window.localStorage.setItem(key, JSON.stringify(value));
+}
+
+type StoredQuote = Quote & { profile?: QuoteProfileV2 };
+
+function isQuoteProfileV2(value: unknown): value is QuoteProfileV2 {
+  if (typeof value !== 'object' || value === null) return false;
+  const profile = value as Record<string, unknown>;
+  const workloadProfile = profile.workloadProfile;
+  const budgetProfile = profile.budgetProfile;
+  const preferenceProfile = profile.preferenceProfile;
+  const storageDemand = profile.storageDemand;
+  const workloads = workloadProfile && typeof workloadProfile === 'object'
+    ? (workloadProfile as Record<string, unknown>).workloads
+    : undefined;
+  const includes = budgetProfile && typeof budgetProfile === 'object'
+    ? (budgetProfile as Record<string, unknown>).includes
+    : undefined;
+  const workloadTypes = Array.isArray(workloads)
+    ? workloads.map((workload) => isRecord(workload) ? workload.type : undefined)
+    : [];
+  const workloadDetailsAreValid = Array.isArray(workloads)
+    && workloads.every((workload) => isRecord(workload)
+      && isValidWorkloadType(workload.type)
+      && isNumber(workload.weight)
+      && workload.weight >= 0
+      && workload.weight <= 100
+      && isValidWorkloadDetails(workload.type, workload.details));
+  const workloadWeightTotal = Array.isArray(workloads)
+    ? workloads.reduce((sum, workload) => sum + (isRecord(workload) && isNumber(workload.weight) ? workload.weight : 0), 0)
+    : 0;
+  const budgetIsValid = isRecord(budgetProfile)
+    && isNumber(budgetProfile.minimumWon)
+    && Number.isSafeInteger(budgetProfile.minimumWon)
+    && budgetProfile.minimumWon >= 0
+    && isNumber(budgetProfile.targetWon)
+    && Number.isSafeInteger(budgetProfile.targetWon)
+    && budgetProfile.targetWon >= budgetProfile.minimumWon
+    && isNumber(budgetProfile.maximumWon)
+    && Number.isSafeInteger(budgetProfile.maximumWon)
+    && budgetProfile.maximumWon >= budgetProfile.targetWon
+    && Array.isArray(includes)
+    && includes.length > 0
+    && includes.every((item) => ['PARTS', 'ASSEMBLY', 'WINDOWS', 'SHIPPING'].includes(String(item)));
+  const preferenceWeights: unknown[] = isRecord(preferenceProfile)
+    ? [preferenceProfile.performance, preferenceProfile.value, preferenceProfile.aesthetics, preferenceProfile.upgradeability]
+    : [];
+  const preferenceTotal = preferenceWeights.reduce<number>((sum, item) => sum + (isNumber(item) ? item : 0), 0);
+  const preferenceIsValid = isRecord(preferenceProfile)
+    && ['BALANCED', 'PERFORMANCE', 'VALUE', 'AESTHETICS', 'UPGRADE'].includes(String(preferenceProfile.preset))
+    && preferenceWeights.every((item) => isNumber(item) && item >= 0 && item <= 100)
+    && Math.abs(preferenceTotal - 100) <= 0.001;
+  const storageIsValid = isRecord(storageDemand)
+    && [storageDemand.systemGb, storageDemand.activeProjectGb, storageDemand.archiveGb, storageDemand.growthGbPerYear]
+      .every((item) => isNumber(item) && Number.isSafeInteger(item) && item >= 0)
+    && ['NONE', 'MIRROR', 'BACKUP_REQUIRED'].includes(String(storageDemand.redundancy));
+  return profile.profileVersion === 2
+    && typeof profile.rulesetVersion === 'string'
+    && profile.rulesetVersion === QUOTE_RULESET_VERSION
+    && Array.isArray(workloads)
+    && workloads.length > 0
+    && workloads.length <= WORKLOAD_TYPES.length
+    && new Set(workloadTypes).size === workloads.length
+    && workloadDetailsAreValid
+    && Math.abs(workloadWeightTotal - 100) <= 0.001
+    && budgetIsValid
+    && preferenceIsValid
+    && storageIsValid
+    && ['NONE', 'INSTALL_ONLY', 'WINDOWS_11_HOME_FPP', 'WINDOWS_11_PRO_FPP'].includes(String(profile.windowsOption))
+    && typeof profile.windowsOption === 'string';
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function isValidWorkloadType(value: unknown): value is string {
+  return typeof value === 'string' && (WORKLOAD_TYPES as readonly string[]).includes(value);
+}
+
+function isValidWorkloadDetails(type: string, value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  switch (type) {
+    case 'GAMING':
+      return isStringArray(value.games)
+        && isResolution(value.resolution)
+        && isNumber(value.refreshRate)
+        && Number.isSafeInteger(value.refreshRate)
+        && value.refreshRate >= 30
+        && value.refreshRate <= 1000;
+    case 'STREAMING':
+      return isResolution(value.outputResolution) && typeof value.hardwareEncoding === 'boolean';
+    case 'VIDEO_EDITING':
+      return isStringArray(value.software) && isNonEmptyString(value.timeline) && isNonEmptyString(value.codec);
+    case 'AI':
+      return isNonEmptyString(value.mode) && isNonEmptyString(value.modelSize) && isNonEmptyString(value.quantization);
+    case 'OFFICE':
+      return isNonEmptyString(value.multitasking);
+    case 'DEVELOPMENT':
+      return typeof value.containers === 'boolean' && typeof value.virtualMachines === 'boolean';
+    default:
+      return false;
+  }
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => isNonEmptyString(item));
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function isResolution(value: unknown): boolean {
+  return ['FHD', 'QHD', '4K', '8K'].includes(String(value));
 }

@@ -6,7 +6,8 @@
     "build": "nest build",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:quote-profile": "node --test --require ts-node/register/transpile-only test/quote-profile.test.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
