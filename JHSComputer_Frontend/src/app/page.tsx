@@ -172,30 +172,33 @@ export default function Home() {
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {[
             {
-              title: '게이밍 입문 세트',
-              spec: 'Ryzen 5 9600 + RTX 5060',
-              desc: 'FHD 고주사율·발로란트·롤 추천 구성',
-              price: 950000,
+              title: '실상품 기준 FHD 144Hz 인기 게이밍 PC',
+              spec: 'i5-12400F + RTX 5060',
+              desc: '실제 판매 상품으로 구성한 FHD 고주사율 추천 구성',
+              price: 1453840,
               badge: '🔥 인기',
+              href: '/recommendations/jhs-real-fhd-i5-rtx5060-popular',
             },
             {
-              title: '게이밍 스탠다드',
-              spec: 'Ryzen 7 7800X3D + RTX 5060 Ti',
-              desc: 'QHD 울트라 세팅·배그·에이팩스 추천 구성',
-              price: 1580000,
+              title: '실상품 기준 QHD 가성비 게이밍 PC',
+              spec: 'Ryzen 7500F + RTX 5060 Ti',
+              desc: '실제 판매 상품과 최신 가격으로 구성한 QHD 추천 구성',
+              price: 1723840,
               badge: '⭐ 추천',
+              href: '/recommendations/jhs-real-qhd-7500f-rtx5060ti',
             },
             {
-              title: '게이밍 프리미엄',
-              spec: 'Ryzen 7 9800X3D + RTX 5070',
-              desc: 'QHD 최상 세팅·4K 게이밍까지 가능한 구성',
-              price: 2400000,
+              title: '실측 벤치마크 기반 QHD 고성능 게이밍 PC',
+              spec: 'Ryzen 9800X3D + RX 9070 XT',
+              desc: 'JHS 성능 검증 데이터와 실제 판매 상품을 함께 확인하는 구성',
+              price: 3336440,
               badge: '👑 프리미엄',
+              href: '/recommendations/jhs-real-benchmark-9800x3d-rx9070xt',
             },
           ].map((build) => (
             <Link
               className="group rounded-2xl border border-line bg-panel p-5 transition hover:border-brand hover:shadow-soft"
-              href="/recommendations"
+              href={build.href}
               key={build.title}
             >
               <div className="flex items-start justify-between gap-2">
