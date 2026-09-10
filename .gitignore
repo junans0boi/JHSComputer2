@@ -5,12 +5,17 @@ coverage
 .env
 .env.local
 .env.server
+.env.*.local
+.claude/
 .DS_Store
 npm-debug.log*
 docker-data
 *.tsbuildinfo
 outputs/db-definition/MonitoringRealtimeProcessMonitoring_*.csv
 project/samples/**/trash/
+
+# Local source dumps used for one-off imports
+/kjwwang_md.md
 
 # External vendor crawl/extracted data
 data/
