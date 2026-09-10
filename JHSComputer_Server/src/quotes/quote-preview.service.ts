@@ -123,7 +123,7 @@ export class QuotePreviewService {
         'supplierOffers.id', 'supplierOffers.offerName', 'supplierOffers.isActive', 'supplierOffers.isDefault',
         'supplierOffers.currentPublicPrice', 'supplierOffers.currentBenefitPrice', 'supplierOffers.currentStockStatus', 'supplierOffers.currentPriceDt',
         'supplierProduct.id', 'supplierProduct.externalProductId', 'supplierProduct.productName', 'supplierProduct.productUrl', 'supplierProduct.imageUrl', 'supplierProduct.isActive',
-        'supplier.id', 'supplier.status',
+        'supplier.id', 'supplier.supplierCode', 'supplier.supplierName', 'supplier.status',
       ])
       .leftJoinAndSelect('part.category', 'category', 'category.IS_ACTIVE = :categoryActive', { categoryActive: 'Y' })
       .leftJoinAndSelect('part.cpuSpec', 'cpuSpec')
@@ -179,6 +179,7 @@ export class QuotePreviewService {
           productUrl: offer.product!.productUrl,
           imageUrl: offer.product!.imageUrl,
           offerName: offer.offerName,
+          supplierCode: offer.product?.supplier?.supplierCode,
           priceWon,
           publicPriceWon: offer.currentPublicPrice,
           stockStatus: String(offer.currentStockStatus),

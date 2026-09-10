@@ -39,6 +39,11 @@ export type QuotePart = {
   productNo?: string;
   imageUrl?: string;
   detailUrl?: string;
+  offerId?: string;
+  offerName?: string;
+  stockStatus?: string;
+  priceCheckedAt?: string;
+  publicPrice?: number;
 };
 
 export type PerformanceResult = {
@@ -49,12 +54,16 @@ export type PerformanceResult = {
   fpsMax: number;
   isEstimated?: boolean;
   isResolutionAdjusted?: boolean;
+  evidenceType?: 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
+  confidence?: 'HIGH' | 'MEDIUM' | 'LOW';
+  evidenceNote?: string;
   sampleCount?: number;
   bestQuality?: string;
 };
 
 export type Quote = {
   id: string;
+  serverQuoteId?: string;
   createdAt: string;
   title?: string;
   mode?: 'AUTO' | 'MANUAL';

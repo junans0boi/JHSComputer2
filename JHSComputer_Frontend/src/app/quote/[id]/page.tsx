@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
+import { getSession } from '@/lib/auth-client';
+
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:6002/api';
 
 export default function QuoteDetailPage() {
   const params = useParams();
@@ -12,8 +15,14 @@ export default function QuoteDetailPage() {
 
   useEffect(() => {
     if (params.id) {
-      fetch(`http://localhost:6002/api/quotes/${params.id}`)
-        .then((res) => res.json())
+      const session = getSession();
+      fetch(`${apiBaseUrl}/quotes/${params.id}`, {
+        headers: session?.accessToken ? { Authorization: `Bearer ${session.accessToken}` } : {},
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error('quote-load-failed');
+          return res.json();
+        })
         .then((data) => {
           setQuote(data);
           setLoading(false);
@@ -55,6 +64,8 @@ export default function QuoteDetailPage() {
                 </div>
                 <div className="shrink-0 font-bold text-sm sm:text-right">
                   {item.currentPublicPrice.toLocaleString()}원
+                  <span className="mt-1 block text-xs font-medium text-gray-500">{item.supplierOffer?.offerName ?? item.part?.canonicalName}</span>
+                  <span className="block text-xs font-medium text-gray-500">판매 단위 {item.supplierOfferId ?? '확인 필요'}</span>
                 </div>
               </div>
             ))}
@@ -63,6 +74,27 @@ export default function QuoteDetailPage() {
             )}
           </div>
         </section>
+
+        {quote.snapshotJson?.preview && (
+          <section className="bg-white rounded-lg border border-line p-5 shadow-sm">
+            <h2 className="text-lg font-bold mb-3">후보 검증 근거</h2>
+            <div className="grid gap-2 text-sm font-semibold text-gray-700">
+              <p>후보: {quote.snapshotJson.preview.candidateId} · {quote.snapshotJson.preview.strategy}</p>
+              <p>규칙 버전: {quote.snapshotJson.preview.rulesetVersion ?? '확인 필요'}</p>
+              <p>성능 근거: {quote.snapshotJson.preview.performanceEvidence?.evidenceType ?? 'NONE'} · 신뢰도 {quote.snapshotJson.preview.performanceEvidence?.confidence ?? 'NONE'} · 표본 {quote.snapshotJson.preview.performanceEvidence?.sampleCount ?? 0}회</p>
+              <p>{quote.snapshotJson.preview.performanceEvidence?.note ?? '성능 근거 메모가 없습니다.'}</p>
+            </div>
+          </section>
+        )}
+
+        {Array.isArray(quote.snapshotJson?.performance) && quote.snapshotJson.performance.length > 0 && (
+          <section className="bg-white rounded-lg border border-line p-5 shadow-sm">
+            <h2 className="text-lg font-bold mb-3">게임별 성능 근거</h2>
+            <div className="grid gap-2 text-sm font-semibold text-gray-700">
+              {quote.snapshotJson.performance.map((item: { game?: string; resolution?: string; fpsMin?: number; fpsMax?: number; evidenceType?: string; confidence?: string }) => <p key={`${item.game}-${item.resolution}`}>{item.game} · {item.resolution} · {item.fpsMin}~{item.fpsMax} FPS · {item.evidenceType ?? 'NONE'} · {item.confidence ?? 'NONE'}</p>)}
+            </div>
+          </section>
+        )}
 
         <section className="bg-white rounded-lg border border-line p-5 shadow-sm">
           <h2 className="text-lg font-bold mb-4">결제 예상 금액</h2>

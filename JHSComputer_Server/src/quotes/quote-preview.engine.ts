@@ -11,6 +11,7 @@ export type CatalogOffer = {
   productUrl: string;
   imageUrl: string | null;
   offerName: string;
+  supplierCode?: string;
   priceWon: number;
   publicPriceWon: number | null;
   stockStatus: string;
@@ -95,6 +96,8 @@ export type QuotePreviewResult = {
   review?: {
     reasons: string[];
     relaxations: string[];
+    requiredMinimumWon?: number;
+    shortfallWon?: number;
   };
 };
 
@@ -173,9 +176,16 @@ export function generateQuotePreview(profile: QuoteProfileV2, catalog: CatalogPa
   }
 
   if (!candidates.length) {
+    const unconstrained = {
+      ...profile,
+      budgetProfile: { ...profile.budgetProfile, maximumWon: Number.MAX_SAFE_INTEGER },
+    };
+    const feasiblePlan = findPlan(unconstrained, grouped, 'VALUE_UPGRADE', new Set<string>(), 'CHEAPEST');
+    const requiredMinimumWon = feasiblePlan?.totalWon;
     return reviewRequired(
       ['활성 판매 단위만으로 예산 상한과 호환성 조건을 동시에 만족하는 조합이 없습니다.'],
       ['최대 예산을 높이거나 workload 비중·저장장치 요구를 완화합니다.'],
+      requiredMinimumWon === undefined ? undefined : { requiredMinimumWon, shortfallWon: Math.max(0, requiredMinimumWon - profile.budgetProfile.maximumWon) },
     );
   }
 
@@ -192,6 +202,7 @@ function findPlan(
   grouped: Map<string, CatalogPart[]>,
   strategy: QuotePreviewStrategy,
   usedFingerprints: Set<string>,
+  sortStrategy: QuotePreviewStrategy | 'CHEAPEST' = strategy,
 ): Plan | undefined {
   const demand = deriveWorkloadDemand(profile);
   const cpus = ordered(grouped.get('CPU')!, strategy, 'CPU');
@@ -249,7 +260,7 @@ function findPlan(
     }
   }
 
-  return plans.sort((a, b) => comparePlans(a, b, strategy, profile.budgetProfile.targetWon))[0];
+  return plans.sort((a, b) => comparePlans(a, b, sortStrategy, profile.budgetProfile.targetWon))[0];
 }
 
 function boardRamOptionsBySocket(boards: CatalogPart[], rams: CatalogPart[], demand: WorkloadDemand) {
@@ -346,7 +357,8 @@ function ordered(parts: CatalogPart[], strategy: QuotePreviewStrategy, _category
   });
 }
 
-function comparePlans(left: Plan, right: Plan, strategy: QuotePreviewStrategy, targetWon: number) {
+function comparePlans(left: Plan, right: Plan, strategy: QuotePreviewStrategy | 'CHEAPEST', targetWon: number) {
+  if (strategy === 'CHEAPEST') return left.totalWon - right.totalWon;
   if (strategy === 'PERFORMANCE') return right.performanceScore - left.performanceScore || right.workloadFitScore - left.workloadFitScore || left.totalWon - right.totalWon;
   if (strategy === 'VALUE_UPGRADE') {
     return (right.valueScore + right.upgradeabilityScore) - (left.valueScore + left.upgradeabilityScore)
@@ -658,12 +670,12 @@ function toCandidate(profile: QuoteProfileV2, strategy: QuotePreviewStrategy, pl
   };
 }
 
-function reviewRequired(reasons: string[], relaxations: string[]): QuotePreviewResult {
+function reviewRequired(reasons: string[], relaxations: string[], estimate?: { requiredMinimumWon: number; shortfallWon: number }): QuotePreviewResult {
   return {
     profileVersion: 2,
     rulesetVersion: QUOTE_PREVIEW_RULESET_VERSION,
     status: 'REVIEW_REQUIRED',
     candidates: [],
-    review: { reasons, relaxations },
+    review: { reasons, relaxations, ...(estimate ?? {}) },
   };
 }

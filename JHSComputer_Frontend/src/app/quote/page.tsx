@@ -1,26 +1,28 @@
 'use client';
 
-import { Check, ChevronRight, ShoppingCart, Sparkles, Cpu, Settings2, ArrowLeft } from 'lucide-react';
+import { Check, ChevronRight, ShoppingCart, Sparkles, Settings2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AppShell } from '@/components/AppShell';
 import { QuoteSummary } from '@/components/QuoteSummary';
+import { QuotePreviewCandidates } from '@/components/QuotePreviewCandidates';
+import { QuoteSurveyPanel } from '@/components/QuoteSurveyPanel';
 import { PartSearchDialog } from '@/components/builder/PartSearchDialog';
 import { CurrentBuildPanel } from '@/components/builder/CurrentBuildPanel';
 import { PartSelectorPanel } from '@/components/builder/PartSelectorPanel';
 import { Button, LinkButton } from '@/components/ui/Button';
-import { FormField, SelectInput } from '@/components/ui/FormField';
-import { PanelCard, SectionHeader } from '@/components/ui/PanelCard';
+import { PanelCard } from '@/components/ui/PanelCard';
 import { useBuilderStore } from '@/lib/builder-store';
 import { loadServerCatalog } from '@/lib/server-parts';
 import { loadBenchmarkGameNames, withDbPerformance } from '@/lib/server-performance';
-import { defaultInput, generateManualQuote, generateQuote, priorities, purposes, resolutions } from '@/lib/v1-estimator';
-import { generateDynamicQuote } from '@/lib/dynamic-engine';
+import { defaultInput, generateManualQuote, purposes } from '@/lib/v1-estimator';
 import { getSession } from '@/lib/auth-client';
+import { candidateToQuote, requestQuotePreview, type QuotePreviewCandidate, type QuotePreviewResponse } from '@/lib/quote-preview-client';
+import { quoteInputToProfile, type QuoteProfileV2 } from '@/lib/quote-profile';
 import { syncCartQuoteToServer } from '@/lib/server-cart';
 import { addQuoteToCart, loadLatestQuote, loadLatestQuoteProfile, loadManualQuantities, loadManualSelection, loadQuoteProfile, quoteInputToV2Profile, saveQuote, saveQuoteProfile } from '@/lib/v1-storage';
-import { applyWindowsOptionToQuote, normalizeWindowsOption, windowsOptions } from '@/lib/windows-options';
-import type { CatalogPart, ManualQuantities, ManualSelection, PartCategory, Priority, Purpose, Quote, QuoteInput, QuotePart, Resolution, WindowsOptionValue } from '@/lib/v1-types';
+import { applyWindowsOptionToQuote, normalizeWindowsOption } from '@/lib/windows-options';
+import type { CatalogPart, ManualQuantities, ManualSelection, PartCategory, Purpose, Quote, QuoteInput, QuotePart } from '@/lib/v1-types';
 
 import { AiChatWidget } from '@/components/builder/AiChatWidget';
 
@@ -35,8 +37,18 @@ export default function QuotePage() {
   const [serverSaved, setServerSaved] = useState(false);
   const [replaceQuotePart, setReplaceQuotePart] = useState<QuotePart | null>(null);
   const [gameOptions, setGameOptions] = useState<string[]>([]);
+  const [surveyProfile, setSurveyProfile] = useState<QuoteProfileV2>(() => createSurveyProfile(defaultInput));
+  const [serverPreview, setServerPreview] = useState<QuotePreviewResponse>();
+  const [selectedCandidateId, setSelectedCandidateId] = useState<string>();
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const surveyProfileRef = useRef(surveyProfile);
 
-  const { manualSelection, manualQuantities, catalog, setCatalog, setManualSelection, setManualQuantities } = useBuilderStore();
+  const { manualSelection, manualQuantities, setCatalog, setManualSelection, setManualQuantities } = useBuilderStore();
+
+  useEffect(() => {
+    surveyProfileRef.current = surveyProfile;
+  }, [surveyProfile]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -52,6 +64,7 @@ export default function QuotePage() {
       ? { ...defaultInput, purpose: purposeParam }
       : defaultInput;
     setInput(updatedInput);
+    setSurveyProfile(createSurveyProfile(updatedInput));
     
     if (modeParam === 'manual') return;
 
@@ -61,6 +74,9 @@ export default function QuotePage() {
       const restoredQuote = latestProfile.legacyInput
         ? { ...latestQuote, input: latestProfile.legacyInput }
         : latestQuote;
+      surveyProfileRef.current = latestProfile;
+      setSurveyProfile(latestProfile);
+      setInput(restoredQuote.input);
       void hydrateAndSetQuote(normalizeQuoteWindows(restoredQuote), { showResult: true });
     }
   }, []);
@@ -82,32 +98,108 @@ export default function QuotePage() {
         const selectedDbGames = current.games.filter((game) => names.includes(game));
         return selectedDbGames.length ? { ...current, games: selectedDbGames.slice(0, 3) } : { ...current, games: names.slice(0, 3) };
       });
+      setSurveyProfile((current) => ({
+        ...current,
+        workloadProfile: {
+          workloads: current.workloadProfile.workloads.map((workload) => workload.type === 'GAMING'
+            ? { ...workload, details: { ...workload.details, games: stringArray(workload.details.games).filter((game) => names.includes(game)).length ? stringArray(workload.details.games).filter((game) => names.includes(game)).slice(0, 3) : names.slice(0, 3) } }
+            : workload),
+        },
+      }));
     };
     void loadGames();
   }, []);
 
-  const selectedGames = new Set(input.games);
   const hasCompatibilityFail = quote?.compatibility.some((item) => item.startsWith('실패:')) ?? false;
 
   const hydrateAndSetQuote = async (
     nextQuote: Quote,
-    options: { showResult?: boolean; persist?: boolean } = {},
+    options: { showResult?: boolean; persist?: boolean; profile?: QuoteProfileV2; refreshPerformance?: boolean } = {},
   ) => {
-    const hydratedQuote = await withDbPerformance(nextQuote);
+    const shouldRefreshPerformance = options.refreshPerformance ?? nextQuote.performance.length === 0;
+    const hydratedQuote = shouldRefreshPerformance ? await withDbPerformance(nextQuote) : nextQuote;
     if (options.persist !== false) {
       saveQuote(hydratedQuote);
-      saveQuoteProfile(hydratedQuote.id, loadQuoteProfile(hydratedQuote.id) ?? quoteInputToV2Profile(hydratedQuote.input));
+      saveQuoteProfile(hydratedQuote.id, options.profile ?? loadQuoteProfile(hydratedQuote.id) ?? quoteInputToV2Profile(hydratedQuote.input));
     }
     setQuote(hydratedQuote);
     if (options.showResult !== undefined) setShowResult(options.showResult);
     return hydratedQuote;
   };
 
+  const persistQuoteToServer = async (nextQuote: Quote, candidate?: QuotePreviewCandidate) => {
+    const session = getSession();
+    if (!session?.accessToken) return nextQuote;
+    if (nextQuote.serverQuoteId) {
+      setServerSaved(true);
+      return nextQuote;
+    }
+    const profile = nextQuote.mode === 'AUTO' ? surveyProfileRef.current : quoteInputToV2Profile(nextQuote.input);
+    const selected = candidate ?? serverPreview?.candidates.find((item) => item.id === selectedCandidateId);
+    try {
+      const response = await fetch(`${apiBaseUrl}/quotes/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.accessToken}` },
+        body: JSON.stringify({
+          title: nextQuote.title,
+          purpose: nextQuote.input.purpose,
+          budget: nextQuote.input.budget,
+          parts: nextQuote.parts,
+          input: nextQuote.input,
+          profile,
+          performance: nextQuote.performance,
+          preview: selected ? {
+            candidateId: selected.id,
+            strategy: selected.strategy,
+            rulesetVersion: serverPreview?.rulesetVersion,
+            status: serverPreview?.status,
+            selectionReasons: selected.selectionReasons,
+            unmetConditions: selected.unmetConditions,
+            compatibility: selected.compatibility,
+            performanceEvidence: selected.performanceEvidence,
+          } : undefined,
+          compatibility: nextQuote.compatibility,
+        }),
+      });
+      if (!response.ok) return nextQuote;
+      const body = await response.json() as { quoteId?: string | number };
+      if (!body.quoteId) return nextQuote;
+      const persisted = { ...nextQuote, serverQuoteId: String(body.quoteId) };
+      saveQuote(persisted);
+      setServerSaved(true);
+      return persisted;
+    } catch {
+      return nextQuote;
+    }
+  };
+
   const handleGenerateAuto = async () => {
-    // Generate dynamically using DB catalog if available
-    const nextQuote = catalog.length > 0 ? generateDynamicQuote(input, catalog) : generateQuote(input);
-    await hydrateAndSetQuote(nextQuote, { showResult: true });
-    setCartMessage('');
+    const currentProfile = surveyProfileRef.current;
+    setPreviewLoading(true);
+    setPreviewError(null);
+    setQuote(undefined);
+    try {
+      const preview = await requestQuotePreview(currentProfile);
+      setServerPreview(preview);
+      setSelectedCandidateId(undefined);
+      setInput(profileToLegacyInput(currentProfile));
+      setShowResult(true);
+      setCartMessage('');
+    } catch (error) {
+      setPreviewError(error instanceof Error ? error.message : '자동 견적을 생성하지 못했습니다.');
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  const handleSelectCandidate = async (candidate: QuotePreviewCandidate) => {
+    const profile = surveyProfileRef.current;
+    const nextQuote = candidateToQuote(candidate, profile, profileToLegacyInput(profile));
+    const hydratedQuote = await hydrateAndSetQuote(nextQuote, { profile, refreshPerformance: false, showResult: true });
+    setSelectedCandidateId(candidate.id);
+    const persistedQuote = await persistQuoteToServer(hydratedQuote, candidate);
+    setQuote(persistedQuote);
+    setCartMessage('선택한 서버 후보를 로컬 견적에 저장했습니다.');
   };
 
   const handleBuildManualQuote = async () => {
@@ -146,39 +238,11 @@ export default function QuotePage() {
 
   const handleAddCart = async () => {
     if (!quote) return;
-    addQuoteToCart(quote);
-    await syncCartQuoteToServer(quote).catch(() => false);
+    const persistedQuote = await persistQuoteToServer(quote);
+    addQuoteToCart(persistedQuote);
+    await syncCartQuoteToServer(persistedQuote).catch(() => false);
+    setQuote(persistedQuote);
     setCartMessage('장바구니에 견적을 담았습니다.');
-    setServerSaved(false);
-
-    const session = getSession();
-    if (session?.accessToken) {
-      try {
-        const res = await fetch(`${apiBaseUrl}/quotes/save`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.accessToken}`,
-          },
-          body: JSON.stringify({
-            title: quote.title,
-            purpose: quote.input.purpose,
-            budget: quote.input.budget,
-            subtotal: quote.subtotal,
-            assemblyFee: quote.assemblyFee,
-            shippingFee: quote.shippingFee,
-            windowsFee: quote.windowsFee,
-            total: quote.total,
-            parts: quote.parts,
-            input: quote.input,
-            compatibility: quote.compatibility,
-          }),
-        });
-        if (res.ok) setServerSaved(true);
-      } catch {
-        // 서버 저장 실패 시 무시 (로컬 저장은 됨)
-      }
-    }
   };
 
   return (
@@ -218,6 +282,7 @@ export default function QuotePage() {
 
       {showResult && quote ? (
         <section className="grid w-full min-w-0 gap-5">
+          {serverPreview && <QuotePreviewCandidates onSelect={handleSelectCandidate} preview={serverPreview} selectedId={selectedCandidateId} />}
           <div>
             <button 
               onClick={() => setShowResult(false)} 
@@ -275,96 +340,13 @@ export default function QuotePage() {
             </div>
           )}
         </section>
+      ) : showResult && serverPreview ? (
+        <section className="grid w-full min-w-0 gap-5">
+          <QuotePreviewCandidates onSelect={handleSelectCandidate} preview={serverPreview} selectedId={selectedCandidateId} />
+          <button className="mx-auto text-sm font-black text-brand hover:underline" onClick={() => setShowResult(false)} type="button">← 설문으로 돌아가기</button>
+        </section>
       ) : mode === 'AUTO' ? (
-        <PanelCard className="mx-auto w-full max-w-4xl md:p-6">
-          <SectionHeader
-            action={<Sparkles className="text-accent" size={28} />}
-            description="예산, 용도, 게임만 정해도 JHS Computer 견적이 바로 생성됩니다."
-            title="자동 견적 설문"
-          />
-
-          <div className="mt-6 grid gap-6">
-            <label className="grid gap-2 bg-panel p-4 rounded-2xl border border-line">
-              <span className="text-sm font-black text-brand">예산</span>
-              <div className="flex items-center gap-3">
-                <input
-                  className="h-2 flex-1 accent-teal-700"
-                  max={450}
-                  min={80}
-                  onChange={(event) => setInput({ ...input, budget: Number(event.target.value) })}
-                  step={10}
-                  type="range"
-                  value={input.budget}
-                />
-                <output className="w-24 rounded-xl border border-line bg-white px-3 py-2 text-right font-black shadow-sm">
-                  {input.budget}만원
-                </output>
-              </div>
-            </label>
-
-            <ChoiceGroup label="용도" options={purposes} value={input.purpose} onChange={(purpose) => setInput({ ...input, purpose })} />
-            <ChoiceGroup label="목표 해상도" options={resolutions} value={input.resolution} onChange={(resolution) => setInput({ ...input, resolution })} />
-            <ChoiceGroup label="부품 우선순위" options={priorities} value={input.priority} onChange={(priority) => setInput({ ...input, priority })} />
-
-            <div className="grid gap-2">
-              <span className="text-sm font-black">주로 하는 게임</span>
-              <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
-                {gameOptions.map((game) => (
-                  <button
-                    className={`rounded-xl border px-3 py-2 text-sm font-bold transition shadow-sm ${
-                      selectedGames.has(game) ? 'border-accent bg-amber-50 text-accent' : 'border-line bg-white hover:border-accent hover:text-accent'
-                    }`}
-                    key={game}
-                    onClick={() => {
-                      const nextGames = selectedGames.has(game)
-                        ? input.games.filter((item) => item !== game)
-                        : [...input.games, game].slice(-3);
-                      setInput({ ...input, games: nextGames.length ? nextGames : [game] });
-                    }}
-                    type="button"
-                  >
-                    {game}
-                  </button>
-                ))}
-              </div>
-              {!gameOptions.length && (
-                <div className="rounded-xl border border-dashed border-line bg-panel p-4 text-sm font-bold text-slate-500">
-                  벤치마크 DB 게임 목록을 불러오는 중입니다. DB 연결이 없으면 더미 게임 목록은 표시하지 않습니다.
-                </div>
-              )}
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-2 border-t border-line/50 pt-6">
-              <FormField label="저장 용량">
-                <SelectInput
-                  className="h-12 shadow-sm"
-                  onChange={(event) => setInput({ ...input, storage: event.target.value as QuoteInput['storage'] })}
-                  value={input.storage}
-                >
-                  <option>500GB</option>
-                  <option>1TB</option>
-                  <option>2TB</option>
-                </SelectInput>
-              </FormField>
-              <FormField label="윈도우 설치 여부">
-                <WindowsOptionGroup
-                  value={normalizeWindowsOption(input.windows)}
-                  onChange={(windows) => setInput({ ...input, windows })}
-                />
-              </FormField>
-            </div>
-
-            <Button
-              className="mt-2 h-14 w-full text-lg shadow-md"
-              onClick={handleGenerateAuto}
-              type="button"
-              variant="dark"
-            >
-              자동 견적 생성하기
-              <ChevronRight size={20} />
-            </Button>
-          </div>
-        </PanelCard>
+        <QuoteSurveyPanel error={previewError} gameOptions={gameOptions} loading={previewLoading} onChange={(nextProfile) => { surveyProfileRef.current = nextProfile; setSurveyProfile(nextProfile); }} onSubmit={handleGenerateAuto} profile={surveyProfile} />
       ) : (
         <section className="grid min-w-0 gap-5 lg:grid-cols-[360px_minmax(0,1fr)] xl:grid-cols-[420px_minmax(0,1fr)] items-start">
           <div className="lg:sticky lg:top-[120px] flex flex-col gap-4">
@@ -379,48 +361,17 @@ export default function QuotePage() {
       {mode === 'AUTO' && !showResult && (
         <AiChatWidget
           currentInput={input}
-          onUpdateInput={(newInput) => setInput({ ...input, ...newInput })}
+          onUpdateInput={(newInput) => {
+            const updatedInput = { ...input, ...newInput };
+            const updatedProfile = mergeAiInputIntoProfile(surveyProfileRef.current, updatedInput, newInput);
+            setInput(updatedInput);
+            surveyProfileRef.current = updatedProfile;
+            setSurveyProfile(updatedProfile);
+          }}
           onGenerate={handleGenerateAuto}
         />
       )}
     </AppShell>
-  );
-}
-
-function WindowsOptionGroup({
-  value,
-  onChange,
-}: {
-  value: WindowsOptionValue;
-  onChange: (value: WindowsOptionValue) => void;
-}) {
-  return (
-    <div className="grid gap-2">
-      {windowsOptions.map((option) => {
-        const selected = value === option.value;
-        return (
-          <button
-            className={`grid gap-1 rounded-xl border p-3 text-left transition ${
-              selected ? 'border-brand bg-teal-50 text-brand shadow-sm' : 'border-line bg-white text-slate-700 hover:border-brand'
-            }`}
-            key={option.value}
-            onClick={() => onChange(option.value)}
-            type="button"
-          >
-            <span className="flex items-start gap-2">
-              <span className={`mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded border ${selected ? 'border-brand bg-brand' : 'border-slate-300 bg-white'}`}>
-                {selected && <Check size={12} className="text-white" />}
-              </span>
-              <span className="min-w-0">
-                <span className="safe-break block text-sm font-black">{option.label}</span>
-                <span className="safe-break mt-0.5 block text-xs font-bold text-slate-500">{option.description}</span>
-              </span>
-            </span>
-            <span className="pl-6 text-sm font-black">{option.price ? `+${option.price.toLocaleString()}원` : '추가금 없음'}</span>
-          </button>
-        );
-      })}
-    </div>
   );
 }
 
@@ -465,34 +416,107 @@ function buildQuoteSummary(quote: Quote) {
   return `${quote.input.resolution} ${quote.input.games.join(', ')} 기준으로 무난한 구성입니다. 케이스 공간, 쿨러 높이, 메모리 규격까지 기본 호환 검사를 통과했습니다.`;
 }
 
-function ChoiceGroup<T extends Purpose | Resolution | Priority>({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: T[];
-  value: T;
-  onChange: (value: T) => void;
-}) {
-  return (
-    <div className="grid gap-2">
-      <span className="text-sm font-black">{label}</span>
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-        {options.map((option) => (
-          <button
-            className={`min-w-0 rounded-xl border px-2 py-2.5 text-sm font-bold leading-5 transition shadow-sm sm:px-3 ${
-              value === option ? 'border-brand bg-brand text-white' : 'border-line bg-white text-slate-700 hover:border-brand hover:text-brand'
-            }`}
-            key={option}
-            onClick={() => onChange(option)}
-            type="button"
-          >
-            {option}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+function createSurveyProfile(input: QuoteInput): QuoteProfileV2 {
+  const profile = quoteInputToProfile(input);
+  const targetWon = profile.budgetProfile.targetWon;
+  return {
+    ...profile,
+    budgetProfile: {
+      ...profile.budgetProfile,
+      minimumWon: Math.max(0, targetWon - 300_000),
+      maximumWon: targetWon + 500_000,
+    },
+    workloadProfile: {
+      workloads: profile.workloadProfile.workloads.map((workload) => workload.type === 'GAMING'
+        ? { ...workload, details: { ...workload.details, refreshRate: 144 } }
+        : workload),
+    },
+  };
+}
+
+function profileToLegacyInput(profile: QuoteProfileV2): QuoteInput {
+  const workload = [...profile.workloadProfile.workloads].sort((left, right) => right.weight - left.weight)[0];
+  const details = workload?.details ?? {};
+  const purpose = {
+    GAMING: '게임',
+    STREAMING: '방송',
+    VIDEO_EDITING: '영상편집',
+    AI: 'AI',
+    OFFICE: '사무',
+    DEVELOPMENT: '사무',
+  }[workload?.type ?? 'GAMING'] as QuoteInput['purpose'];
+  const resolution = String(details.resolution ?? details.outputResolution ?? details.timeline ?? 'QHD');
+  const priority = {
+    PERFORMANCE: '성능 우선',
+    VALUE: '가성비 우선',
+    AESTHETICS: '감성 우선',
+    UPGRADE: '업그레이드 우선',
+    BALANCED: '성능 우선',
+  }[profile.preferenceProfile.preset] as QuoteInput['priority'];
+  const systemGb = profile.storageDemand.systemGb;
+  return {
+    budget: Math.round(profile.budgetProfile.targetWon / 10_000),
+    purpose,
+    games: Array.isArray(details.games) ? details.games.filter((game): game is string => typeof game === 'string') : [],
+    resolution: resolution === 'FHD' || resolution === '4K' ? resolution : 'QHD',
+    storage: systemGb >= 2048 ? '2TB' : systemGb <= 500 ? '500GB' : '1TB',
+    windows: profile.windowsOption,
+    priority,
+  };
+}
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+}
+
+function mergeAiInputIntoProfile(profile: QuoteProfileV2, input: QuoteInput, changes: Partial<QuoteInput>): QuoteProfileV2 {
+  let next: QuoteProfileV2 = { ...profile, legacyInput: { ...input, games: [...input.games] } };
+  if (changes.purpose) {
+    const type = { 게임: 'GAMING', 방송: 'STREAMING', 영상편집: 'VIDEO_EDITING', 사무: 'OFFICE', AI: 'AI' }[changes.purpose] as QuoteProfileV2['workloadProfile']['workloads'][number]['type'];
+    const dominant = [...next.workloadProfile.workloads].sort((left, right) => right.weight - left.weight)[0];
+    if (dominant) {
+      next = { ...next, workloadProfile: { workloads: next.workloadProfile.workloads.map((workload) => workload.type === dominant.type ? { ...workload, type, details: workload.type === type ? workload.details : defaultWorkloadDetails(type) } : workload) } };
+    }
+  }
+  if (changes.budget !== undefined) {
+    const targetWon = Math.max(0, Math.round(input.budget * 10_000));
+    next = { ...next, budgetProfile: { ...next.budgetProfile, minimumWon: Math.max(0, targetWon - 300_000), targetWon, maximumWon: targetWon + 500_000 } };
+  }
+  if (changes.priority) {
+    const preset = { '성능 우선': 'PERFORMANCE', '가성비 우선': 'VALUE', '감성 우선': 'AESTHETICS', '업그레이드 우선': 'UPGRADE' }[changes.priority] as QuoteProfileV2['preferenceProfile']['preset'];
+    next = { ...next, preferenceProfile: preferenceForPreset(preset) };
+  }
+  if (changes.windows !== undefined) next = { ...next, windowsOption: input.windows };
+  if (changes.storage) next = { ...next, storageDemand: { ...next.storageDemand, systemGb: input.storage === '500GB' ? 500 : input.storage === '2TB' ? 2048 : 1024 } };
+  if (changes.resolution || changes.games) {
+    next = {
+      ...next,
+      workloadProfile: {
+        workloads: next.workloadProfile.workloads.map((workload) => workload.type === 'GAMING'
+          ? { ...workload, details: { ...workload.details, ...(changes.resolution ? { resolution: input.resolution } : {}), ...(changes.games ? { games: [...input.games] } : {}) } }
+          : workload),
+      },
+    };
+  }
+  return next;
+}
+
+function defaultWorkloadDetails(type: QuoteProfileV2['workloadProfile']['workloads'][number]['type']): Record<string, unknown> {
+  return type === 'GAMING' ? { games: [], resolution: 'QHD', refreshRate: 144 }
+    : type === 'STREAMING' ? { outputResolution: 'QHD', hardwareEncoding: true }
+      : type === 'VIDEO_EDITING' ? { software: ['Premiere Pro'], timeline: 'QHD', codec: 'H.264' }
+        : type === 'AI' ? { mode: 'INFERENCE', modelSize: '13B', quantization: 'Q4' }
+          : type === 'DEVELOPMENT' ? { containers: true, virtualMachines: false }
+            : { multitasking: 'STANDARD' };
+}
+
+function preferenceForPreset(preset: QuoteProfileV2['preferenceProfile']['preset']): QuoteProfileV2['preferenceProfile'] {
+  const weights = {
+    BALANCED: { performance: 35, value: 25, aesthetics: 15, upgradeability: 25 },
+    PERFORMANCE: { performance: 45, value: 15, aesthetics: 10, upgradeability: 30 },
+    VALUE: { performance: 25, value: 45, aesthetics: 10, upgradeability: 20 },
+    AESTHETICS: { performance: 30, value: 15, aesthetics: 40, upgradeability: 15 },
+    UPGRADE: { performance: 30, value: 15, aesthetics: 10, upgradeability: 45 },
+  }[preset];
+  return { preset, ...weights };
 }

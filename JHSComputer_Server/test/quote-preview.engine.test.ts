@@ -75,6 +75,7 @@ test('returns REVIEW_REQUIRED instead of inventing parts when the budget cannot 
   assert.equal(result.status, 'REVIEW_REQUIRED');
   assert.deepEqual(result.candidates, []);
   assert.match(result.review?.reasons[0] ?? '', /예산|호환성/);
+  assert.ok((result.review?.shortfallWon ?? 0) > 0);
 });
 
 test('excludes hard-incompatible combinations before scoring', () => {

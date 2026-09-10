@@ -236,6 +236,9 @@ export default function MyPage() {
                   <p className="part-spec mt-2 text-sm text-slate-500">
                     {(quote.snapshotJson?.parts ?? []).map((part) => part.category).join(' · ') || '구성 정보 확인 중'}
                   </p>
+                  <Link className="mt-3 inline-flex items-center gap-1 text-sm font-black text-brand hover:underline" href={`/quote/${quote.id}`}>
+                    견적 상세 보기 <ChevronRight size={15} />
+                  </Link>
                 </article>
               ))}
             </div>
