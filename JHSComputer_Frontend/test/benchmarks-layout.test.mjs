@@ -17,4 +17,5 @@ test('FPS table does not repeat source audit details in every cell', async () =>
   const table = await readFile(join(frontendRoot, 'src/components/benchmarks/BenchmarkGameTable.tsx'), 'utf8');
 
   assert.doesNotMatch(table, /evidenceLabel|sampleCount|evidenceNote|sourceNames|testSystem|sourceUrl/);
+  assert.doesNotMatch(table, /:\$\{game\.sourceConditionKey/);
 });

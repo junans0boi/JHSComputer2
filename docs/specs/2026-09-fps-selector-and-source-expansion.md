@@ -61,8 +61,10 @@ GPU를 먼저 고른 뒤 그 조합의 게임 성능과 부품 벤치마크를 �
 - 선택 URL은 공개 CPU/GPU 모델을 `cpu`·`gpu` query로 사용하고, 서버는 FPS 근거 조합
   목록에서 정확한 정규화 조합을 찾는다.
 - 공개 선택지 전용 API를 추가해 전체 수집 조합을 큰 목록으로 내려보내지 않는다.
-- 게임 표의 행 그룹 키는 `benchmarkGame + option + sourceCondition`이며, 해상도 셀은
-  기존 `benchmark_combo_game_results`의 해당 관측값만 사용한다.
+- 저장·API의 원본 관측은 `benchmarkGame + option + sourceCondition + resolution`으로
+  구분한다. 고객용 게임 표는 `benchmarkGame + option` 한 줄로 묶고, 각 해상도 셀에는
+  이미 존재하는 해당 관측값을 채운다. 여러 원본 조건이 같은 해상도에 겹치면 서버가
+  반환한 우선 행 하나만 사용하며 평균·보간하지 않는다.
 - 추천 조합 API와 FPS API는 계속 분리한다. `/benchmarks`는 추천 조합 API를 로드하거나
   추천 목록을 렌더링하지 않고, 추천 맥락 수를 FPS 표의 표본 수로 쓰지 않는다.
 - 수집기 파서는 원본 HTML의 필수 필드가 없으면 레코드를 버리고, 수집 결과를

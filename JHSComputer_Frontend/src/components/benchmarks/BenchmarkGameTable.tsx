@@ -67,9 +67,9 @@ function groupGames(games: BenchmarkGameResult[]): GameRow[] {
   const grouped = new Map<string, GameRow>();
   for (const game of games) {
     const quality = game.optionPreset || game.bestQuality || 'UNKNOWN';
-    const key = `${game.gameId}:${quality}:${game.sourceConditionKey ?? 'UNKNOWN'}`;
+    const key = `${game.gameId}:${quality}`;
     const row = grouped.get(key) ?? { key, gameName: game.gameName, quality, cells: {} };
-    row.cells[game.resolution] = game;
+    if (!row.cells[game.resolution]) row.cells[game.resolution] = game;
     grouped.set(key, row);
   }
   return [...grouped.values()].sort((left, right) => left.gameName.localeCompare(right.gameName, 'ko') || left.quality.localeCompare(right.quality));
