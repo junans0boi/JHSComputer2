@@ -32,6 +32,23 @@ flowchart LR
   P -. FPS 아님 .-> M
 ```
 
+### FPS 선택형 화면 흐름
+
+```mermaid
+flowchart LR
+  A[(benchmark_combo_game_results)] --> B[GET /benchmarks/selector-options]
+  B --> C[CPU 드롭다운 + GPU 드롭다운]
+  C --> D[정확한 공개 CPU/GPU 조합 조회]
+  D --> E[게임+옵션 행 / FHD·QHD·4K 열]
+  D --> F[CPU Cinebench 2024 비교 표]
+  D --> G[GPU Cinebench 2024 비교 표]
+  H[추천 조합·견적 구성] -. FPS 선택지에 직접 합류하지 않음 .-> C
+```
+
+선택지는 실제 FPS 근거 조합에서만 생성한다. 추천 조합 수가 많더라도 해당 조합에
+해상도·옵션·숫자 FPS가 없으면 선택기에 넣지 않으며, 빈 해상도 셀을 다른 값으로
+복제하지 않는다.
+
 ### 견적왕 느린 증분 수집 흐름
 
 ```mermaid

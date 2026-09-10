@@ -316,6 +316,21 @@ _Avoid_: 게임 성능 데이터(추천 조합과 숫자 관측값을 합치는 
 특정 CPU/GPU 조합을 특정 게임·해상도·품질·게임 버전·드라이버·테스트 시스템 조건으로 측정하거나 출처가 보고한 FPS 숫자다. 조건이 빠진 평균값은 해상도별 FPS로 복제하지 않는다.
 _Avoid_: 지원 해상도(해상도 지원 문구와 FPS 숫자를 혼동하는 표현)
 
+### 원본 테스트 조건 (SourceConditionKey)
+
+같은 CPU/GPU·게임·해상도·옵션이라도 원본 기사, 테스트 시스템, 게임 버전·드라이버 조건이
+다르면 분리해 보존하기 위한 내부 식별자다. 집계 결과가 서로 다른 조건의 FPS를 평균내지
+않도록 `SOURCE_CONDITION_KEY`를 원본·조합 결과 유일키에 포함한다.
+_Avoid_: 같은 조합이면 모든 출처·기사의 FPS를 하나의 평균으로 합치는 표현
+
+### FPS 근거 조합 (FpsEvidenceCombo)
+
+`GameFpsObservation`이 하나 이상 연결된 정규화 CPU/GPU 조합이다. 벤치마크 화면의
+CPU/GPU 선택기는 이 집합에서만 만든다. 추천 조합이나 조립 PC 수집 조합은 FPS 숫자와
+조건이 확인되기 전까지 FPS 근거 조합으로 세지 않는다.
+
+_Avoid_: 수집 조합(견적·추천·FPS 조합을 하나의 숫자로 세는 표현)
+
 ### 추천 맥락 스냅샷 (RecommendationContextSnapshot)
 
 외부 출처가 특정 게임·해상도·추천 등급·플랫폼·CPU/GPU 조합에 대해 마지막으로
@@ -378,7 +393,7 @@ AI 추론 workload의 후보 품질을 판단하는 기준이다. 모델 크기�
 | 컴퓨존 (compuzone.co.kr) | 공급처 상품·가격·후기·상세 스펙·이미지 | `JHSComputer_Agent/compuzone/` |
 | 견적왕 (kjwwang.com) | 느린 증분 방식의 게임별 추천 조합·예산·해상도 정보; 같은 추천 맥락은 최신값으로 유지하고 실제 FPS는 별도 검증 | `JHSComputer_Agent/kjwwang/` |
 | 왕가PC (wanggapc.com) | 실제 조립 PC 구성·가격; 게임 FPS 숫자와 조건은 원문 검증 후 별도 관측값으로 적재 | `JHSComputer_Agent/wanggapc/` |
-| ComputerBase (computerbase.de) | 게임별 해상도 FPS 원본 및 하드웨어 리뷰 차트 후보 출처; 현재 게임 FPS는 고정 테스트 CPU·10개 GPU·14개 게임 범위 | `JHSComputer_Agent/computerbase/` |
+| ComputerBase (computerbase.de) | 기사별 테스트 조건이 보존된 게임별 해상도 FPS 원본; 현재 2개 기사·28개 내부 GPU 그룹·1,457개 FPS 행(공개 정규화 27개 조합) | `JHSComputer_Agent/computerbase/` |
 | Blender Open Data (opendata.blender.org) | 공개 라이선스 범위를 확인한 Blender 관측값 후보 | `JHSComputer_Agent/benchmarks/` |
 | 다나와 (danawa.com) | 상품 스펙 표 보강용 후보 | `JHSComputer_Agent/danawa/` |
 
@@ -394,7 +409,9 @@ AI 추론 workload의 후보 품질을 판단하는 기준이다. 모델 크기�
 - [x] 견적왕 추천 스냅샷을 CPU/GPU 조합과 게임·해상도·등급 상세로 제공하는 별도 API 추가
 - [x] 벤치마크 화면에서 추천 조합과 실제 FPS 조합을 별도 영역으로 제공
 - [ ] 견적왕 전체 대상 페이지를 소량 배치로 증분 수집하고 최신 추천 스냅샷을 검증
-- [ ] ComputerBase 게임 FPS를 현재 고정 CPU·10개 GPU 범위에서 추가 GPU/CPU 기사로 확장
+- [x] ComputerBase 게임 FPS를 2개 기사·28개 내부 GPU 그룹으로 확장하고 기사별 원본 조건 키를 보존
+- [ ] 왕가PC·견적왕에서 숫자·CPU·GPU·해상도·옵션이 함께 있는 FPS 원본만 별도 적재
+- [x] CPU/GPU 선택형 게임 FPS 표와 Cinebench 2024 싱글/멀티 비교 표를 `/benchmarks`에 적용
 - [ ] JHS 직접 측정(`MEASURED`) 수집 장비·절차와 추가 출처별 이용 조건 확정
 
 아키텍처 흐름과 다음 정규화 공통 모듈 기회는
