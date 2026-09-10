@@ -8,6 +8,11 @@
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import mysql from 'mysql2/promise';
+import {
+  dedupeRecommendationRecords,
+  getRecommendationContextKey,
+  shouldApplyLatestSnapshot,
+} from './incremental-collection.mjs';
 
 function parseArgs(argv) {
   const args = {
@@ -155,6 +160,28 @@ async function upsertBuild(connection, sourceId, game, recommendation) {
     crawledAt: game.crawledAt,
   };
   const title = `${clean(game.gameName)} ${resolution} ${clean(recommendation.tier)} · ${clean(recommendation.combo)}`;
+  const [existingRows] = await connection.execute(
+    `SELECT RAW_JSON AS rawJson
+       FROM benchmark_builds
+      WHERE BENCHMARK_SOURCE_ID = ? AND EXTERNAL_BUILD_ID = ?
+      LIMIT 1`,
+    [sourceId, externalBuildId],
+  );
+  const existingRaw = existingRows[0]?.rawJson;
+  const existingCapturedAt = typeof existingRaw === 'string'
+    ? (() => { try { return JSON.parse(existingRaw).crawledAt; } catch { return null; } })()
+    : existingRaw?.crawledAt;
+  if (!shouldApplyLatestSnapshot(existingCapturedAt, game.crawledAt)) {
+    return { externalBuildId, updated: false, contextKey: getRecommendationContextKey({
+      source: 'KJWWANG',
+      gameId: game.gameId,
+      resolution,
+      tier: recommendation.tier,
+      platform: recommendation.platform,
+      cpuModel: combo.cpuModel,
+      gpuModel: combo.gpuModel,
+    }) };
+  }
   await connection.execute(
     `INSERT INTO benchmark_builds
       (BENCHMARK_SOURCE_ID, EXTERNAL_BUILD_ID, TITLE, COMBO_KEY,
@@ -166,16 +193,38 @@ async function upsertBuild(connection, sourceId, game, recommendation) {
        GAME_COUNT=VALUES(GAME_COUNT), FPS_RECORD_COUNT=0, RAW_JSON=VALUES(RAW_JSON), UPDATED_DT=NOW()`,
     [sourceId, externalBuildId, title, comboKey, combo.cpuName, combo.cpuModel, combo.gpuName, combo.gpuModel, JSON.stringify(raw)],
   );
-  return externalBuildId;
+  return { externalBuildId, updated: true, contextKey: getRecommendationContextKey({
+    source: 'KJWWANG',
+    gameId: game.gameId,
+    resolution,
+    tier: recommendation.tier,
+    platform: recommendation.platform,
+    cpuModel: combo.cpuModel,
+    gpuModel: combo.gpuModel,
+  }) };
 }
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const games = await readGames(args.input);
-  const recommendations = games.flatMap((game) =>
-    Object.values(game.builds ?? {}).flatMap((items) => items.map((recommendation) => ({ game, recommendation }))),
-  );
-  console.log(`[kjwwang-db] games=${games.length} recommendations=${recommendations.length}`);
+  const recommendationRecords = games.flatMap((game) =>
+    Object.values(game.builds ?? {}).flatMap((items) => items.map((recommendation) => {
+      const combo = splitCombo(recommendation.combo);
+      if (!combo?.cpuModel || !combo?.gpuModel) return null;
+      return {
+        ...recommendation,
+        source: 'KJWWANG',
+        game,
+        gameId: game.gameId,
+        cpuModel: combo.cpuModel,
+        gpuModel: combo.gpuModel,
+        crawledAt: game.crawledAt,
+      };
+    })),
+  ).filter(Boolean);
+  const recommendations = dedupeRecommendationRecords(recommendationRecords)
+    .map((recommendation) => ({ game: recommendation.game, recommendation }));
+  console.log(`[kjwwang-db] games=${games.length} recommendations=${recommendationRecords.length} deduped=${recommendations.length}`);
   if (args.dryRun) return;
 
   const env = await loadEnv(path.resolve(args.env));
@@ -192,7 +241,8 @@ async function main() {
   let skipped = 0;
   for (const game of games) await upsertGame(connection, game);
   for (const { game, recommendation } of recommendations) {
-    if (await upsertBuild(connection, sourceId, game, recommendation)) synced += 1;
+    const result = await upsertBuild(connection, sourceId, game, recommendation);
+    if (result?.updated) synced += 1;
     else skipped += 1;
   }
   const summary = {
