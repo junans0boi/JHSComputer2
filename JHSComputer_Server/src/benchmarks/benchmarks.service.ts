@@ -170,7 +170,7 @@ export class BenchmarksService {
       )`);
     }
 
-    values.push(limitValue(params.limit, 1000, 50));
+    const resultLimit = limitValue(params.limit, 1000, 50);
     const rows = await this.dataSource.query(
       `
       SELECT
@@ -187,12 +187,11 @@ export class BenchmarksService {
       ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
       GROUP BY b.COMBO_KEY
       ORDER BY buildSampleCount DESC, gameCount DESC, comboKey ASC
-      LIMIT ?
       `,
       values,
     );
 
-    const items = mergePublicCombos(rows.map((row: any) => toPublicCombo(row)));
+    const items = mergePublicCombos(rows.map((row: any) => toPublicCombo(row))).slice(0, resultLimit);
     await this.attachComponentPartIds(items);
     return { items, total: items.length };
   }
@@ -417,7 +416,7 @@ export class BenchmarksService {
       values.push(params.resolution);
     }
 
-    values.push(limitValue(params.limit, 500, 200));
+    const resultLimit = limitValue(params.limit, 500, 200);
 
     const rows = await this.dataSource.query(
       `
@@ -427,6 +426,7 @@ export class BenchmarksService {
         r.RESOLUTION AS resolution,
         r.OPTION_KEY AS optionPreset,
         r.SOURCE_CONDITION_KEY AS sourceConditionKey,
+        r.EVIDENCE_TYPE AS evidenceType,
         r.SAMPLE_COUNT AS sampleCount,
         r.RAW_FPS_AVG AS rawFpsAvg,
         r.RAW_FPS_MIN AS rawFpsMin,
@@ -450,17 +450,42 @@ export class BenchmarksService {
           SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.testSystem')))
           FROM benchmark_builds sourceBuild
           WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
-        ) AS testSystem
+        ) AS testSystem,
+        (
+          SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.sourceUpdatedAt')))
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceUpdatedAt,
+        (
+          SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.estimateId')))
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceEstimateId,
+        (
+          SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.capturedAt')))
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceCapturedAt,
+        (
+          SELECT MAX(sourceBuild.UPDATED_DT)
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceBuildUpdatedAt,
+        (
+          SELECT MAX(sourceBuild.BENCHMARK_BUILD_ID)
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceBuildId
       FROM benchmark_combo_game_results r
       JOIN benchmark_games g ON g.BENCHMARK_GAME_ID = r.BENCHMARK_GAME_ID
       WHERE ${where.join(' AND ')}
       ORDER BY g.GAME_NAME ASC, FIELD(r.RESOLUTION, 'FHD', 'QHD', 'UHD')
-      LIMIT ?
       `,
       values,
     );
 
-    const items = rows.map((row: any) => ({ ...row, ...benchmarkEvidence(row) }));
+    const items = selectPreferredEvidenceRows(rows, resultLimit)
+      .map((row: any) => ({ ...row, ...benchmarkEvidence(row) }));
     return { items, total: items.length };
   }
 
@@ -525,13 +550,19 @@ export class BenchmarksService {
         MIN(b.GPU_MODEL) AS gpuModel,
         MIN(b.CPU_NAME) AS cpuName,
         MIN(b.GPU_NAME) AS gpuName,
+        MIN(CASE
+          WHEN r.EVIDENCE_TYPE = 'MEASURED' THEN 0
+          WHEN r.EVIDENCE_TYPE IN ('SOURCE_BENCHMARK', 'SOURCE_REPORTED') THEN 1
+          WHEN r.EVIDENCE_TYPE = 'SOURCE_RECOMMENDATION' THEN 2
+          ELSE 9
+        END) AS evidenceRank,
         COUNT(DISTINCT b.BENCHMARK_BUILD_ID) AS buildSampleCount,
         COUNT(DISTINCT r.BENCHMARK_GAME_ID) AS gameCount
       FROM benchmark_builds b
       JOIN benchmark_combo_game_results r ON r.COMBO_KEY = b.COMBO_KEY
       WHERE ${where.join(' AND ')}
       GROUP BY b.COMBO_KEY
-      ORDER BY buildSampleCount DESC, gameCount DESC, comboKey ASC
+      ORDER BY evidenceRank ASC, buildSampleCount DESC, gameCount DESC, comboKey ASC
       `,
       values,
     );
@@ -629,7 +660,7 @@ export class BenchmarksService {
       : '';
     const priorityValues = priorityGames.map((game) => `%${game}%`);
 
-    return this.dataSource.query(
+    const rows = await this.dataSource.query(
       `
       SELECT
         g.BENCHMARK_GAME_ID AS gameId,
@@ -637,6 +668,7 @@ export class BenchmarksService {
         r.RESOLUTION AS resolution,
         r.OPTION_KEY AS optionPreset,
         r.SOURCE_CONDITION_KEY AS sourceConditionKey,
+        r.EVIDENCE_TYPE AS evidenceType,
         r.SAMPLE_COUNT AS sampleCount,
         r.RAW_FPS_AVG AS rawFpsAvg,
         r.DISPLAY_FPS_MIN AS displayFpsMin,
@@ -660,15 +692,40 @@ export class BenchmarksService {
           SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.testSystem')))
           FROM benchmark_builds sourceBuild
           WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
-        ) AS testSystem
+        ) AS testSystem,
+        (
+          SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.sourceUpdatedAt')))
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceUpdatedAt,
+        (
+          SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.estimateId')))
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceEstimateId,
+        (
+          SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.capturedAt')))
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceCapturedAt,
+        (
+          SELECT MAX(sourceBuild.UPDATED_DT)
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceBuildUpdatedAt,
+        (
+          SELECT MAX(sourceBuild.BENCHMARK_BUILD_ID)
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceBuildId
       FROM benchmark_combo_game_results r
       JOIN benchmark_games g ON g.BENCHMARK_GAME_ID = r.BENCHMARK_GAME_ID
       WHERE ${params.where.join(' AND ')}
       ORDER BY ${priorityOrder} g.GAME_NAME ASC, FIELD(r.RESOLUTION, 'FHD', 'QHD', 'UHD')
-      LIMIT ?
       `,
-      [...params.values, ...priorityValues, limitValue(params.limit, 200, 80)],
+      [...params.values, ...priorityValues],
     );
+    return selectPreferredEvidenceRows(rows, limitValue(params.limit, 200, 80));
   }
 
   async getRecommendedBuilds(params: { q?: string; limit: number }) {
@@ -1005,6 +1062,63 @@ function sumCount(left: unknown, right: unknown) {
   return Number.isFinite(total) ? total : 0;
 }
 
+function evidenceRank(evidenceType: unknown) {
+  return {
+    MEASURED: 0,
+    SOURCE_BENCHMARK: 1,
+    SOURCE_REPORTED: 1,
+    SOURCE_RECOMMENDATION: 2,
+  }[String(evidenceType ?? '')] ?? 9;
+}
+
+function compareEvidenceFreshness(left: any, right: any) {
+  for (const field of ['sourceUpdatedAt']) {
+    const leftValue = String(left?.[field] ?? '');
+    const rightValue = String(right?.[field] ?? '');
+    if (leftValue !== rightValue) return rightValue.localeCompare(leftValue);
+  }
+
+  const estimateDifference = Number(right?.sourceEstimateId ?? 0) - Number(left?.sourceEstimateId ?? 0);
+  if (estimateDifference !== 0) return estimateDifference;
+
+  for (const field of ['sourceCapturedAt', 'sourceBuildUpdatedAt']) {
+    const leftValue = String(left?.[field] ?? '');
+    const rightValue = String(right?.[field] ?? '');
+    if (leftValue !== rightValue) return rightValue.localeCompare(leftValue);
+  }
+
+  const buildDifference = Number(right?.sourceBuildId ?? 0) - Number(left?.sourceBuildId ?? 0);
+  if (buildDifference !== 0) return buildDifference;
+  return String(left?.sourceConditionKey ?? '').localeCompare(String(right?.sourceConditionKey ?? ''));
+}
+
+/**
+ * A public CPU/GPU group can contain several internal source combo keys.
+ * Return one row per game/resolution/option and keep the strongest evidence.
+ */
+export function selectPreferredEvidenceRows(rows: any[], limit = rows.length) {
+  const selected = new Map<string, any>();
+  for (const row of rows) {
+    const key = `${row.gameId ?? row.gameName}|${row.resolution}|${row.optionPreset ?? row.bestQuality ?? 'UNKNOWN'}`;
+    const current = selected.get(key);
+    if (!current
+      || evidenceRank(row.evidenceType) < evidenceRank(current.evidenceType)
+      || (evidenceRank(row.evidenceType) === evidenceRank(current.evidenceType)
+        && compareEvidenceFreshness(row, current) < 0)) {
+      selected.set(key, row);
+    }
+  }
+  return [...selected.values()]
+    .sort((left, right) => String(left.gameName ?? '').localeCompare(String(right.gameName ?? ''))
+      || resolutionOrder(left.resolution) - resolutionOrder(right.resolution)
+      || String(left.optionPreset ?? '').localeCompare(String(right.optionPreset ?? '')))
+    .slice(0, limit);
+}
+
+function resolutionOrder(value: unknown) {
+  return { FHD: 0, QHD: 1, UHD: 2 }[String(value ?? '')] ?? 9;
+}
+
 function countSelectorValues(values: Array<unknown>) {
   const counts = new Map<string, number>();
   for (const value of values) {
@@ -1033,7 +1147,7 @@ export function collapseSourceReportedResolutionRows(rows: any[]) {
   const result: any[] = [];
   for (const group of grouped.values()) {
     const signatures = new Set(group.map((row) => `${row.rawFpsAvg}-${row.rawFpsMin}-${row.rawFpsMax}-${row.displayFpsMin ?? row.fpsMin}-${row.displayFpsMax ?? row.fpsMax}`));
-    if (group.length > 1 && group.every((row) => row.evidenceType === 'SOURCE_REPORTED') && signatures.size === 1) {
+    if (group.length > 1 && group.every((row) => ['SOURCE_BENCHMARK', 'SOURCE_REPORTED'].includes(row.evidenceType)) && signatures.size === 1) {
       const first = group[0];
       result.push({
         ...first,
@@ -1148,7 +1262,7 @@ function normalizeQuotePerformanceRows(rows: any[]) {
   return items.map((item) => {
     const key = `${item.game}:${item.optionPreset ?? 'UNKNOWN'}:${item.sourceConditionKey ?? 'UNKNOWN'}`;
     const group = groupMap.get(key) ?? [];
-    if (item.evidenceType === 'SOURCE_REPORTED' || !shouldAdjustResolutionBuckets(group)) return item;
+    if (['SOURCE_BENCHMARK', 'SOURCE_REPORTED', 'SOURCE_RECOMMENDATION'].includes(item.evidenceType) || !shouldAdjustResolutionBuckets(group)) return item;
 
     const baseline = group.find((result) => result.resolution === 'FHD') ?? group[0];
     const multiplier = getResolutionFpsMultiplier(item.resolution);
@@ -1202,6 +1316,31 @@ function mapComfortGrade(comfortGrade: string | null | undefined, fpsMin: number
 }
 
 function benchmarkEvidence(row: any) {
+  const explicitEvidenceType = String(row.evidenceType ?? '').trim();
+  if (explicitEvidenceType === 'SOURCE_RECOMMENDATION') {
+    return {
+      isEstimated: true,
+      evidenceType: 'SOURCE_RECOMMENDATION',
+      confidence: 'LOW',
+      evidenceNote: `${String(row.sourceNames ?? '').trim() || '견적왕'} 견적 원문에 표시된 추천 FPS입니다. 직접 실측값이 아닙니다.`,
+    };
+  }
+  if (explicitEvidenceType === 'SOURCE_BENCHMARK') {
+    return {
+      isEstimated: true,
+      evidenceType: 'SOURCE_BENCHMARK',
+      confidence: 'LOW',
+      evidenceNote: `${String(row.sourceNames ?? '').trim() || '공개 벤치마크'} 원문에 표시된 평균 FPS입니다. 우리 서버 직접 실측값이 아닙니다.`,
+    };
+  }
+  if (explicitEvidenceType === 'MEASURED') {
+    return {
+      isEstimated: false,
+      evidenceType: 'MEASURED',
+      confidence: Number(row.sampleCount ?? 0) >= 3 ? 'MEDIUM' : 'LOW',
+      evidenceNote: 'JHS 직접 측정 FPS 집계값입니다.',
+    };
+  }
   const sampleCount = Number(row.sampleCount ?? 0);
   const rawAvg = Number(row.rawFpsAvg ?? 0);
   const rawMin = Number(row.rawFpsMin ?? 0);

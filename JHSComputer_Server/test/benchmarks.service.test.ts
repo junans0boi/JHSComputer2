@@ -1,7 +1,27 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { DataSource } from 'typeorm';
-import { BenchmarksService } from '../src/benchmarks/benchmarks.service';
+import { BenchmarksService, selectPreferredEvidenceRows } from '../src/benchmarks/benchmarks.service';
+
+test('public combo rows choose one strongest evidence row per game, resolution, and option', () => {
+  const rows = selectPreferredEvidenceRows([
+    {
+      gameId: 'game-1', gameName: '샘플 게임', resolution: 'FHD', optionPreset: '울트라',
+      evidenceType: 'SOURCE_RECOMMENDATION', sourceUpdatedAt: '2026-09-10', sourceConditionKey: 'estimate-2',
+    },
+    {
+      gameId: 'game-1', gameName: '샘플 게임', resolution: 'FHD', optionPreset: '울트라',
+      evidenceType: 'SOURCE_BENCHMARK', sourceUpdatedAt: '2026-09-01', sourceConditionKey: 'computerbase-1',
+    },
+    {
+      gameId: 'game-1', gameName: '샘플 게임', resolution: 'QHD', optionPreset: '울트라',
+      evidenceType: 'SOURCE_RECOMMENDATION', sourceUpdatedAt: '2026-09-10', sourceConditionKey: 'estimate-2',
+    },
+  ]);
+
+  assert.equal(rows.length, 2);
+  assert.equal(rows.find((row) => row.resolution === 'FHD')?.evidenceType, 'SOURCE_BENCHMARK');
+});
 
 test('returns only selected games from an exact CPU/GPU combo with evidence metadata', async () => {
   const calls: Array<{ sql: string; values: unknown[] }> = [];
@@ -359,6 +379,39 @@ test('preserves source-reported rows when each resolution is explicitly present'
   assert.equal(result.items[0]?.evidenceType, 'SOURCE_REPORTED');
   assert.equal(result.items[1]?.resolution, 'QHD');
   assert.equal(result.items[2]?.resolution, 'UHD');
+});
+
+test('preserves recommendation evidence when FPS comes from a KJWWANG estimate page', async () => {
+  const service = new BenchmarksService(fakeDataSource(async (sql) => {
+    if (sql.includes('FROM benchmark_combo_game_results r')) {
+      return [{
+        gameId: 'game-1',
+        gameName: '샘플 게임',
+        resolution: 'FHD',
+        optionPreset: '상옵',
+        evidenceType: 'SOURCE_RECOMMENDATION',
+        sourceNames: '견적왕',
+        sampleCount: 1,
+        rawFpsAvg: 120,
+        rawFpsMin: 120,
+        rawFpsMax: 120,
+        displayFpsMin: 120,
+        displayFpsMax: 120,
+        bestQuality: 'HIGH',
+        comfortGrade: '좋음',
+      }];
+    }
+    if (sql.includes('FROM benchmark_builds')) {
+      return [{ comboKey: 'kjwwang-ryzen5-9600x-rtx5060ti', cpuModel: 'ryzen5-9600x', gpuModel: 'rtx5060ti' }];
+    }
+    return [];
+  }));
+
+  const result = await service.getComboGames({ comboKey: 'combo_9600', limit: 200 });
+
+  assert.equal(result.items[0]?.evidenceType, 'SOURCE_RECOMMENDATION');
+  assert.equal(result.items[0]?.isEstimated, true);
+  assert.match(result.items[0]?.evidenceNote ?? '', /직접 실측값이 아닙니다/);
 });
 
 test('returns no detail for an unknown public combo reference', async () => {

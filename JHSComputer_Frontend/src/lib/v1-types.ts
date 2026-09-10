@@ -63,7 +63,7 @@ export type PerformanceResult = {
   fpsMax: number;
   isEstimated?: boolean;
   isResolutionAdjusted?: boolean;
-  evidenceType?: 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
+  evidenceType?: 'MEASURED' | 'SOURCE_BENCHMARK' | 'SOURCE_RECOMMENDATION' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
   confidence?: 'HIGH' | 'MEDIUM' | 'LOW';
   evidenceNote?: string;
   sampleCount?: number;
@@ -71,7 +71,7 @@ export type PerformanceResult = {
 };
 
 export type PerformanceEvidenceSummary = {
-  evidenceType: 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
+  evidenceType: 'MEASURED' | 'SOURCE_BENCHMARK' | 'SOURCE_RECOMMENDATION' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
   confidence: 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
   sampleCount: number;
   note: string;

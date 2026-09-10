@@ -50,7 +50,7 @@ export type RecommendationPostGame = {
   fpsMax: number | null;
   comfortGrade: string | null;
   isEstimated?: boolean;
-  evidenceType?: 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
+  evidenceType?: 'MEASURED' | 'SOURCE_BENCHMARK' | 'SOURCE_RECOMMENDATION' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
   confidence?: 'HIGH' | 'MEDIUM' | 'LOW';
   sampleCount?: number;
   evidenceNote?: string;

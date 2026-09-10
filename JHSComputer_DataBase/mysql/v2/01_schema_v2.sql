@@ -510,6 +510,7 @@ CREATE TABLE IF NOT EXISTS `benchmark_fps_results` (
   `RESOLUTION`              VARCHAR(20)  NOT NULL,
   `OPTION_KEY`              VARCHAR(100) NOT NULL DEFAULT 'UNKNOWN',
   `SOURCE_CONDITION_KEY`    VARCHAR(160) NOT NULL DEFAULT 'UNKNOWN',
+  `EVIDENCE_TYPE`           VARCHAR(40)  NOT NULL DEFAULT 'SOURCE_BENCHMARK',
   `RAW_OPTION_PRESET`       VARCHAR(50)  NULL,
   `NORMALIZED_QUALITY`      VARCHAR(30)  NOT NULL,
   `RAW_FPS`                 INT          NULL,
@@ -519,7 +520,7 @@ CREATE TABLE IF NOT EXISTS `benchmark_fps_results` (
   `PLAYABLE`                CHAR(1)      NOT NULL DEFAULT 'Y',
   `RAW_TEXT`                VARCHAR(100) NULL,
   PRIMARY KEY (`BENCHMARK_FPS_RESULT_ID`),
-  UNIQUE KEY `uk_benchmark_fps`          (`BENCHMARK_BUILD_ID`, `GAME_ID`, `RESOLUTION`, `OPTION_KEY`, `SOURCE_CONDITION_KEY`),
+  UNIQUE KEY `uk_benchmark_fps`          (`BENCHMARK_BUILD_ID`, `GAME_ID`, `RESOLUTION`, `OPTION_KEY`, `SOURCE_CONDITION_KEY`, `EVIDENCE_TYPE`),
   KEY        `idx_benchmark_fps_game_res` (`GAME_ID`, `RESOLUTION`),
   CONSTRAINT `fk_benchmark_fps_build`
     FOREIGN KEY (`BENCHMARK_BUILD_ID`) REFERENCES `benchmark_builds` (`BENCHMARK_BUILD_ID`) ON DELETE CASCADE  ON UPDATE CASCADE,
@@ -536,6 +537,7 @@ CREATE TABLE IF NOT EXISTS `benchmark_combo_game_results` (
   `RESOLUTION`                     VARCHAR(20) NOT NULL,
   `OPTION_KEY`                     VARCHAR(100) NOT NULL DEFAULT 'UNKNOWN',
   `SOURCE_CONDITION_KEY`           VARCHAR(160) NOT NULL DEFAULT 'UNKNOWN',
+  `EVIDENCE_TYPE`                  VARCHAR(40)  NOT NULL DEFAULT 'SOURCE_BENCHMARK',
   `SAMPLE_COUNT`                   INT         NOT NULL,
   `RAW_FPS_AVG`                    DECIMAL(8,2) NULL,
   `RAW_FPS_MIN`                    INT          NULL,
@@ -546,7 +548,7 @@ CREATE TABLE IF NOT EXISTS `benchmark_combo_game_results` (
   `COMFORT_GRADE`                  VARCHAR(30) NOT NULL,
   `UPDATED_DT`                     DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`BENCHMARK_COMBO_GAME_RESULT_ID`),
-  UNIQUE KEY `uk_benchmark_combo_game`        (`BENCHMARK_COMBO_ID`, `GAME_ID`, `RESOLUTION`, `OPTION_KEY`, `SOURCE_CONDITION_KEY`),
+  UNIQUE KEY `uk_benchmark_combo_game`        (`BENCHMARK_COMBO_ID`, `GAME_ID`, `RESOLUTION`, `OPTION_KEY`, `SOURCE_CONDITION_KEY`, `EVIDENCE_TYPE`),
   KEY        `idx_benchmark_combo_game_id`    (`GAME_ID`),
   KEY        `idx_benchmark_combo_resolution` (`BENCHMARK_COMBO_ID`, `RESOLUTION`),
   CONSTRAINT `fk_benchmark_combo_game_combo`

@@ -138,6 +138,8 @@ export function QuoteGamePerformancePanel({ quote }: { quote: Quote }) {
                           <div className="mt-0.5 flex flex-wrap items-center gap-1 font-bold text-slate-500">
                             <span>{item.grade}</span>
                             {item.isResolutionAdjusted && <span className="rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-black text-amber-700">DB 기반 보정</span>}
+                            {item.evidenceType === 'SOURCE_BENCHMARK' && <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-slate-600">공개 벤치마크</span>}
+                            {item.evidenceType === 'SOURCE_RECOMMENDATION' && <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-slate-600">견적왕 추천값</span>}
                             {item.evidenceType === 'SOURCE_REPORTED' && <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-slate-600">보고값</span>}
                             {item.evidenceType === 'DERIVED' && <span className="rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-black text-amber-700">추정값</span>}
                             {item.sampleCount ? <span className="text-[10px]">표본 {item.sampleCount}</span> : null}
@@ -183,12 +185,21 @@ function performanceEvidenceLabel(results: PerformanceResult[]) {
   const types = new Set(results.map((result) => result.evidenceType));
   if (types.has('MEASURED') && types.size === 1) return '실측 데이터';
   if (types.has('DERIVED')) return '추정·보정 포함';
+  if (types.has('SOURCE_BENCHMARK')) return '공개 벤치마크';
+  if (types.has('SOURCE_RECOMMENDATION')) return '견적왕 추천값';
   if (types.has('SOURCE_REPORTED')) return '출처 보고값';
   return '근거 확인 필요';
 }
 
 function evidenceSummaryLabel(type: NonNullable<Quote['performanceEvidence']>['evidenceType']) {
-  return { MEASURED: '실측 데이터', SOURCE_REPORTED: '출처 보고값', DERIVED: '추정·보정 포함', NONE: '근거 확인 필요' }[type];
+  return {
+    MEASURED: '실측 데이터',
+    SOURCE_BENCHMARK: '공개 벤치마크',
+    SOURCE_RECOMMENDATION: '견적왕 추천값',
+    SOURCE_REPORTED: '출처 보고값',
+    DERIVED: '추정·보정 포함',
+    NONE: '근거 확인 필요',
+  }[type];
 }
 
 export function QuoteCompatibilityPanel({ quote, compact = false }: { quote: Quote; compact?: boolean }) {

@@ -53,7 +53,7 @@ export type BenchmarkGameResult = {
   bestQuality: string;
   comfortGrade: string;
   isEstimated?: boolean;
-  evidenceType?: 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
+  evidenceType?: 'MEASURED' | 'SOURCE_BENCHMARK' | 'SOURCE_RECOMMENDATION' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
   confidence?: 'HIGH' | 'MEDIUM' | 'LOW';
   evidenceNote?: string;
 };

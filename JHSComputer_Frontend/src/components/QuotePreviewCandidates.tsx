@@ -92,7 +92,14 @@ function categoryLabel(category: string) {
 }
 
 function evidenceLabel(type: QuotePreviewCandidate['performanceEvidence']['evidenceType']) {
-  return { MEASURED: '실측', SOURCE_REPORTED: '출처 보고값', DERIVED: '해상도 추정값', NONE: '데이터 없음' }[type];
+  return {
+    MEASURED: '실측',
+    SOURCE_BENCHMARK: '공개 벤치마크',
+    SOURCE_RECOMMENDATION: '견적왕 추천값',
+    SOURCE_REPORTED: '출처 보고값',
+    DERIVED: '해상도 추정값',
+    NONE: '데이터 없음',
+  }[type];
 }
 
 function EvidenceIcon({ type }: { type: QuotePreviewCandidate['performanceEvidence']['evidenceType'] }) {

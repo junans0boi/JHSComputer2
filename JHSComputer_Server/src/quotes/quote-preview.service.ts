@@ -220,7 +220,7 @@ export class QuotePreviewService {
 
 function toPerformanceEvidenceResult(item: Record<string, unknown>): PerformanceEvidenceResult | null {
   const evidenceType = item.evidenceType;
-  if (!['MEASURED', 'SOURCE_REPORTED', 'DERIVED'].includes(String(evidenceType))) return null;
+  if (!['MEASURED', 'SOURCE_BENCHMARK', 'SOURCE_RECOMMENDATION', 'SOURCE_REPORTED', 'DERIVED'].includes(String(evidenceType))) return null;
   const confidence = item.confidence;
   return {
     game: String(item.game ?? item.gameName ?? ''),

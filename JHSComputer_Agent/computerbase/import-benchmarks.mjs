@@ -244,6 +244,7 @@ async function syncComboResults(conn, { comboKey, cpuModel, gpuModel }) {
   const [rows] = await conn.execute(
     `SELECT BENCHMARK_GAME_ID AS gameId, RESOLUTION AS resolution,
             b.EXTERNAL_BUILD_ID AS sourceConditionKey,
+            MAX(r.EVIDENCE_TYPE) AS evidenceType,
             MAX(OPTION_KEY) AS optionKey,
             COUNT(RAW_FPS) AS sampleCount, AVG(RAW_FPS) AS rawFpsAvg,
             MIN(RAW_FPS) AS rawFpsMin, MAX(RAW_FPS) AS rawFpsMax,
@@ -251,18 +252,18 @@ async function syncComboResults(conn, { comboKey, cpuModel, gpuModel }) {
             MAX(NORMALIZED_QUALITY) AS bestQuality, MAX(COMFORT_GRADE) AS comfortGrade
      FROM benchmark_fps_results r
      JOIN benchmark_builds b ON b.BENCHMARK_BUILD_ID = r.BENCHMARK_BUILD_ID
-     WHERE b.COMBO_KEY = ? GROUP BY BENCHMARK_GAME_ID, RESOLUTION, OPTION_KEY, b.EXTERNAL_BUILD_ID`,
+     WHERE b.COMBO_KEY = ? GROUP BY BENCHMARK_GAME_ID, RESOLUTION, OPTION_KEY, b.EXTERNAL_BUILD_ID, r.EVIDENCE_TYPE`,
     [comboKey],
   );
   await conn.execute('DELETE FROM benchmark_combo_game_results WHERE COMBO_KEY = ?', [comboKey]);
   for (const row of rows) {
     await conn.execute(
       `INSERT INTO benchmark_combo_game_results
-         (COMBO_KEY, CPU_MODEL, GPU_MODEL, BENCHMARK_GAME_ID, RESOLUTION, OPTION_KEY, SOURCE_CONDITION_KEY,
+         (COMBO_KEY, CPU_MODEL, GPU_MODEL, BENCHMARK_GAME_ID, RESOLUTION, OPTION_KEY, SOURCE_CONDITION_KEY, EVIDENCE_TYPE,
           SAMPLE_COUNT, RAW_FPS_AVG, RAW_FPS_MIN, RAW_FPS_MAX,
           DISPLAY_FPS_MIN, DISPLAY_FPS_MAX, BEST_QUALITY, COMFORT_GRADE)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [comboKey, cpuModel, gpuModel, row.gameId, row.resolution, row.optionKey ?? row.bestQuality ?? 'UNKNOWN', row.sourceConditionKey ?? 'UNKNOWN', Number(row.sampleCount ?? 0),
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [comboKey, cpuModel, gpuModel, row.gameId, row.resolution, row.optionKey ?? row.bestQuality ?? 'UNKNOWN', row.sourceConditionKey ?? 'UNKNOWN', row.evidenceType ?? 'SOURCE_BENCHMARK', Number(row.sampleCount ?? 0),
        row.rawFpsAvg, row.rawFpsMin, row.rawFpsMax, row.displayFpsMin, row.displayFpsMax,
        row.bestQuality ?? 'UNKNOWN', row.comfortGrade ?? '지원'],
     );
@@ -305,7 +306,7 @@ async function syncConfig(conn, config, records, gameCache, apply) {
          RAW_JSON=VALUES(RAW_JSON), UPDATED_DT=NOW()`,
       [source.sourceId, externalBuildId, title, comboKey, testCpu.name, testCpu.model,
        gpu.name, gpuModel, gameCount, gpuRecords.length,
-       JSON.stringify({ source: config.sourceName, sourceUrl: `${config.baseUrl}/artikel/grafikkarten/${config.articleKey}`, testSystem: testCpu.name, evidenceType: 'SOURCE_REPORTED', capturedAt: new Date().toISOString() })],
+       JSON.stringify({ source: config.sourceName, sourceUrl: `${config.baseUrl}/artikel/grafikkarten/${config.articleKey}`, testSystem: testCpu.name, evidenceType: 'SOURCE_BENCHMARK', capturedAt: new Date().toISOString() })],
     );
     const [[build]] = await conn.execute('SELECT BENCHMARK_BUILD_ID AS buildId FROM benchmark_builds WHERE BENCHMARK_SOURCE_ID = ? AND EXTERNAL_BUILD_ID = ?', [source.sourceId, externalBuildId]);
     await conn.execute('DELETE FROM benchmark_fps_results WHERE BENCHMARK_BUILD_ID = ?', [build.buildId]);
@@ -315,11 +316,11 @@ async function syncConfig(conn, config, records, gameCache, apply) {
       const roundedFps = Math.round(record.fps);
       await conn.execute(
         `INSERT INTO benchmark_fps_results
-           (BENCHMARK_BUILD_ID, BENCHMARK_GAME_ID, RESOLUTION, OPTION_KEY, SOURCE_CONDITION_KEY,
+           (BENCHMARK_BUILD_ID, BENCHMARK_GAME_ID, RESOLUTION, OPTION_KEY, SOURCE_CONDITION_KEY, EVIDENCE_TYPE,
             RAW_OPTION_PRESET, NORMALIZED_QUALITY, RAW_FPS,
             DISPLAY_FPS_MIN, DISPLAY_FPS_MAX, COMFORT_GRADE, PLAYABLE, RAW_TEXT)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [build.buildId, gameId, record.resolution, record.optionPreset, config.articleKey, record.optionPreset, normalizeQuality(record.optionPreset), roundedFps,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [build.buildId, gameId, record.resolution, record.optionPreset, config.articleKey, 'SOURCE_BENCHMARK', record.optionPreset, normalizeQuality(record.optionPreset), roundedFps,
          roundedFps, roundedFps, comfortGrade(record.fps), record.fps >= 30 ? 'Y' : 'N',
          `${record.rawText} | 출처: ${record.pageUrl} | 테스트 시스템: ${testCpu.name}`.slice(0, 100)],
       );

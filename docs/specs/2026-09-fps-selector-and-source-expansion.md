@@ -14,9 +14,11 @@ GPU를 먼저 고른 뒤 그 조합의 게임 성능과 부품 벤치마크를 �
 ## 결정된 요구사항
 
 1. 견적왕·왕가PC에서 조합별 FPS를 수집한다. 단, 원문에 CPU·GPU·게임·해상도·옵션·
-   숫자 FPS가 함께 존재하는 행만 `GameFpsObservation`으로 적재한다.
-2. 견적왕의 단일 평균 FPS와 FHD/QHD/UHD “지원 옵션” 문구는 해상도별 FPS가 아니다.
-   현재는 추천 맥락으로만 보존하고 FPS 원본으로 적재하지 않는다. 해상도별 행으로
+   숫자 FPS가 함께 존재하는 행만 `GameFpsObservation`으로 적재한다. 견적왕 개별
+   견적 상세 HTML의 숫자 FPS는 `SOURCE_RECOMMENDATION`으로 기존 FPS 테이블에 적재한다.
+2. 견적왕의 Markdown 단일 평균 FPS와 FHD/QHD/UHD “지원 옵션” 문구는 해상도별 FPS가
+   아니다. 하지만 개별 견적 상세 HTML의 `게임 성능으로는` 블록에서 해상도별 숫자 FPS가
+   확인되면 `SOURCE_RECOMMENDATION`으로 보존한다. 어느 경우에도 없는 값을 해상도별로
    복제하지 않는다.
 3. 왕가PC가 실제 FPS를 제공하지 않는 페이지는 조립 PC 구성·가격 출처로만 적재한다.
    숫자를 추정해 FPS를 만들지 않는다.

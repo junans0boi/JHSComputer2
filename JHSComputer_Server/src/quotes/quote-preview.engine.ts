@@ -56,7 +56,7 @@ export type QuoteCandidatePart = CatalogOffer & {
   trustLabel: 'VERIFIED_MANUFACTURER' | 'ADMIN_APPROVED' | 'POPULAR' | 'SPEC_VERIFIED' | 'UNVERIFIED';
 };
 
-export type PerformanceEvidenceType = 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
+export type PerformanceEvidenceType = 'MEASURED' | 'SOURCE_BENCHMARK' | 'SOURCE_RECOMMENDATION' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
 
 export type PerformanceEvidenceResult = {
   game: string;
@@ -121,9 +121,13 @@ export function summarizePerformanceEvidence(results: PerformanceEvidenceResult[
   if (!results.length) return emptyPerformanceEvidence();
   const evidenceType = results.some((result) => result.evidenceType === 'DERIVED')
     ? 'DERIVED'
-    : results.some((result) => result.evidenceType === 'SOURCE_REPORTED')
-      ? 'SOURCE_REPORTED'
-      : 'MEASURED';
+    : results.some((result) => result.evidenceType === 'MEASURED')
+      ? 'MEASURED'
+      : results.some((result) => result.evidenceType === 'SOURCE_BENCHMARK')
+        ? 'SOURCE_BENCHMARK'
+        : results.some((result) => result.evidenceType === 'SOURCE_RECOMMENDATION')
+          ? 'SOURCE_RECOMMENDATION'
+          : 'SOURCE_REPORTED';
   const confidenceRank = { LOW: 1, MEDIUM: 2, HIGH: 3 } as const;
   const confidence = results.reduce<'LOW' | 'MEDIUM' | 'HIGH'>((lowest, result) => (
     confidenceRank[result.confidence] < confidenceRank[lowest] ? result.confidence : lowest

@@ -32,7 +32,7 @@ test('preview service loads only active sellable catalog units and returns candi
       fpsMin: 90,
       fpsMax: 120,
       sampleCount: 3,
-      evidenceType: 'MEASURED',
+      evidenceType: 'SOURCE_RECOMMENDATION',
       confidence: 'MEDIUM',
       evidenceNote: '원본 FPS 집계값입니다.',
     }],
@@ -58,7 +58,7 @@ test('preview service loads only active sellable catalog units and returns candi
   assert.equal(result.candidates[0].parts[0].summarySpecText, 'CPU product spec');
   assert.match(result.candidates[0].parts[0].displaySpecText ?? '', /6코어/);
   assert.deepEqual(result.candidates[0].parts[0].detailImages, ['https://example.test/detail.jpg']);
-  assert.equal(result.candidates[0].performanceEvidence.evidenceType, 'MEASURED');
+  assert.equal(result.candidates[0].performanceEvidence.evidenceType, 'SOURCE_RECOMMENDATION');
   assert.equal(result.candidates[0].performanceEvidence.sampleCount, 3);
   assert.equal(result.candidates[0].performanceEvidence.results[0]?.game, 'APEX');
 });

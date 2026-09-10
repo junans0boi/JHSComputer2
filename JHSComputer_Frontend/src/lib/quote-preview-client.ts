@@ -30,7 +30,7 @@ export type QuotePreviewPart = {
 };
 
 export type QuotePerformanceEvidence = {
-  evidenceType: 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
+  evidenceType: 'MEASURED' | 'SOURCE_BENCHMARK' | 'SOURCE_RECOMMENDATION' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
   confidence: 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
   sampleCount: number;
   results: Array<PerformanceResult & { evidenceNote?: string }>;
