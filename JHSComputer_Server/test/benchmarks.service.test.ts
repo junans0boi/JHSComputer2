@@ -217,6 +217,27 @@ test('returns collected combos without FPS and marks the evidence state separate
   assert.equal(result.items[1]?.hasFpsEvidence, false);
 });
 
+test('does not attach an arbitrary SKU when a benchmark-backed model family is ambiguous', async () => {
+  const service = new BenchmarksService(fakeDataSource(async (sql) => {
+    if (sql.includes('GROUP BY b.COMBO_KEY')) {
+      return [{ comboKey: '9800-5070ti', cpuModel: 'ryzen7-9800x3d', gpuModel: 'rtx5070ti', buildSampleCount: 1, gameCount: 0, resultCount: 0 }];
+    }
+    if (sql.includes('FROM parts p')) {
+      return [
+        { partId: 21, categoryId: 1, partName: 'Ryzen 7 9800X3D', modelName: 'Ryzen 7 9800X3D', manufacturer: 'AMD' },
+        { partId: 84, categoryId: 5, partName: 'RTX 5070 Ti A', modelName: 'RTX 5070 Ti', manufacturer: 'NVIDIA' },
+        { partId: 100, categoryId: 5, partName: 'RTX 5070 Ti B', modelName: 'RTX 5070 Ti', manufacturer: 'NVIDIA' },
+      ];
+    }
+    return [];
+  }));
+
+  const result = await service.getCombos({ includeNoFps: true, limit: 20 });
+
+  assert.equal(result.items[0]?.cpuPartId, 21);
+  assert.equal(result.items[0]?.gpuPartId, undefined);
+});
+
 test('normalizes summary top-combo fields for the public benchmark page', async () => {
   const service = new BenchmarksService(fakeDataSource(async (sql) => {
     if (sql.includes('COUNT(*) FROM benchmark_builds')) {

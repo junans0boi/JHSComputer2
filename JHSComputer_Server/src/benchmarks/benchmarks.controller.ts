@@ -1,10 +1,14 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { Public } from '../auth';
 import { BenchmarksService } from './benchmarks.service';
+import { ComponentBenchmarksService } from './component-benchmarks.service';
 
 @Controller('benchmarks')
 export class BenchmarksController {
-  constructor(private readonly benchmarksService: BenchmarksService) {}
+  constructor(
+    private readonly benchmarksService: BenchmarksService,
+    private readonly componentBenchmarksService: ComponentBenchmarksService,
+  ) {}
 
   @Get('summary')
   @Public()
@@ -98,4 +102,34 @@ export class BenchmarksController {
       limit: Number(body.limit) || 80,
     });
   }
+
+  @Get('components/:partId/scores')
+  @Public()
+  async getComponentScores(@Param('partId') partId: string) {
+    return this.componentBenchmarksService.getScores(Number(partId));
+  }
+
+  @Get('components/compare')
+  @Public()
+  async compareComponentScores(
+    @Query('partIds') partIds = '',
+    @Query('testId') testId?: string,
+  ) {
+    const ids = parseComponentPartIds(partIds);
+    const parsedTestId = testId && /^\d+$/.test(testId) ? Number(testId) : undefined;
+    return this.componentBenchmarksService.compare(ids, parsedTestId);
+  }
+}
+
+const MAX_COMPONENT_COMPARE_PART_IDS = 12;
+
+export function parseComponentPartIds(value: string) {
+  const ids = value
+    .split(',')
+    .map((partId) => Number(partId.trim()))
+    .filter((partId) => Number.isInteger(partId) && partId > 0);
+  if (ids.length > MAX_COMPONENT_COMPARE_PART_IDS) {
+    throw new BadRequestException(`한 번에 비교할 부품은 최대 ${MAX_COMPONENT_COMPARE_PART_IDS}개입니다.`);
+  }
+  return ids;
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { formatPublicComboName, formatPublicCpuModel, formatPublicGpuModel } from './public-model-labels';
+import { normalizeComponentModelKey } from './component-benchmark';
 
 type ComboSearchParams = {
   q?: string;
@@ -74,11 +75,14 @@ export class BenchmarksService {
     `);
     const publicComboCount = mergePublicCombos(publicComboRows.map((row: any) => toPublicCombo(row))).length;
 
+    const publicTopCombos = mergePublicCombos(topCombos.map((combo: any) => toPublicCombo(combo)));
+    await this.attachComponentPartIds(publicTopCombos);
+
     return {
       ...summary,
       sourceComboCount: summary.totalComboCount,
       totalComboCount: String(publicComboCount),
-      topCombos: mergePublicCombos(topCombos.map((combo: any) => toPublicCombo(combo))),
+      topCombos: publicTopCombos,
     };
   }
 
@@ -171,6 +175,7 @@ export class BenchmarksService {
     );
 
     const items = mergePublicCombos(rows.map((row: any) => toPublicCombo(row)));
+    await this.attachComponentPartIds(items);
     return { items, total: items.length };
   }
 
@@ -540,6 +545,44 @@ export class BenchmarksService {
     );
 
     return { ...toPublicCombo(build), parts };
+  }
+
+  private async attachComponentPartIds(combos: any[]) {
+    if (!combos.length) return;
+    const rows = await this.dataSource.query(
+      `SELECT p.PART_ID AS partId, p.PART_CATEGORY_ID AS categoryId, p.CANONICAL_NAME AS partName,
+              p.MODEL_NAME AS modelName, p.MANUFACTURER AS manufacturer,
+              p.IS_ADMIN_APPROVED AS isAdminApproved, p.ADMIN_PRIORITY AS adminPriority,
+              p.POPULARITY_SCORE AS popularityScore
+       FROM parts p
+       JOIN (
+         SELECT DISTINCT o.PART_ID
+         FROM benchmark_component_observations o
+         JOIN benchmark_component_tests t ON t.BENCHMARK_COMPONENT_TEST_ID = o.BENCHMARK_COMPONENT_TEST_ID
+         WHERE o.PART_ID IS NOT NULL AND t.IS_ACTIVE = 'Y'
+       ) observed ON observed.PART_ID = p.PART_ID
+       WHERE p.PART_CATEGORY_ID IN (1, 5) AND p.STATUS = 'ACTIVE'`,
+    );
+    const byKey = new Map<string, any[]>();
+    for (const row of rows) {
+      const deviceType = Number(row.categoryId) === 1 ? 'CPU' : 'GPU';
+      const key = normalizeComponentModelKey(
+        `${row.manufacturer ?? ''} ${row.modelName ?? row.partName ?? ''}`,
+        deviceType,
+      );
+      const candidates = byKey.get(key) ?? [];
+      candidates.push(row);
+      byKey.set(key, candidates);
+    }
+
+    combos.forEach((combo) => {
+      const cpuCandidates = byKey.get(normalizeComponentModelKey(`${combo.cpuName ?? ''} ${combo.cpuModel ?? ''}`, 'CPU')) ?? [];
+      const gpuCandidates = byKey.get(normalizeComponentModelKey(`${combo.gpuName ?? ''} ${combo.gpuModel ?? ''}`, 'GPU')) ?? [];
+      // A public combo receives a concrete SKU only when the model-family match
+      // is both benchmark-backed and unique. Never pick a popular SKU as a proxy.
+      if (cpuCandidates.length === 1) combo.cpuPartId = Number(cpuCandidates[0].partId);
+      if (gpuCandidates.length === 1) combo.gpuPartId = Number(gpuCandidates[0].partId);
+    });
   }
 
   private async resolveInternalComboKeys(publicComboKey: string) {
