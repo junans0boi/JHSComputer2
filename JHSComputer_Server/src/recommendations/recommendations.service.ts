@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import OpenAI from 'openai';
 import { DataSource } from 'typeorm';
+import { collapseSourceReportedResolutionRows } from '../benchmarks/benchmarks.service';
+import { formatPublicComboName, formatPublicCpuModel, formatPublicGpuModel } from '../benchmarks/public-model-labels';
 
 type PostSearchParams = {
   q?: string;
@@ -96,7 +98,7 @@ export class RecommendationsService {
       ORDER BY COALESCE(UPDATED_DT, CREATED_DT) DESC, RECOMMENDATION_POST_ID DESC
       LIMIT ?
       `,
-      [Math.min(limit, 200)],
+      [boundedLimit(limit, 200, 100)],
     );
 
     const items = await Promise.all(rows.map(async (row: any) => this.attachPostChildren(row)));
@@ -162,7 +164,7 @@ export class RecommendationsService {
     }
 
     const orderBy = this.resolveOrderBy(params.sort);
-    values.push(Math.min(params.limit, 100));
+    values.push(boundedLimit(params.limit, 100, 30));
 
     const rows = await this.dataSource.query(
       `
@@ -203,7 +205,7 @@ export class RecommendationsService {
 
     return {
       items: rows.map((row: any) => ({
-        ...row,
+        ...toPublicPost(row),
         gameTags: row.gameTags ? String(row.gameTags).split('|') : [],
       })),
       total: rows.length,
@@ -283,7 +285,7 @@ export class RecommendationsService {
     const benchmarkGames = await this.getBenchmarkGamesForPost(post.cpuModel, post.gpuModel);
     const games = this.mergeGames(manualGames, benchmarkGames);
 
-    return { ...post, parts, games };
+    return { ...toPublicPost(post), parts, games };
   }
 
   async generateSummary(payload: RecommendationPostPayload & { games?: any[] }) {
@@ -538,12 +540,16 @@ export class RecommendationsService {
 
   private async getBenchmarkGamesForPost(cpuModel?: string | null, gpuModel?: string | null) {
     if (!cpuModel || !gpuModel) return [];
-    return this.dataSource.query(
+    const rows = await this.dataSource.query(
       `
       SELECT
         g.GAME_NAME AS gameName,
         c.RESOLUTION AS resolution,
         c.BEST_QUALITY AS qualityPreset,
+        c.SAMPLE_COUNT AS sampleCount,
+        c.RAW_FPS_AVG AS rawFpsAvg,
+        c.RAW_FPS_MIN AS rawFpsMin,
+        c.RAW_FPS_MAX AS rawFpsMax,
         c.DISPLAY_FPS_MIN AS fpsMin,
         c.DISPLAY_FPS_MAX AS fpsMax,
         c.COMFORT_GRADE AS comfortGrade
@@ -552,25 +558,30 @@ export class RecommendationsService {
         ON g.BENCHMARK_GAME_ID = c.BENCHMARK_GAME_ID
       WHERE
         (
-          LOWER(c.CPU_MODEL) = LOWER(?)
-          OR LOWER(?) LIKE CONCAT('%', LOWER(c.CPU_MODEL), '%')
-          OR LOWER(c.CPU_MODEL) LIKE CONCAT('%', LOWER(?), '%')
+        REPLACE(REPLACE(LOWER(c.CPU_MODEL), '-', ''), ' ', '') = REPLACE(REPLACE(LOWER(?), '-', ''), ' ', '')
         )
         AND (
-          LOWER(c.GPU_MODEL) = LOWER(?)
-          OR LOWER(?) LIKE CONCAT('%', LOWER(c.GPU_MODEL), '%')
-          OR LOWER(c.GPU_MODEL) LIKE CONCAT('%', LOWER(?), '%')
+        REPLACE(REPLACE(LOWER(c.GPU_MODEL), '-', ''), ' ', '') = REPLACE(REPLACE(LOWER(?), '-', ''), ' ', '')
         )
       ORDER BY g.GAME_NAME ASC, FIELD(c.RESOLUTION, 'FHD', 'QHD', '4K', 'UHD')
       `,
-      [cpuModel, cpuModel, cpuModel, gpuModel, gpuModel, gpuModel],
+      [cpuModel, gpuModel],
     );
+    return collapseSourceReportedResolutionRows(rows.map((row: any) => ({ ...row, ...benchmarkEvidence(row) })));
   }
 
   private mergeGames(manualGames: any[], benchmarkGames: any[]) {
     const seen = new Set<string>();
+    const benchmarkGameNames = new Set(benchmarkGames.map((game) => game.gameName));
     const merged: any[] = [];
-    for (const game of [...manualGames, ...benchmarkGames]) {
+    for (const game of benchmarkGames) {
+      const key = `${game.gameName}::${game.resolution}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      merged.push(game);
+    }
+    for (const game of manualGames) {
+      if (benchmarkGameNames.has(game.gameName)) continue;
       const key = `${game.gameName}::${game.resolution}`;
       if (seen.has(key)) continue;
       seen.add(key);
@@ -673,4 +684,60 @@ export class RecommendationsService {
         return 'p.POPULARITY_SCORE DESC, p.ORDER_COUNT DESC, p.CART_COUNT DESC, p.PUBLISHED_DT DESC';
     }
   }
+}
+
+function benchmarkEvidence(row: any) {
+  const sampleCount = Number(row.sampleCount ?? 0);
+  const rawAvg = Number(row.rawFpsAvg ?? 0);
+  const rawMin = Number(row.rawFpsMin ?? 0);
+  const rawMax = Number(row.rawFpsMax ?? 0);
+  const displayMin = Number(row.fpsMin ?? 0);
+  const displayMax = Number(row.fpsMax ?? 0);
+  const syntheticDisplayRange = rawAvg > 0
+    && rawMin === rawMax
+    && displayMin === Math.round(rawAvg * 0.85)
+    && displayMax === Math.round(rawAvg * 1.15);
+
+  if (syntheticDisplayRange) {
+    return {
+      isEstimated: true,
+      evidenceType: 'SOURCE_REPORTED',
+      confidence: 'LOW',
+      evidenceNote: '게임당 평균 보고값이며 해상도별 독립 실측을 확인할 수 없습니다.',
+    };
+  }
+
+  if (sampleCount <= 1) {
+    return {
+      isEstimated: true,
+      evidenceType: 'SOURCE_REPORTED',
+      confidence: 'LOW',
+      evidenceNote: '원문에 표시된 게임별 평균 FPS입니다. 우리 서버 직접 실측값이 아니며 테스트 조건을 함께 확인해주세요.',
+    };
+  }
+
+  return {
+    isEstimated: false,
+    evidenceType: 'MEASURED',
+    confidence: sampleCount >= 3 ? 'MEDIUM' : 'LOW',
+    evidenceNote: '원본 FPS 집계값입니다. 테스트 조건을 함께 확인해주세요.',
+  };
+}
+
+function boundedLimit(value: number, maximum: number, fallback: number) {
+  if (!Number.isFinite(value)) return fallback;
+  return Math.min(maximum, Math.max(1, Math.floor(value)));
+}
+
+function toPublicPost(post: any) {
+  const publicCpuModel = formatPublicCpuModel(post.cpuModel, post.cpuModel);
+  const publicGpuModel = formatPublicGpuModel(post.gpuModel, post.gpuModel);
+  return {
+    ...post,
+    cpuModel: publicCpuModel,
+    gpuModel: publicGpuModel,
+    publicCpuModel,
+    publicGpuModel,
+    publicComboName: formatPublicComboName(post.cpuModel, post.gpuModel, post.cpuModel, post.gpuModel),
+  };
 }

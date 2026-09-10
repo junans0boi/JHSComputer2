@@ -1,5 +1,9 @@
 import { ArrowRight, PlayCircle } from 'lucide-react';
 import Link from 'next/link';
+import {
+  RECOMMENDATION_CARD_IMAGE_CLASS,
+  RECOMMENDATION_CARD_IMAGE_FRAME_CLASS,
+} from '@/lib/recommendation-image-layout';
 
 type RecommendationBuildCardProps = {
   href: string;
@@ -14,10 +18,10 @@ type RecommendationBuildCardProps = {
 export function RecommendationBuildCard({ href, title, subtitle, imageUrl, tags, sourceLabel, price }: RecommendationBuildCardProps) {
   return (
     <article className="overflow-hidden rounded-2xl border border-line bg-white shadow-soft">
-      <div className="grid gap-4 p-4 md:grid-cols-[180px_1fr]">
-        <div className="grid h-44 place-items-center rounded-xl bg-panel p-4">
+      <div className="grid min-w-0 gap-4 p-4 md:grid-cols-[180px_minmax(0,1fr)]">
+        <div className={RECOMMENDATION_CARD_IMAGE_FRAME_CLASS}>
           {imageUrl ? (
-            <img alt={title} className="max-h-full max-w-full object-contain" src={imageUrl} />
+            <img alt={title} className={RECOMMENDATION_CARD_IMAGE_CLASS} src={imageUrl} />
           ) : (
             <div className="text-center text-sm font-black text-slate-400">추천 PC</div>
           )}

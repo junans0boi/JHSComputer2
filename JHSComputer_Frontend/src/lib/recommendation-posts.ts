@@ -1,7 +1,7 @@
 import type { Quote, QuotePart } from './v1-types';
 import { defaultInput } from './v1-estimator';
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:6002/api';
+const apiBaseUrl = process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3010/api';
 
 export type RecommendationPostListItem = {
   id: string;
@@ -16,6 +16,9 @@ export type RecommendationPostListItem = {
   gpuBrand: string | null;
   cpuModel: string | null;
   gpuModel: string | null;
+  publicCpuModel?: string;
+  publicGpuModel?: string;
+  publicComboName?: string;
   comboType: string | null;
   thumbnailImageUrl: string | null;
   casePartName: string | null;
@@ -46,6 +49,11 @@ export type RecommendationPostGame = {
   fpsMin: number | null;
   fpsMax: number | null;
   comfortGrade: string | null;
+  isEstimated?: boolean;
+  evidenceType?: 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
+  confidence?: 'HIGH' | 'MEDIUM' | 'LOW';
+  sampleCount?: number;
+  evidenceNote?: string;
 };
 
 export type RecommendationPostDetail = RecommendationPostListItem & {
@@ -65,6 +73,20 @@ export type RecommendationPostFilters = {
   comboType?: string;
   sort?: string;
 };
+
+const recommendationComboLabels: Record<string, string> = {
+  RYZEN_NVIDIA: '라이젠 + 엔비디아',
+  INTEL_NVIDIA: '인텔 + 엔비디아',
+  RYZEN_RADEON: '라이젠 + 라데온',
+  INTEL_RADEON: '인텔 + 라데온',
+  RYZEN_AMD: '라이젠 + 라데온',
+  INTEL_AMD: '인텔 + 라데온',
+};
+
+export function recommendationComboLabel(comboType?: string | null) {
+  if (!comboType) return 'JHS 추천 조합';
+  return recommendationComboLabels[comboType] ?? comboType.replaceAll('_', ' + ');
+}
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -113,14 +135,19 @@ export function recommendationPostToQuote(post: RecommendationPostDetail): Quote
       games: post.games.length ? [...new Set(post.games.map((game) => game.gameName))].slice(0, 3) : defaultInput.games,
     },
     parts,
-    performance: post.games.map((game) => ({
+    performance: post.games.filter((game) => Number(game.fpsMin) > 0 && Number(game.fpsMax) > 0).map((game) => ({
       game: game.gameName,
       resolution: game.resolution === 'UHD' ? '4K' : game.resolution,
       grade: game.comfortGrade === 'EXCELLENT' ? '쾌적' : game.comfortGrade === 'GOOD' ? '좋음' : '플레이 가능',
       fpsMin: Number(game.fpsMin ?? 0),
       fpsMax: Number(game.fpsMax ?? 0),
+      isEstimated: game.isEstimated,
+      evidenceType: game.evidenceType,
+      confidence: game.confidence,
+      sampleCount: game.sampleCount,
+      evidenceNote: game.evidenceNote,
     })),
-    compatibility: ['JHS 추천 견적: 주문 전 가격/재고/호환성 최종 확인', `${post.cpuModel ?? 'CPU'} + ${post.gpuModel ?? 'GPU'} 조합`],
+    compatibility: ['JHS 추천 견적: 주문 전 가격/재고/호환성 최종 확인', `${post.publicComboName ?? `${post.cpuModel ?? 'CPU'} + ${post.gpuModel ?? 'GPU'}`} 조합`],
     subtotal,
     assemblyFee: 50000,
     shippingFee: 10000,

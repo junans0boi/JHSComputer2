@@ -2,7 +2,7 @@ import { AppShell } from '@/components/AppShell';
 import { RecommendationBuildCard } from '@/components/RecommendationBuildCard';
 import { FormField, SelectInput, TextInput } from '@/components/ui/FormField';
 import { PageStack, PanelCard, SectionHeader } from '@/components/ui/PanelCard';
-import { loadRecommendationPosts, type RecommendationPostFilters } from '@/lib/recommendation-posts';
+import { loadRecommendationPosts, recommendationComboLabel, type RecommendationPostFilters } from '@/lib/recommendation-posts';
 
 const scenarioCards = [
   { title: '게임별 추천', desc: '게임명과 해상도를 골라 옵션별 견적을 가격순으로 봅니다.', href: '/recommendations?game=배틀그라운드&resolution=QHD&sort=price' },
@@ -29,7 +29,7 @@ export default async function RecommendationsPage(props: { searchParams: Promise
       <PageStack>
         <PanelCard>
           <SectionHeader
-            description="왕가PC 원본 목록이 아니라, JHS 기준으로 재구성하고 검수한 추천 견적만 보여줍니다. 게임, 예산, 인기, 부품, 브랜드 조합으로 빠르게 좁혀보세요."
+            description="JHS 기준으로 재구성하고 검수한 추천 견적만 보여줍니다. 게임, 예산, 인기, 부품, 브랜드 조합으로 빠르게 좁혀보세요."
             eyebrow="JHS 추천 견적"
             title="내 상황에 맞는 PC 견적 찾기"
           />
@@ -114,12 +114,11 @@ export default async function RecommendationsPage(props: { searchParams: Promise
                 imageUrl={post.thumbnailImageUrl}
                 key={post.id}
                 price={Number(post.totalPrice ?? 0)}
-                sourceLabel={`${post.cpuModel ?? 'CPU'} + ${post.gpuModel ?? 'GPU'}`}
+                sourceLabel={post.publicComboName ?? `${post.cpuModel ?? 'CPU'} + ${post.gpuModel ?? 'GPU'}`}
                 subtitle={post.subtitle ?? post.summary ?? `${post.cpuBrand ?? ''} ${post.gpuBrand ?? ''} 추천 견적`}
                 tags={[
                   ...(post.gameTags ?? []).slice(0, 3),
-                  post.comboType ?? '',
-                  post.casePartName ? '케이스 썸네일' : '',
+                  recommendationComboLabel(post.comboType),
                 ].filter(Boolean)}
                 title={post.title}
               />

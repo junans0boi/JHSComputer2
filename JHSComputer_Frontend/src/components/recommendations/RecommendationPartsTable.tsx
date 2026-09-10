@@ -1,5 +1,5 @@
-import { Badge } from '@/components/ui/Badge';
 import { PanelCard } from '@/components/ui/PanelCard';
+import { QuotePartList } from '@/components/ui/QuotePartList';
 
 export type RecommendationPartRow = {
   id: string;
@@ -22,17 +22,8 @@ export function RecommendationPartsTable({
     <PanelCard>
       <h3 className="text-xl font-black">{title}</h3>
       <p className="mt-1 text-sm text-slate-600">{description}</p>
-      <div className="mt-4 overflow-x-auto rounded-xl border border-line">
-        {parts.map((part) => (
-          <div className="grid min-w-[780px] gap-3 border-t border-line p-3 first:border-t-0 sm:grid-cols-[110px_minmax(420px,1fr)_auto]" key={part.id}>
-            <Badge>{part.label}</Badge>
-            <div className="min-w-0">
-              <div className="part-name text-sm">{part.name}</div>
-              {part.spec && <div className="part-spec mt-1 text-xs text-slate-500">{part.spec}</div>}
-            </div>
-            <div className="font-black">{part.price.toLocaleString()}원</div>
-          </div>
-        ))}
+      <div className="mt-4">
+        <QuotePartList parts={parts.map((part) => ({ id: part.id, category: part.label, name: part.name, spec: part.spec, price: part.price, quantity: 1 }))} />
       </div>
     </PanelCard>
   );

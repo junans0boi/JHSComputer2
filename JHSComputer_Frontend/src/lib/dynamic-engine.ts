@@ -32,7 +32,7 @@ const TIER_BUDGET_TARGETS: Record<number, Record<PartCategory, [number, number]>
 
 export function generateDynamicQuote(input: QuoteInput, catalog: CatalogPart[]): Quote {
   const tier = pickTier(input);
-  const targets = TIER_BUDGET_TARGETS[tier];
+  const targets = cloneTargets(TIER_BUDGET_TARGETS[tier]);
 
   // Modify targets based on specific input parameters
   if (input.purpose === '영상편집' || input.purpose === 'AI') {
@@ -46,34 +46,38 @@ export function generateDynamicQuote(input: QuoteInput, catalog: CatalogPart[]):
 
   // Pre-sort catalog globally to favor parts with high review count (surrogate for "good/reliable/value")
   // and prioritize parts in the target price range.
-  const scoredCatalog = catalog.map(part => {
-    let score = part.reviewCount * 10;
-    // Add extra score if "품절" is not in name (status is not reliably available here without common-codes)
-    if (!part.name.includes('품절') && !part.name.includes('단종')) score += 10000;
-    return { part, score };
-  }).sort((a, b) => b.score - a.score);
+  const scoredCatalog = catalog
+    .filter((part) => part.price > 0)
+    .filter((part) => !/품절|단종|SOLD.?OUT|OUT.?OF.?STOCK/i.test(`${part.name} ${part.stockStatus ?? ''}`))
+    .map((part) => ({
+      part,
+      // Popularity is the primary trust signal; price is only used inside a
+      // target band so a low-price, unknown manufacturer cannot win by price.
+      score: (part.adminPriority ?? 0) * 100000 + (part.popularityScore ?? 0) * 100 + part.reviewCount,
+    }));
 
   const bestSelection = backtrackBuild({}, 0, scoredCatalog, targets);
   
   // If backtracking fails to find a complete build (very rare), fallback to greedy
   const finalSelection = bestSelection || greedyBuild(scoredCatalog, targets);
 
-  // Convert to QuotePart array matching 'categories' order
-  const parts: QuotePart[] = categories.map((cat) => {
+  // Convert only real DB selections. Missing categories are surfaced below
+  // instead of a fake 0원 product row.
+  const parts: QuotePart[] = categories.flatMap((cat) => {
     const part = finalSelection[cat];
     if (!part) {
-      return { category: cat, name: '부품을 찾을 수 없음', price: 0, memo: '수동으로 추가해주세요', supplier: '' };
+      return [];
     }
-    return {
+    return [{
       category: part.category,
       name: part.name,
       memo: part.spec || '동적 엔진 자동 할당',
       price: part.price,
-      supplier: '컴퓨존 카탈로그 기준',
+      supplier: 'JHS 상품 기준',
       productNo: part.productNo,
       imageUrl: part.imageUrl,
       detailUrl: part.detailUrl,
-    };
+    }];
   });
 
   const subtotal = parts.reduce((sum, part) => sum + part.price, 0);
@@ -89,7 +93,12 @@ export function generateDynamicQuote(input: QuoteInput, catalog: CatalogPart[]):
     input,
     parts,
     performance: [],
-    compatibility: buildCompatibility(parts),
+    compatibility: [
+      ...buildCompatibility(parts),
+      ...categories
+        .filter((category) => !finalSelection[category])
+        .map((category) => `확인필요: ${category} 후보를 현재 예산/호환 조건에서 찾지 못했습니다.`),
+    ],
     subtotal,
     assemblyFee,
     shippingFee,
@@ -181,4 +190,10 @@ function greedyBuild(
     }
   }
   return selection;
+}
+
+function cloneTargets(targets: Record<PartCategory, [number, number]>) {
+  return Object.fromEntries(
+    Object.entries(targets).map(([category, range]) => [category, [...range]]),
+  ) as Record<PartCategory, [number, number]>;
 }

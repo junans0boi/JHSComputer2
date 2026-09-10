@@ -9,7 +9,7 @@ import { RecommendationHero } from '@/components/recommendations/RecommendationH
 import { RecommendationMarkdownBody } from '@/components/recommendations/RecommendationMarkdownBody';
 import { RecommendationPartsTable } from '@/components/recommendations/RecommendationPartsTable';
 import { PageStack, PanelCard } from '@/components/ui/PanelCard';
-import { loadRecommendationPost, normalizeRecommendationCategory, recommendationPostToQuote, type RecommendationPostGame } from '@/lib/recommendation-posts';
+import { loadRecommendationPost, normalizeRecommendationCategory, recommendationComboLabel, recommendationPostToQuote, type RecommendationPostGame } from '@/lib/recommendation-posts';
 import type { Quote } from '@/lib/v1-types';
 
 export default async function RecommendationDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -28,13 +28,13 @@ export default async function RecommendationDetailPage({ params }: { params: Pro
 
         <RecommendationHero
           actions={<QuoteOrderActions quote={quote} />}
-          highlights={['JHS 검수 추천 조합', `CPU: ${post.cpuModel}`, `GPU: ${post.gpuModel}`, `케이스: ${post.casePartName ?? '추천 케이스'}`]}
+          highlights={['JHS 검수 추천 조합', `CPU: ${post.publicCpuModel ?? post.cpuModel}`, `GPU: ${post.publicGpuModel ?? post.gpuModel}`, `케이스: ${post.casePartName ?? '추천 케이스'}`]}
           imageAlt={post.title}
           imageFallback="JHS 추천 PC"
           imageUrl={heroImage}
-          subtitle={`${post.cpuModel} + ${post.gpuModel}`}
+          subtitle={post.publicComboName ?? `${post.cpuModel} + ${post.gpuModel}`}
           summary={post.summary ?? 'JHS 기준으로 재구성한 추천 PC입니다. 주문 전 운영자가 현재 가격, 재고, 호환성, 케이스 장착성을 최종 확인합니다.'}
-          tags={['JHS 추천', post.comboType ?? '', ...gameTags]}
+          tags={['JHS 추천', recommendationComboLabel(post.comboType), ...gameTags]}
           title={post.title}
         />
 

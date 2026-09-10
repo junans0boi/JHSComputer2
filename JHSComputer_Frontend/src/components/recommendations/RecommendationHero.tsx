@@ -2,6 +2,10 @@ import { CheckCircle } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Badge } from '@/components/ui/Badge';
 import { PanelCard } from '@/components/ui/PanelCard';
+import {
+  RECOMMENDATION_HERO_IMAGE_CLASS,
+  RECOMMENDATION_HERO_IMAGE_FRAME_CLASS,
+} from '@/lib/recommendation-image-layout';
 
 export function RecommendationHero({
   title,
@@ -27,9 +31,9 @@ export function RecommendationHero({
   return (
     <PanelCard className="overflow-hidden p-0">
       <div className="grid min-w-0 gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(260px,360px)_minmax(0,1fr)]">
-        <div className="grid min-h-80 place-items-center rounded-2xl bg-panel p-5">
+        <div className={RECOMMENDATION_HERO_IMAGE_FRAME_CLASS}>
           {imageUrl ? (
-            <img alt={imageAlt} className="max-h-72 max-w-full object-contain" src={imageUrl} />
+            <img alt={imageAlt} className={RECOMMENDATION_HERO_IMAGE_CLASS} src={imageUrl} />
           ) : (
             <div className="text-center text-sm font-black text-slate-400">{imageFallback}</div>
           )}
