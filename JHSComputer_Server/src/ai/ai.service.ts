@@ -42,26 +42,63 @@ export class AiService {
 
     try {
       // Convert history from Gemini format to OpenAI format
+      const normalizedHistory = history
+        .slice(-20)
+        .map((message) => ({
+          role: message.role === 'model' ? 'assistant' as const : 'user' as const,
+          content: message.parts
+            .map((part) => part.text.trim())
+            .filter(Boolean)
+            .join('\n')
+            .slice(0, 2_000),
+        }))
+        .filter((message) => message.content.length > 0);
       const messages: any[] = [
         { role: 'system', content: systemInstruction },
-        ...history.map(msg => ({
-          role: msg.role === 'model' ? 'assistant' : 'user',
-          content: msg.parts[0].text
-        })),
-        { role: 'user', content: newMessage }
+        ...normalizedHistory,
+        { role: 'user', content: newMessage.trim().slice(0, 2_000) },
       ];
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
         messages,
-        response_format: { type: "json_object" },
-      });
+        response_format: { type: 'json_object' },
+        max_tokens: 700,
+      }, { signal: AbortSignal.timeout(15_000) });
 
       const text = response.choices[0].message.content;
-      return JSON.parse(text || '{}');
+      return normalizeAiResponse(JSON.parse(text || '{}'));
     } catch (error: any) {
       console.error('OpenAI API Error:', error.message);
       throw new InternalServerErrorException('AI 상담원과 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
     }
   }
+}
+
+function normalizeAiResponse(value: unknown) {
+  if (!value || typeof value !== 'object') throw new Error('Invalid AI response');
+  const response = value as Record<string, unknown>;
+  if (typeof response.message !== 'string' || !response.message.trim()) throw new Error('Invalid AI message');
+
+  const result: { message: string; action?: Record<string, unknown> } = {
+    message: response.message.trim().slice(0, 4_000),
+  };
+  if (!response.action || typeof response.action !== 'object' || Array.isArray(response.action)) return result;
+
+  const action = response.action as Record<string, unknown>;
+  const normalized: Record<string, unknown> = {};
+  if (typeof action.budget === 'number' && Number.isFinite(action.budget)) normalized.budget = Math.min(5_000, Math.max(1, Math.round(action.budget)));
+  if (['게임', '방송', '영상편집', '사무', 'AI'].includes(String(action.purpose))) normalized.purpose = action.purpose;
+  if (['FHD', 'QHD', '4K'].includes(String(action.resolution))) normalized.resolution = action.resolution;
+  if (['성능 우선', '가성비 우선', '감성 우선', '업그레이드 우선'].includes(String(action.priority))) normalized.priority = action.priority;
+  if (['500GB', '1TB', '2TB'].includes(String(action.storage))) normalized.storage = action.storage;
+  if (Array.isArray(action.games)) {
+    normalized.games = action.games
+      .filter((game): game is string => typeof game === 'string')
+      .map((game) => game.trim().slice(0, 100))
+      .filter(Boolean)
+      .slice(0, 3);
+  }
+  if (Object.keys(normalized).length) result.action = normalized;
+  return result;
 }

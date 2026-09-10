@@ -61,7 +61,7 @@ export default function MyPage() {
         .then((r) => r.ok ? r.json() : null)
         .then((data) => { if (data?.items) setServerQuotes(data.items); })
         .catch(() => {});
-      fetch(`${apiBaseUrl}/orders?userId=${encodeURIComponent(session.user.id)}&page=1&limit=20`, {
+      fetch(`${apiBaseUrl}/orders/my?page=1&limit=20`, {
         headers: { Authorization: `Bearer ${session.accessToken}` },
       })
         .then((r) => r.ok ? r.json() : null)

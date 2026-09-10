@@ -3,9 +3,9 @@
 import { Eye, EyeOff, Lock, Mail, User, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AppShell } from '@/components/AppShell';
-import { saveSession } from '@/lib/auth-client';
+import { getSafeReturnPath, saveSession } from '@/lib/auth-client';
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:6002/api';
 
@@ -15,6 +15,11 @@ export default function RegisterPage() {
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [returnPath, setReturnPath] = useState('/mypage');
+
+  useEffect(() => {
+    setReturnPath(getSafeReturnPath(new URLSearchParams(window.location.search).get('next'), '/mypage'));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +60,7 @@ export default function RegisterPage() {
       }
 
       saveSession({ accessToken: data.accessToken, user: data.user });
-      router.push('/mypage');
+      router.push(returnPath);
     } catch {
       setError('서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
     } finally {

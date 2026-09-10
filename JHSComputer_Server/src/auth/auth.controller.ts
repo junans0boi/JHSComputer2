@@ -1,28 +1,35 @@
 import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
+import { Public, RateLimit } from './index';
+import { LoginDto, RegisterDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() body: { loginId?: string; password?: string }) {
-    return this.authService.login(body.loginId ?? '', body.password ?? '');
+  @Public()
+  @RateLimit(10, 60_000)
+  async login(@Body() body: LoginDto) {
+    return this.authService.login(body.loginId, body.password);
   }
 
   @Post('register')
-  async register(@Body() body: { loginId?: string; password?: string; name?: string; email?: string; nickname?: string }) {
+  @Public()
+  @RateLimit(5, 60_000)
+  async register(@Body() body: RegisterDto) {
     return this.authService.register({
-      loginId: body.loginId ?? '',
-      password: body.password ?? '',
-      name: body.name ?? '회원',
+      loginId: body.loginId,
+      password: body.password,
+      name: body.name,
       email: body.email,
       nickname: body.nickname,
     });
   }
 
   @Get('google')
+  @Public()
   googleRedirect(@Res() res: Response) {
     const params = new URLSearchParams({
       client_id: process.env.GOOGLE_CLIENT_ID ?? '',
@@ -35,6 +42,8 @@ export class AuthController {
   }
 
   @Get('google/callback')
+  @Public()
+  @RateLimit(10, 60_000)
   async googleCallback(@Query('code') code: string, @Res() res: Response) {
     const frontendUrl = process.env.FRONTEND_URL ?? 'https://jhspc.kro.kr';
     try {

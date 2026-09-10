@@ -7,14 +7,14 @@ import { useEffect, useState } from 'react';
 import { AppShell } from '@/components/AppShell';
 import { DaumPostcodeButton } from '@/components/DaumPostcodeButton';
 import { QuotePartsPanel, QuotePricePanel, QuoteSidePanel } from '@/components/QuoteSummary';
-import { Button } from '@/components/ui/Button';
+import { Button, LinkButton } from '@/components/ui/Button';
 import { FormField, TextareaInput, TextInput } from '@/components/ui/FormField';
 import { IconTitle, PanelCard } from '@/components/ui/PanelCard';
 import { getSession } from '@/lib/auth-client';
 import { bankTransferInfo, isBankTransferConfigured } from '@/lib/payment-config';
 import { withDbPerformance } from '@/lib/server-performance';
-import { defaultInput, generateQuote } from '@/lib/v1-estimator';
-import { loadLatestQuote, saveQuote } from '@/lib/v1-storage';
+import { loadLatestQuote, loadLatestQuoteProfile, quoteInputToV2Profile, saveQuote, saveQuoteProfile } from '@/lib/v1-storage';
+import type { BudgetInclude } from '@/lib/quote-profile';
 import { applyWindowsOptionToQuote, getWindowsOptionMeta, normalizeWindowsOption, windowsOptions } from '@/lib/windows-options';
 import type { Quote, WindowsOptionValue } from '@/lib/v1-types';
 
@@ -35,19 +35,20 @@ export default function OrderPage() {
   const [delivery, setDelivery] = useState(initialDelivery);
   const [submitting, setSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    setIsAuthenticated(Boolean(getSession()?.accessToken));
     const hydrateQuote = async () => {
       const latestQuote = loadLatestQuote();
       if (latestQuote) {
-        const hydratedQuote = await withDbPerformance(normalizeQuoteWindows(latestQuote));
+        const normalizedQuote = normalizeQuoteWindows(latestQuote);
+        const hydratedQuote = normalizedQuote.performance.length ? normalizedQuote : await withDbPerformance(normalizedQuote);
         saveQuote(hydratedQuote);
         setQuote(hydratedQuote);
         return;
       }
-      const fallbackQuote = await withDbPerformance(generateQuote(defaultInput));
-      saveQuote(fallbackQuote);
-      setQuote(fallbackQuote);
+      setSubmitMessage('주문할 견적이 없습니다. 실상품 기준으로 견적을 먼저 만들어주세요.');
     };
     void hydrateQuote();
   }, []);
@@ -57,7 +58,18 @@ export default function OrderPage() {
 
   const handleWindowsChange = (windows: WindowsOptionValue) => {
     if (!quote) return;
-    const nextQuote = applyWindowsOptionToQuote(quote, windows);
+    const nextQuote = { ...applyWindowsOptionToQuote(quote, windows), serverQuoteId: undefined };
+    const profile = loadLatestQuoteProfile() ?? quoteInputToV2Profile(quote.input);
+    const includes: BudgetInclude[] = windows === 'NONE'
+      ? profile.budgetProfile.includes.filter((item) => item !== 'WINDOWS')
+      : profile.budgetProfile.includes.includes('WINDOWS')
+        ? profile.budgetProfile.includes
+        : [...profile.budgetProfile.includes, 'WINDOWS'];
+    saveQuoteProfile(nextQuote.id, {
+      ...profile,
+      windowsOption: windows,
+      budgetProfile: { ...profile.budgetProfile, includes },
+    });
     saveQuote(nextQuote);
     setQuote(nextQuote);
   };
@@ -67,26 +79,54 @@ export default function OrderPage() {
     setSubmitting(true);
     setSubmitMessage('');
 
-    try {
-      const session = getSession();
+      try {
+        const savedProfile = loadLatestQuoteProfile() ?? quoteInputToV2Profile(quote.input);
+        const session = getSession();
       if (!session?.accessToken) {
         setSubmitMessage('DB 주문 접수를 위해 로그인이 필요합니다.');
         router.push('/login');
         return;
       }
 
-      const categoryMap: Record<string, string> = {
-        'CPU': 'CPU',
-        '쿨러': 'CPU_COOLER',
-        '메인보드': 'MAINBOARD',
-        'RAM': 'RAM',
-        '그래픽카드': 'GPU',
-        'SSD': 'SSD',
-        '파워': 'PSU',
-        '케이스': 'CASE',
-      };
+      let quoteId = quote.serverQuoteId ? Number(quote.serverQuoteId) : 0;
+      if (!quoteId) {
+        const saveQuoteResponse = await fetch(`${apiBaseUrl}/quotes/save`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.accessToken}`,
+          },
+          body: JSON.stringify({
+            title: quote.title ?? 'JHS PC 견적',
+            budget: quote.input.budget,
+            input: quote.input,
+            compatibility: quote.compatibility,
+            profile: savedProfile,
+            performance: quote.performance,
+            parts: quote.parts.map((part) => ({
+              category: part.category,
+              name: part.name,
+              memo: part.memo,
+              productNo: part.productNo,
+              imageUrl: part.imageUrl,
+              detailUrl: part.detailUrl,
+              offerId: part.offerId,
+              offerName: part.offerName,
+              supplier: part.supplier,
+              stockStatus: part.stockStatus,
+              priceCheckedAt: part.priceCheckedAt,
+              publicPrice: part.publicPrice,
+              quantity: part.quantity ?? 1,
+              price: Math.round(part.price / (part.quantity ?? 1)),
+            })),
+          }),
+        });
+        if (!saveQuoteResponse.ok) throw new Error('quote-save-failed');
+        const savedQuote = await saveQuoteResponse.json();
+        quoteId = Number(savedQuote.quoteId);
+        if (!quoteId) throw new Error('quote-save-failed');
+      }
 
-      const orderNo = createOrderNo();
       const response = await fetch(`${apiBaseUrl}/orders/sync`, {
         method: 'POST',
         headers: {
@@ -94,31 +134,27 @@ export default function OrderPage() {
           Authorization: `Bearer ${session.accessToken}`,
         },
         body: JSON.stringify({
-          orderNo,
-          userId: session.user.id,
+          quoteId,
           recipientName: delivery.recipientName,
           recipientPhone: delivery.recipientPhone,
           postalCode: delivery.postalCode,
           address1: delivery.address1,
-          address2: delivery.address2 || null,
-          deliveryMemo: delivery.deliveryMemo || null,
-          subtotalPartsPrice: quote.subtotal,
-          assemblyFee: quote.assemblyFee,
-          windowsFee: quote.windowsFee,
-          shippingFee: quote.shippingFee,
-          totalPrice: quote.total,
-          parts: quote.parts.map((part) => ({
-            categoryCode: categoryMap[part.category] ?? part.category,
-            partName: part.name,
-            quantity: part.quantity ?? 1,
-            price: Math.round(part.price / (part.quantity ?? 1)),
-          })),
+          address2: delivery.address2 || undefined,
+          deliveryMemo: delivery.deliveryMemo || undefined,
         }),
       });
 
-      if (!response.ok) throw new Error('order-sync-failed');
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({})) as { code?: string; message?: string | string[]; changes?: Array<{ partName?: string; previousPrice?: number; currentPrice?: number; currentStockStatus?: string }> };
+        if (body.code === 'PRICE_APPROVAL_REQUIRED') {
+          const changes = (body.changes ?? []).map((change) => `${change.partName ?? '부품'}: ${change.previousPrice?.toLocaleString() ?? '-'}원 → ${change.currentPrice?.toLocaleString() ?? '-'}원 (${change.currentStockStatus ?? '재고 확인 필요'})`).join(' · ');
+          setSubmitMessage(`주문 전 가격·재고 확인이 필요합니다. ${changes}`);
+          return;
+        }
+        throw new Error('order-sync-failed');
+      }
       const result = await response.json();
-      router.push(`/track?orderNo=${encodeURIComponent(result.orderNo ?? orderNo)}`);
+      router.push(`/track?orderNo=${encodeURIComponent(result.orderNo)}`);
     } catch {
       setSubmitMessage('DB 주문 접수에 실패했습니다. 서버 연결 또는 로그인 상태를 확인해주세요.');
     } finally {
@@ -128,7 +164,9 @@ export default function OrderPage() {
 
   return (
     <AppShell>
-      <section className="grid min-w-0 gap-5 xl:grid-cols-[25fr_50fr_25fr]">
+      {quote ? <div className="grid min-w-0 gap-5">
+        {!isAuthenticated && <PanelCard className="border-amber-200 bg-amber-50"><div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="font-black text-amber-900">주문 접수 전 로그인이 필요합니다</h2><p className="mt-1 text-sm font-bold text-amber-800">견적 확인과 장바구니는 로그인 없이 가능하지만, 배송 정보와 주문 기록은 계정에 연결해야 합니다.</p></div><LinkButton className="shrink-0" href="/login?next=%2Forder">로그인 / 회원가입</LinkButton></div></PanelCard>}
+        <section className="grid min-w-0 gap-5 xl:grid-cols-[25fr_50fr_25fr]">
         {/* 1열: 게임 성능 예상 + 호환성 체크 */}
         {quote ? <QuoteSidePanel compact quote={quote} /> : <div />}
 
@@ -242,29 +280,29 @@ export default function OrderPage() {
           {/* 가격 합계 */}
           {quote && <QuotePricePanel quote={quote} />}
 
-          <Button
-            className={`h-14 rounded-2xl px-4 text-lg font-black text-white transition ${
-              canSubmit && !submitting
-                ? 'bg-brand hover:bg-teal-900'
-                : 'cursor-not-allowed bg-slate-300'
-            }`}
-            disabled={!canSubmit || submitting}
-            onClick={handleSubmit}
-            type="button"
-            variant={canSubmit && !submitting ? 'primary' : 'disabled'}
-          >
-            {submitting ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                주문 접수 중...
-              </span>
-            ) : (
-              <span className="flex items-center justify-center gap-2">
-                주문 접수하기
-                <ChevronRight size={20} />
-              </span>
-            )}
-          </Button>
+          {isAuthenticated ? <Button
+              className={`h-14 rounded-2xl px-4 text-lg font-black text-white transition ${
+                canSubmit && !submitting
+                  ? 'bg-brand hover:bg-teal-900'
+                  : 'cursor-not-allowed bg-slate-300'
+              }`}
+              disabled={!canSubmit || submitting}
+              onClick={handleSubmit}
+              type="button"
+              variant={canSubmit && !submitting ? 'primary' : 'disabled'}
+            >
+              {submitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  주문 접수 중...
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  주문 접수하기
+                  <ChevronRight size={20} />
+                </span>
+              )}
+            </Button> : <LinkButton className="h-14 rounded-2xl px-4 text-lg" href="/login?next=%2Forder">로그인 후 주문 접수하기 <ChevronRight size={20} /></LinkButton>}
 
           {submitMessage && (
             <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-center text-sm font-bold text-red-700">
@@ -276,7 +314,18 @@ export default function OrderPage() {
             ← 견적 다시 수정하기
           </Link>
         </div>
-      </section>
+        </section>
+      </div> : (
+        <PanelCard>
+          <div className="py-10 text-center">
+            <h1 className="text-2xl font-black text-slate-950">주문할 견적이 없습니다.</h1>
+            <p className="mt-3 text-sm font-bold text-slate-500">JHS 실상품과 최신 수집 가격 기준으로 견적을 먼저 만들어주세요.</p>
+            <LinkButton className="mt-6" href="/quote">
+              실상품 기준 견적 만들기
+            </LinkButton>
+          </div>
+        </PanelCard>
+      )}
     </AppShell>
   );
 }
@@ -328,10 +377,6 @@ function WindowsOptionPanel({
       </p>
     </div>
   );
-}
-
-function createOrderNo() {
-  return `JHS-${new Date().toISOString().slice(2, 10).replaceAll('-', '')}-${String(Date.now()).slice(-5)}`;
 }
 
 function PaymentRow({ label, value, strong = false }: { label: string; value: string; strong?: boolean }) {

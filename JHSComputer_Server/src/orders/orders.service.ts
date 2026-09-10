@@ -1,34 +1,54 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { DiscordService } from '../discord/discord.service';
+import { OrderStatus } from '../common/enums';
 import { Order } from './order.entity';
 import { OrderItem } from './order-item.entity';
-import { OrderStatus } from '../common/enums';
 import { OrderStatusHistory } from './order-status-history.entity';
+
+const allowedTransitions: Record<OrderStatus, OrderStatus[]> = {
+  [OrderStatus.PRICE_APPROVAL_REQUIRED]: [OrderStatus.ADMIN_REVIEW, OrderStatus.CANCELLED, OrderStatus.ON_HOLD],
+  [OrderStatus.ADMIN_REVIEW]: [OrderStatus.WAITING_DEPOSIT, OrderStatus.PRICE_APPROVAL_REQUIRED, OrderStatus.CANCELLED, OrderStatus.ON_HOLD],
+  [OrderStatus.WAITING_DEPOSIT]: [OrderStatus.DEPOSIT_CONFIRMED, OrderStatus.CANCELLED, OrderStatus.ON_HOLD],
+  [OrderStatus.DEPOSIT_CONFIRMED]: [OrderStatus.PARTS_ORDERING, OrderStatus.CANCELLED, OrderStatus.REFUNDED, OrderStatus.ON_HOLD],
+  [OrderStatus.PARTS_ORDERING]: [OrderStatus.PARTS_WAITING, OrderStatus.PARTS_ARRIVED, OrderStatus.CANCELLED, OrderStatus.ON_HOLD],
+  [OrderStatus.PARTS_WAITING]: [OrderStatus.PARTS_ARRIVED, OrderStatus.CANCELLED, OrderStatus.ON_HOLD],
+  [OrderStatus.PARTS_ARRIVED]: [OrderStatus.ASSEMBLING, OrderStatus.CANCELLED, OrderStatus.ON_HOLD],
+  [OrderStatus.ASSEMBLING]: [OrderStatus.TESTING, OrderStatus.ON_HOLD],
+  [OrderStatus.TESTING]: [OrderStatus.PREPARING_DELIVERY, OrderStatus.ON_HOLD],
+  [OrderStatus.PREPARING_DELIVERY]: [OrderStatus.SHIPPING, OrderStatus.ON_HOLD],
+  [OrderStatus.SHIPPING]: [OrderStatus.DELIVERED, OrderStatus.ON_HOLD],
+  [OrderStatus.DELIVERED]: [OrderStatus.PURCHASE_CONFIRMED, OrderStatus.REVIEW_AVAILABLE],
+  [OrderStatus.PURCHASE_CONFIRMED]: [OrderStatus.REVIEW_AVAILABLE],
+  [OrderStatus.REVIEW_AVAILABLE]: [],
+  [OrderStatus.ON_HOLD]: [OrderStatus.ADMIN_REVIEW, OrderStatus.WAITING_DEPOSIT, OrderStatus.DEPOSIT_CONFIRMED, OrderStatus.CANCELLED],
+  [OrderStatus.CANCELLED]: [OrderStatus.REFUNDED],
+  [OrderStatus.REFUNDED]: [],
+};
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
-    private orderRepository: Repository<Order>,
+    private readonly orderRepository: Repository<Order>,
     @InjectRepository(OrderItem)
-    private orderItemRepository: Repository<OrderItem>,
+    private readonly orderItemRepository: Repository<OrderItem>,
     @InjectRepository(OrderStatusHistory)
-    private historyRepository: Repository<OrderStatusHistory>,
-    private discordService: DiscordService,
+    private readonly historyRepository: Repository<OrderStatusHistory>,
+    private readonly dataSource: DataSource,
+    private readonly discordService: DiscordService,
   ) {}
 
   async getOrders(params: { userId?: number; page: number; limit: number }) {
-    const { userId, page, limit } = params;
+    const { page, limit } = normalizePagination(params.page, params.limit);
+    const { userId } = params;
     const query = this.orderRepository.createQueryBuilder('order')
       .leftJoinAndSelect('order.user', 'user')
       .leftJoinAndSelect('order.items', 'items')
       .leftJoinAndSelect('order.statusHistories', 'statusHistories');
 
-    if (userId) {
-      query.andWhere('order.userId = :userId', { userId: userId.toString() });
-    }
+    if (userId) query.andWhere('order.userId = :userId', { userId: userId.toString() });
 
     const [items, total] = await query
       .skip((page - 1) * limit)
@@ -36,13 +56,18 @@ export class OrdersService {
       .orderBy('order.createdAt', 'DESC')
       .getManyAndCount();
 
-    return {
-      items,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
-    };
+    return { items, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
+  async getMyOrders(userId: string, page = 1, limit = 20) {
+    const normalized = normalizePagination(page, limit);
+    const [items, total] = await this.orderRepository.findAndCount({
+      where: { userId },
+      order: { createdAt: 'DESC' },
+      skip: (normalized.page - 1) * normalized.limit,
+      take: normalized.limit,
+    });
+    return { items, total, page: normalized.page, limit: normalized.limit, totalPages: Math.ceil(total / normalized.limit) };
   }
 
   async getOrderDetail(id: number) {
@@ -50,158 +75,105 @@ export class OrdersService {
       where: { id: id.toString() },
       relations: ['user', 'items', 'payments', 'statusHistories'],
     });
-
-    if (!order) {
-      throw new NotFoundException('주문을 찾을 수 없습니다.');
-    }
-
+    if (!order) throw new NotFoundException('주문을 찾을 수 없습니다.');
     return order;
   }
 
   async getOrderByNo(orderNo: string) {
-    const order = await this.orderRepository.findOne({
-      where: { orderNo },
-      relations: ['user', 'items', 'statusHistories'],
-    });
+    const order = await this.orderRepository.findOne({ where: { orderNo } });
+    if (!order) throw new NotFoundException('주문번호로 조회된 주문이 없습니다.');
 
-    if (!order) {
-      throw new NotFoundException('주문번호로 조회된 주문이 없습니다.');
-    }
-
-    return order;
+    return {
+      id: order.id,
+      orderNo: order.orderNo,
+      status: order.status,
+      recipientName: maskName(order.recipientName),
+      address1: maskAddress(order.address1),
+      address2: null,
+      totalPrice: order.totalPrice,
+      trackingCompany: order.trackingCompany,
+      trackingNo: order.trackingNo,
+      createdAt: order.createdAt,
+    };
   }
 
-  async updateOrderStatus(id: number, status: string, memo?: string) {
-    const order = await this.orderRepository.findOne({ where: { id: id.toString() } });
-    if (!order) throw new NotFoundException('주문을 찾을 수 없습니다.');
+  async updateOrderStatus(id: number, status: OrderStatus, memo?: string, actorUserId?: string) {
+    const updated = await this.dataSource.transaction(async (manager) => {
+      const orderRepository = manager.getRepository(Order);
+      const historyRepository = manager.getRepository(OrderStatusHistory);
+      const order = await orderRepository.findOne({ where: { id: id.toString() } });
+      if (!order) throw new NotFoundException('주문을 찾을 수 없습니다.');
+      if (order.status === status) return order;
+      if (!allowedTransitions[order.status]?.includes(status)) {
+        throw new ConflictException(`${order.status}에서 ${status} 상태로 변경할 수 없습니다.`);
+      }
 
-    const prevStatus = order.status;
-    order.status = status as OrderStatus;
-    await this.orderRepository.save(order);
-
-    const history = this.historyRepository.create({
-      orderId: order.id,
-      fromStatus: prevStatus,
-      toStatus: status,
-      memo: memo ?? null,
-    });
-    await this.historyRepository.save(history);
-
-    void this.discordService.sendStatusNotification(order.orderNo, status, memo);
-
-    return order;
-  }
-
-  async syncOrder(data: {
-    orderNo: string;
-    userId: string;
-    quoteId?: string;
-    recipientName: string;
-    recipientPhone: string;
-    postalCode: string;
-    address1: string;
-    address2?: string;
-    deliveryMemo?: string;
-    subtotalPartsPrice: number;
-    assemblyFee: number;
-    windowsFee: number;
-    shippingFee: number;
-    totalPrice: number;
-    parts: Array<{
-      categoryCode: string;
-      partName: string;
-      quantity: number;
-      price: number;
-    }>;
-  }) {
-    const existing = await this.orderRepository.findOne({ where: { orderNo: data.orderNo } });
-    if (existing) {
-      return { orderId: existing.id, orderNo: existing.orderNo, synced: false };
-    }
-
-    const order = this.orderRepository.create({
-      orderNo: data.orderNo,
-      userId: data.userId,
-      quoteId: data.quoteId ?? null,
-      status: OrderStatus.WAITING_DEPOSIT,
-      recipientName: data.recipientName,
-      recipientPhone: data.recipientPhone,
-      postalCode: data.postalCode,
-      address1: data.address1,
-      address2: data.address2 ?? null,
-      deliveryMemo: data.deliveryMemo ?? null,
-      subtotalPartsPrice: data.subtotalPartsPrice,
-      assemblyFee: data.assemblyFee,
-      windowsFee: data.windowsFee,
-      shippingFee: data.shippingFee,
-      totalPrice: data.totalPrice,
-    } as any);
-
-    const savedOrder = await this.orderRepository.save(order) as unknown as Order;
-
-    for (const part of data.parts) {
-      const item = this.orderItemRepository.create({
-        orderId: savedOrder.id,
-        categoryCode: part.categoryCode,
-        partNameSnapshot: part.partName,
-        quantity: part.quantity,
-        publicPrice: part.price,
-        totalPublicPrice: part.price * part.quantity,
-      });
-      await this.orderItemRepository.save(item);
-    }
-
-    const history = this.historyRepository.create({
-      orderId: savedOrder.id,
-      fromStatus: null,
-      toStatus: OrderStatus.WAITING_DEPOSIT,
-      memo: '주문이 접수되었습니다. 안내된 계좌로 입금해주시면 확인 후 조립을 시작합니다.',
-    });
-    await this.historyRepository.save(history);
-
-    void this.discordService.sendOrderNotification({
-      orderNo: savedOrder.orderNo,
-      recipientName: data.recipientName,
-      recipientPhone: data.recipientPhone,
-      address1: data.address1,
-      address2: data.address2,
-      totalPrice: data.totalPrice,
-      assemblyFee: data.assemblyFee,
-      parts: data.parts.map((p) => ({
-        partNameSnapshot: p.partName,
-        quantity: p.quantity,
-        publicPrice: p.price,
-      })),
+      const previousStatus = order.status;
+      order.status = status;
+      const saved = await orderRepository.save(order);
+      await historyRepository.save(historyRepository.create({
+        orderId: saved.id,
+        fromStatus: previousStatus,
+        toStatus: status,
+        actorUserId: actorUserId ?? null,
+        memo: memo ?? null,
+      }));
+      return saved;
     });
 
-    return { orderId: savedOrder.id, orderNo: savedOrder.orderNo, synced: true };
+    void this.discordService.sendStatusNotification(updated.orderNo, status, memo);
+    return updated;
   }
 
-  async updateShipping(id: number, data: { trackingCompany?: string; trackingNo?: string; memo?: string }) {
-    const order = await this.orderRepository.findOne({ where: { id: id.toString() } });
-    if (!order) throw new NotFoundException('주문을 찾을 수 없습니다.');
+  async updateShipping(id: number, data: { trackingCompany?: string; trackingNo?: string; memo?: string }, actorUserId?: string) {
+    const updated = await this.dataSource.transaction(async (manager) => {
+      const orderRepository = manager.getRepository(Order);
+      const historyRepository = manager.getRepository(OrderStatusHistory);
+      const order = await orderRepository.findOne({ where: { id: id.toString() } });
+      if (!order) throw new NotFoundException('주문을 찾을 수 없습니다.');
 
-    const prevStatus = order.status;
-    order.trackingCompany = data.trackingCompany || 'CJ';
-    order.trackingNo = data.trackingNo || null;
-    if (data.trackingNo && ![OrderStatus.SHIPPING, OrderStatus.DELIVERED].includes(order.status)) {
-      order.status = OrderStatus.SHIPPING;
-    }
-    await this.orderRepository.save(order);
-
-    const history = this.historyRepository.create({
-      orderId: order.id,
-      fromStatus: prevStatus,
-      toStatus: order.status,
-      memo: data.memo ?? `운송장번호가 등록되었습니다. (${order.trackingCompany} ${order.trackingNo ?? ''})`,
+      const previousStatus = order.status;
+      order.trackingCompany = data.trackingCompany ?? order.trackingCompany ?? null;
+      order.trackingNo = data.trackingNo ?? order.trackingNo ?? null;
+      if (order.trackingNo && ![OrderStatus.SHIPPING, OrderStatus.DELIVERED].includes(order.status)) {
+        if (!allowedTransitions[order.status]?.includes(OrderStatus.SHIPPING)) {
+          throw new ConflictException('현재 주문 상태에서는 운송장을 등록할 수 없습니다.');
+        }
+        order.status = OrderStatus.SHIPPING;
+      }
+      const saved = await orderRepository.save(order);
+      if (saved.status !== previousStatus || data.trackingNo || data.trackingCompany) {
+        await historyRepository.save(historyRepository.create({
+          orderId: saved.id,
+          fromStatus: previousStatus,
+          toStatus: saved.status,
+          actorUserId: actorUserId ?? null,
+          memo: data.memo ?? `운송장번호가 등록되었습니다. (${saved.trackingCompany ?? ''} ${saved.trackingNo ?? ''})`,
+        }));
+      }
+      return saved;
     });
-    await this.historyRepository.save(history);
 
-    return order;
+    return updated;
   }
+}
 
-  async createOrder(data: any) {
-    const order = this.orderRepository.create(data);
-    return this.orderRepository.save(order);
-  }
+function normalizePagination(page: number, limit: number) {
+  return {
+    page: Number.isFinite(page) ? Math.max(1, Math.floor(page)) : 1,
+    limit: Number.isFinite(limit) ? Math.min(100, Math.max(1, Math.floor(limit))) : 20,
+  };
+}
+
+function maskName(value: string) {
+  const chars = [...value];
+  if (chars.length <= 1) return '*';
+  if (chars.length === 2) return `${chars[0]}*`;
+  return `${chars[0]}${'*'.repeat(chars.length - 2)}${chars.at(-1)}`;
+}
+
+function maskAddress(value: string) {
+  const parts = value.trim().split(/\s+/);
+  if (parts.length <= 1) return '***';
+  return `${parts.slice(0, 2).join(' ')} ***`;
 }

@@ -3,3 +3,4 @@ export { ROLES_KEY } from './roles.guard';
 export { JwtAuthGuard } from './jwt-auth.guard';
 export { RolesGuard } from './roles.guard';
 export { Public, Roles } from './decorators';
+export { RateLimit } from '../common/rate-limit.decorator';

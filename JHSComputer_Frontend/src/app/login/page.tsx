@@ -2,10 +2,10 @@
 
 import { Eye, EyeOff, Lock, Monitor, User } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/AppShell';
-import { saveSession } from '@/lib/auth-client';
+import { getSafeReturnPath, saveSession } from '@/lib/auth-client';
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:6002/api';
 
@@ -16,6 +16,11 @@ export default function LoginPage() {
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [returnPath, setReturnPath] = useState('');
+
+  useEffect(() => {
+    setReturnPath(getSafeReturnPath(new URLSearchParams(window.location.search).get('next'), ''));
+  }, []);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -37,7 +42,8 @@ export default function LoginPage() {
       }
       const session = await response.json();
       saveSession(session);
-      router.push(session.user.role === 'ADMIN' ? '/admin' : '/mypage');
+      const nextPath = getSafeReturnPath(new URLSearchParams(window.location.search).get('next'), session.user.role === 'ADMIN' ? '/admin' : '/mypage');
+      router.push(nextPath);
     } catch (err) {
       setError(err instanceof Error ? err.message : '로그인에 실패했습니다.');
     } finally {
@@ -139,12 +145,15 @@ export default function LoginPage() {
           <div className="flex flex-col items-center gap-3 text-sm text-slate-500">
             <div className="flex items-center gap-2">
               <span>계정이 없으신가요?</span>
-              <Link className="font-black text-brand hover:underline" href="/register">
+              <Link
+                className="font-black text-brand hover:underline"
+                href={returnPath ? `/register?next=${encodeURIComponent(returnPath)}` : '/register'}
+              >
                 회원가입 →
               </Link>
             </div>
             <div className="h-px w-full bg-line" />
-            <p className="text-xs">로그인 없이도 견적 조회·주문이 가능합니다</p>
+            <p className="text-xs">로그인 없이 견적을 확인할 수 있고, 주문 접수는 로그인 후 진행합니다.</p>
             <Link className="font-black text-brand hover:underline" href="/quote">
               바로 견적 받기 →
             </Link>

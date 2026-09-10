@@ -25,3 +25,7 @@ export function saveSession(session: { accessToken: string; user: LoginUser }) {
 export function clearSession() {
   localStorage.removeItem(sessionKey);
 }
+
+export function getSafeReturnPath(value: string | null | undefined, fallback: string) {
+  return value && value.startsWith('/') && !value.startsWith('//') ? value : fallback;
+}

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { FormField, TextareaInput, TextInput } from '@/components/ui/FormField';
 import { IconTitle, PageStack, PanelCard } from '@/components/ui/PanelCard';
 import { bankTransferInfo } from '@/lib/payment-config';
+import { getSession } from '@/lib/auth-client';
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:6002/api';
 
@@ -18,6 +19,7 @@ export default function OrderPage() {
   const [quote, setQuote] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState('');
 
   const [formData, setFormData] = useState({
     recipientName: '',
@@ -29,15 +31,23 @@ export default function OrderPage() {
   });
 
   useEffect(() => {
+    const session = getSession();
+    if (!session?.accessToken) {
+      router.push('/login');
+      return;
+    }
     if (params.id) {
-      fetch(`${apiBaseUrl}/quotes/${params.id}`)
+      fetch(`${apiBaseUrl}/quotes/${params.id}`, {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      })
         .then((res) => res.json())
         .then((data) => {
           setQuote(data);
           setLoading(false);
-        });
+        })
+        .catch(() => setLoading(false));
     }
-  }, [params.id]);
+  }, [params.id, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -47,12 +57,25 @@ export default function OrderPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${apiBaseUrl}/quotes/${params.id}/order`, {
+      const session = getSession();
+      if (!session?.accessToken) {
+        router.push('/login');
+        return;
+      }
+      const res = await fetch(`${apiBaseUrl}/orders/sync`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        body: JSON.stringify({ quoteId: Number(params.id), ...formData }),
       });
       const data = await res.json();
+      if (data.code === 'PRICE_APPROVAL_REQUIRED') {
+        const changes = (data.changes ?? []).map((change: { partName?: string; previousPrice?: number; currentPrice?: number; currentStockStatus?: string }) => `${change.partName ?? '부품'}: ${change.previousPrice?.toLocaleString() ?? '-'}원 → ${change.currentPrice?.toLocaleString() ?? '-'}원 (${change.currentStockStatus ?? '재고 확인 필요'})`).join(' · ');
+        setSubmitMessage(`주문 전 가격·재고 확인이 필요합니다. ${changes}`);
+        return;
+      }
       if (data.orderNo) {
         alert('주문이 완료되었습니다. 무통장 입금을 진행해주세요.');
         router.push(`/track`);
@@ -60,7 +83,7 @@ export default function OrderPage() {
         alert('주문에 실패했습니다.');
       }
     } catch (error) {
-      alert('오류가 발생했습니다.');
+      setSubmitMessage('주문 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsSubmitting(false);
     }
@@ -132,6 +155,7 @@ export default function OrderPage() {
             {isSubmitting ? '주문 처리 중...' : `${quote?.totalPrice?.toLocaleString()}원 결제하기`}
             <CheckCircle2 size={20} />
           </Button>
+          {submitMessage && <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm font-bold text-amber-800">{submitMessage}</p>}
         </form>
       </PageStack>
     </AppShell>

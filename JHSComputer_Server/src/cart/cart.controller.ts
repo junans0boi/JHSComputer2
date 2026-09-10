@@ -1,36 +1,26 @@
-import { Body, Controller, Delete, Get, Headers, Param, Post, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { CartService } from './cart.service';
+import { AddCartQuoteDto } from './cart.dto';
 
 @Controller('cart')
 export class CartController {
   constructor(
     private readonly cartService: CartService,
-    private readonly jwtService: JwtService,
   ) {}
 
-  private userId(auth: string) {
-    const token = auth?.replace('Bearer ', '');
-    if (!token) throw new UnauthorizedException();
-    try {
-      return (this.jwtService.verify(token) as { sub: string }).sub;
-    } catch {
-      throw new UnauthorizedException();
-    }
-  }
-
   @Get()
-  async getCart(@Headers('authorization') auth: string) {
-    return this.cartService.getCart(this.userId(auth));
+  async getCart(@Req() request: Request & { user?: { sub: string } }) {
+    return this.cartService.getCart(request.user!.sub);
   }
 
   @Post()
-  async addCartQuote(@Headers('authorization') auth: string, @Body() body: { clientCartId?: string; quote?: any }) {
-    return this.cartService.addCartQuote(this.userId(auth), { clientCartId: body.clientCartId, quote: body.quote });
+  async addCartQuote(@Req() request: Request & { user?: { sub: string } }, @Body() body: AddCartQuoteDto) {
+    return this.cartService.addCartQuote(request.user!.sub, { clientCartId: body.clientCartId, quote: body.quote });
   }
 
   @Delete(':cartQuoteId')
-  async deleteCartQuote(@Headers('authorization') auth: string, @Param('cartQuoteId') cartQuoteId: string) {
-    return this.cartService.deleteCartQuote(this.userId(auth), cartQuoteId);
+  async deleteCartQuote(@Req() request: Request & { user?: { sub: string } }, @Param('cartQuoteId') cartQuoteId: string) {
+    return this.cartService.deleteCartQuote(request.user!.sub, cartQuoteId);
   }
 }

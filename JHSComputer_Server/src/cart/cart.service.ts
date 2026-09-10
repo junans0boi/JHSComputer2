@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 @Injectable()
@@ -25,9 +25,17 @@ export class CartService {
   }
 
   async addCartQuote(userId: string, data: { clientCartId?: string; quote: any }) {
-    const quote = data.quote ?? {};
-    const title = quote.title ?? quote.id ?? 'PC 견적';
+    const quote = data.quote;
+    if (!quote || typeof quote !== 'object' || Array.isArray(quote)) {
+      throw new BadRequestException('견적 형식이 올바르지 않습니다.');
+    }
+    const serializedQuote = JSON.stringify(quote);
+    if (serializedQuote.length > 100_000) throw new BadRequestException('장바구니 견적이 너무 큽니다.');
+    const title = typeof quote.title === 'string' ? quote.title.slice(0, 255) : typeof quote.id === 'string' ? quote.id.slice(0, 255) : 'PC 견적';
     const total = Number(quote.total ?? 0);
+    if (!Number.isSafeInteger(total) || total < 0 || total > 100_000_000) {
+      throw new BadRequestException('견적 금액이 올바르지 않습니다.');
+    }
     const clientCartId = data.clientCartId ?? quote.id ?? null;
     await this.dataSource.query(
       `
@@ -39,7 +47,7 @@ export class CartService {
         QUOTE_SNAPSHOT_JSON = VALUES(QUOTE_SNAPSHOT_JSON),
         UPDATED_DT = NOW()
       `,
-      [userId, clientCartId, title, total, JSON.stringify(quote)],
+      [userId, clientCartId, title, total, serializedQuote],
     );
     return { ok: true };
   }
