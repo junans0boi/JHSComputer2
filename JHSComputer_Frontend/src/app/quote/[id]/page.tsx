@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 import { getSession } from '@/lib/auth-client';
+import { BenchmarkScoreComparisonLoader } from '@/components/benchmarks/BenchmarkScoreComparisonLoader';
 import { QuotePartList } from '@/components/ui/QuotePartList';
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:6002/api';
@@ -47,7 +48,7 @@ export default function QuoteDetailPage() {
     const snapshotPart = quote.snapshotJson?.parts?.find((part: any) => part.offerId === item.supplierOfferId);
     return {
       id: String(item.id),
-      category: item.partCategory?.categoryName ?? '부품',
+      category: item.category?.name ?? item.partCategory?.categoryName ?? '부품',
       name: item.part?.canonicalName ?? item.supplierOffer?.offerName ?? '부품 정보 확인 필요',
       productNo: snapshotPart?.productNo,
       price: item.currentPublicPrice,
@@ -61,6 +62,15 @@ export default function QuoteDetailPage() {
       ].filter(Boolean).join(' · '),
     };
   });
+  const componentPartIds = (quote.items ?? []).reduce((result: { cpu: string[]; gpu: string[] }, item: any) => {
+    const categoryCode = String(item.category?.code ?? item.partCategory?.code ?? '').toUpperCase();
+    const categoryName = String(item.category?.name ?? item.partCategory?.categoryName ?? '');
+    const partId = item.partId == null ? '' : String(item.partId);
+    if (!partId) return result;
+    if (categoryCode === 'CPU' || categoryName === 'CPU') result.cpu.push(partId);
+    if (categoryCode === 'GPU' || categoryName === '그래픽카드') result.gpu.push(partId);
+    return result;
+  }, { cpu: [], gpu: [] });
 
   return (
     <main className="min-h-screen px-5 py-6 text-ink md:px-8 bg-gray-50">
@@ -78,6 +88,23 @@ export default function QuoteDetailPage() {
           {quoteParts.length > 0 ? <QuotePartList parts={quoteParts} /> : (
               <div className="text-sm text-gray-500">부품이 없습니다.</div>
             )}
+        </section>
+
+        <section className="grid min-w-0 gap-5 bg-white rounded-lg border border-line p-5 shadow-sm">
+          <div>
+            <h2 className="text-lg font-bold">부품 성능 비교</h2>
+            <p className="mt-1 text-sm font-semibold leading-6 text-gray-500">같은 테스트·버전·지표의 출처 보고값만 CPU와 GPU별로 비교합니다.</p>
+          </div>
+          {componentPartIds.cpu.length > 0 ? (
+            <BenchmarkScoreComparisonLoader partIds={componentPartIds.cpu} title="견적 CPU 벤치마크 비교" />
+          ) : (
+            <div className="rounded-xl border border-dashed border-line bg-gray-50 p-4 text-sm font-semibold text-gray-500">이 저장 견적에는 비교할 CPU 표준 부품 ID가 없습니다.</div>
+          )}
+          {componentPartIds.gpu.length > 0 ? (
+            <BenchmarkScoreComparisonLoader partIds={componentPartIds.gpu} title="견적 GPU 벤치마크 비교" />
+          ) : (
+            <div className="rounded-xl border border-dashed border-line bg-gray-50 p-4 text-sm font-semibold text-gray-500">이 저장 견적에는 비교할 GPU 표준 부품 ID가 없습니다.</div>
+          )}
         </section>
 
         {quote.snapshotJson?.preview && (

@@ -36,6 +36,7 @@ export type QuoteInput = {
 };
 
 export type QuotePart = {
+  partId?: string;
   category: string;
   name: string;
   memo: string;

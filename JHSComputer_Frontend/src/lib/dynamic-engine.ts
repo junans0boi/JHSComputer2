@@ -69,6 +69,7 @@ export function generateDynamicQuote(input: QuoteInput, catalog: CatalogPart[]):
       return [];
     }
     return [{
+      partId: part.id,
       category: part.category,
       name: part.name,
       memo: part.spec || '동적 엔진 자동 할당',

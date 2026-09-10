@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { IconTitle, PanelCard } from '@/components/ui/PanelCard';
 import { QuotePartsTable } from '@/components/ui/PartsList';
 import { getGameLogo } from '@/lib/game-assets';
+import { BenchmarkScoreComparisonLoader } from '@/components/benchmarks/BenchmarkScoreComparisonLoader';
 import type { CatalogPart, PerformanceResult, Quote, QuotePart, Resolution } from '@/lib/v1-types';
 
 type QuoteEditActions = {
@@ -35,9 +36,20 @@ export function QuotePartsPanel({ quote, onRequestReplacePart, onRemovePart }: {
 }
 
 export function QuoteSidePanel({ quote, compact = false }: { quote: Quote; compact?: boolean }) {
+  const cpuPartIds = quote.parts
+    .filter((part) => part.category === 'CPU')
+    .map((part) => part.partId)
+    .filter((partId): partId is string => Boolean(partId));
+  const gpuPartIds = quote.parts
+    .filter((part) => part.category === '그래픽카드')
+    .map((part) => part.partId)
+    .filter((partId): partId is string => Boolean(partId));
+
   return (
     <aside className="grid min-w-0 content-start gap-5">
       <QuoteGamePerformancePanel quote={quote} />
+      {cpuPartIds.length > 0 && <BenchmarkScoreComparisonLoader partIds={cpuPartIds} title="견적 CPU 벤치마크 비교" />}
+      {gpuPartIds.length > 0 && <BenchmarkScoreComparisonLoader partIds={gpuPartIds} title="견적 GPU 벤치마크 비교" />}
       <QuoteCompatibilityPanel compact={compact} quote={quote} />
     </aside>
   );

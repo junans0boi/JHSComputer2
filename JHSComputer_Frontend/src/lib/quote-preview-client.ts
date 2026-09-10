@@ -78,6 +78,7 @@ export async function requestQuotePreview(profile: QuoteProfileV2): Promise<Quot
 
 export function candidateToQuote(candidate: QuotePreviewCandidate, profile: QuoteProfileV2, input: QuoteInput): Quote {
   const parts = candidate.parts.map((part): QuotePart => ({
+    partId: part.partId,
     category: toLegacyCategory(part.category),
     name: part.partName,
     memo: `${part.offerName} · ${part.stockStatus} · ${new Date(part.priceCheckedAt).toLocaleDateString('ko-KR')} 가격 확인`,

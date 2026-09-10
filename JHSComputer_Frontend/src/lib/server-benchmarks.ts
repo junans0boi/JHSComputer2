@@ -24,6 +24,8 @@ export type BenchmarkCombo = {
   publicComboName?: string;
   publicComboRef?: string;
   hasFpsEvidence?: boolean;
+  cpuPartId?: number;
+  gpuPartId?: number;
 };
 
 export type BenchmarkGameResult = {
@@ -81,3 +83,15 @@ export async function loadComboGameResults(comboKey: string, limit = 18) {
     { items: [], total: 0 },
   );
 }
+
+export async function loadComponentBenchmarkComparison(partIds: Array<number | string>) {
+  const ids = [...new Set(partIds.map((partId) => Number(partId)).filter((partId) => Number.isInteger(partId) && partId > 0))];
+  if (!ids.length) {
+    return { selectedPartId: null, parts: [], items: [], total: 0, reason: '선택 조합과 연결된 CPU/GPU 부품을 찾지 못했습니다.' } satisfies ComponentBenchmarkComparison;
+  }
+  return getJson<ComponentBenchmarkComparison>(
+    `/benchmarks/components/compare?partIds=${ids.join(',')}`,
+    { selectedPartId: null, parts: [], items: [], total: 0, reason: '벤치마크 비교 데이터를 불러오지 못했습니다.' },
+  );
+}
+import type { ComponentBenchmarkComparison } from './component-benchmarks';

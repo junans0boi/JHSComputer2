@@ -203,6 +203,7 @@ function buildPart(category: PartCategory, tier: number, input: QuoteInput): Quo
   }
 
   return {
+    partId: catalogPart?.id,
     category: base.category,
     name,
     memo,
@@ -216,6 +217,7 @@ function buildPart(category: PartCategory, tier: number, input: QuoteInput): Quo
 
 function catalogPartToQuotePart(part: CatalogPart, quantity = 1): QuotePart {
   return {
+    partId: part.id,
     category: part.category,
     name: part.name,
     memo: quantity > 1 ? `${part.spec || 'JHS 상품 기준'} · 수량 ${quantity}개` : part.spec || 'JHS 상품 기준',

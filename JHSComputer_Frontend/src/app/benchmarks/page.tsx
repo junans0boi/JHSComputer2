@@ -1,8 +1,9 @@
 import { AppShell } from '@/components/AppShell';
 import { BenchmarkComboList } from '@/components/benchmarks/BenchmarkComboList';
 import { BenchmarkGameTable } from '@/components/benchmarks/BenchmarkGameTable';
+import { BenchmarkScoreComparison } from '@/components/benchmarks/BenchmarkScoreComparison';
 import { BenchmarkSummaryCards } from '@/components/benchmarks/BenchmarkSummaryCards';
-import { loadBenchmarkCombos, loadBenchmarkSummary, loadComboGameResults } from '@/lib/server-benchmarks';
+import { loadBenchmarkCombos, loadBenchmarkSummary, loadComboGameResults, loadComponentBenchmarkComparison } from '@/lib/server-benchmarks';
 
 export default async function BenchmarksPage(props: { searchParams: Promise<{ comboKey?: string }> }) {
   const searchParams = await props.searchParams;
@@ -11,6 +12,10 @@ export default async function BenchmarksPage(props: { searchParams: Promise<{ co
   const selectedCombo = searchParams.comboKey ?? combos.items.find((combo) => combo.hasFpsEvidence)?.publicComboRef ?? combos.items[0]?.publicComboRef ?? combos.items[0]?.comboKey;
   const selectedComboInfo = combos.items.find((combo) => combo.publicComboRef === selectedCombo || combo.comboKey === selectedCombo);
   const games = selectedCombo ? await loadComboGameResults(selectedCombo, 999) : { items: [], total: 0 };
+  const [cpuBenchmarks, gpuBenchmarks] = await Promise.all([
+    loadComponentBenchmarkComparison([selectedComboInfo?.cpuPartId ?? 0]),
+    loadComponentBenchmarkComparison([selectedComboInfo?.gpuPartId ?? 0]),
+  ]);
 
   return (
     <AppShell>
@@ -34,6 +39,12 @@ export default async function BenchmarksPage(props: { searchParams: Promise<{ co
             games={games.items}
           />
         </div>
+        {(selectedComboInfo?.cpuPartId || selectedComboInfo?.gpuPartId) && (
+          <div className="grid min-w-0 gap-5 lg:grid-cols-2">
+            {selectedComboInfo?.cpuPartId && <BenchmarkScoreComparison data={cpuBenchmarks} title="대표 조합의 CPU 벤치마크" />}
+            {selectedComboInfo?.gpuPartId && <BenchmarkScoreComparison data={gpuBenchmarks} title="대표 조합의 GPU 벤치마크" />}
+          </div>
+        )}
       </section>
     </AppShell>
   );
