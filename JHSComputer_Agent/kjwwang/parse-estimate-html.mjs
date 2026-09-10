@@ -1,6 +1,8 @@
 import * as cheerio from 'cheerio';
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const RESOLUTIONS = ['FHD', 'QHD', 'UHD'];
 
@@ -15,10 +17,51 @@ function parseArgs(argv) {
 }
 
 async function listHtmlFiles(input) {
-  const stat = await import('node:fs/promises').then((fs) => fs.stat(input));
-  if (stat.isFile()) return [input];
-  const entries = await readdir(input, { withFileTypes: true });
-  return entries.filter((entry) => entry.isFile() && entry.name.endsWith('.html')).map((entry) => path.join(input, entry.name));
+  const inputStat = await stat(input);
+  if (inputStat.isFile()) return [input];
+  const files = [];
+  async function visit(directory) {
+    const entries = await readdir(directory, { withFileTypes: true });
+    for (const entry of entries) {
+      const entryPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) await visit(entryPath);
+      else if (entry.isFile() && entry.name.endsWith('.html')) files.push(entryPath);
+    }
+  }
+  await visit(input);
+  return files;
+}
+
+async function loadCollectionMetadata(input) {
+  try {
+    const root = (await stat(input)).isFile() ? path.dirname(input) : input;
+    const metadata = new Map();
+    async function visit(directory) {
+      const entries = await readdir(directory, { withFileTypes: true });
+      for (const entry of entries) {
+        const entryPath = path.join(directory, entry.name);
+        if (entry.isDirectory()) {
+          await visit(entryPath);
+        } else if (entry.isFile() && entry.name === 'summary.json') {
+          const summary = JSON.parse(await readFile(entryPath, 'utf8'));
+          for (const item of summary.results ?? []) {
+            metadata.set(String(item.estimateId), {
+              url: item.url ?? null,
+              status: item.status ?? null,
+              collectedAt: item.collectedAt ?? null,
+              contentHash: item.contentHash ?? null,
+              attempts: item.attempts ?? null,
+              fileName: item.fileName ?? null,
+            });
+          }
+        }
+      }
+    }
+    await visit(root);
+    return metadata;
+  } catch {
+    return new Map();
+  }
 }
 
 function clean(value = '') {
@@ -49,6 +92,14 @@ function parseEstimateId(html, file) {
     path.basename(file).match(/estimate_(\d+)/)?.[1] ??
     null
   );
+}
+
+function parseSourceUpdatedAt($) {
+  const text = clean($('body').text());
+  const match = text.match(/(20\d{2})년\s*(\d{1,2})월\s*(\d{1,2})일\s*업데이트/);
+  if (!match) return null;
+  const [, year, month, day] = match;
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00.000+09:00`;
 }
 
 function parseParts($) {
@@ -173,21 +224,26 @@ function parsePerformanceGrid($) {
 function parseGameLists($) {
   const records = [];
   $('.game_list').each((_, list) => {
-    const resolution = parseResolutionFromText(clean($(list).prev().text()));
+    const heading = $(list).prevAll('h1,h2,h3,h4').first();
+    const resolution = parseResolutionFromText(clean(heading.text() || $(list).prev().text()));
     if (!resolution) return;
     $(list)
       .find('li')
       .each((__, item) => {
         const text = clean($(item).clone().children('.spec_layer').remove().end().text());
-        const match = text.match(/^-?\s*(.+)\s*:\s*(.+?)으로\s*(\d+)\s*FPS\s*가능/i);
-        if (!match) return;
+        const gameName = clean($(item).find('.gname').first().text())
+          || clean(text.split(':')[0].replace(/^-+/, ''));
+        if (!gameName) return;
+        const gameSuffix = text.slice(text.indexOf(gameName) + gameName.length);
+        const match = gameSuffix.match(/:\s*(.+?)으로\s*(\d+)?\s*FPS\s*가능/i);
+        if (!match || !match[2]) return;
         records.push({
-          gameName: clean(match[1]),
+          gameName,
           resolution,
-          rawText: `${match[2]} ${match[3]} FPS`,
-          optionPreset: clean(match[2]),
-          fps: Number(match[3]),
-          playable: !match[2].includes('미지원'),
+          rawText: `${clean(match[1])} ${match[2]} FPS`,
+          optionPreset: clean(match[1]),
+          fps: Number(match[2]),
+          playable: !match[1].includes('미지원'),
         });
       });
   });
@@ -197,34 +253,38 @@ function parseGameLists($) {
 function dedupe(records) {
   const map = new Map();
   for (const record of records) {
-    const key = `${record.gameName}__${record.resolution}`;
+    const key = `${record.gameName}__${record.resolution}__${record.optionPreset ?? 'UNKNOWN'}__${record.fps ?? 'NONE'}`;
     if (!map.has(key)) map.set(key, record);
   }
   return [...map.values()];
 }
 
-async function parseFile(file) {
-  const html = await readFile(file, 'utf8');
+export function parseEstimateHtml(html, file = '', collection = null) {
   const $ = cheerio.load(html, { decodeEntities: false });
   const title = clean($('meta[property="og:title"]').attr('content') || $('title').text());
   const performanceRecords = dedupe([...parsePerformanceGrid($), ...parseGameLists($)]);
   const games = Object.values(
     performanceRecords.reduce((acc, record) => {
       acc[record.gameName] ??= { gameName: record.gameName, resolutions: {} };
-      acc[record.gameName].resolutions[record.resolution] = {
+      const resolutionRecords = acc[record.gameName].resolutions[record.resolution] ?? [];
+      resolutionRecords.push({
         optionPreset: record.optionPreset,
         fps: record.fps,
         playable: record.playable,
         rawText: record.rawText,
-      };
+      });
+      acc[record.gameName].resolutions[record.resolution] = resolutionRecords;
       return acc;
     }, {}),
   );
 
   return {
     sourceFile: file,
+    contentHash: createHash('sha256').update(html, 'utf8').digest('hex'),
+    collection,
     estimateId: parseEstimateId(html, file),
     title,
+    sourceUpdatedAt: parseSourceUpdatedAt($),
     parsedAt: new Date().toISOString(),
     parts: parseParts($),
     gameCount: games.length,
@@ -233,15 +293,22 @@ async function parseFile(file) {
   };
 }
 
+async function parseFile(file) {
+  return parseEstimateHtml(await readFile(file, 'utf8'), file);
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const files = await listHtmlFiles(path.resolve(args.input));
+  const collectionMetadata = await loadCollectionMetadata(path.resolve(args.input));
   const outDir = path.resolve(args.out);
   await mkdir(outDir, { recursive: true });
   const summaries = [];
 
   for (const file of files) {
-    const parsed = await parseFile(file);
+    const html = await readFile(file, 'utf8');
+    const estimateId = parseEstimateId(html, file);
+    const parsed = parseEstimateHtml(html, file, collectionMetadata.get(String(estimateId)) ?? null);
     if (!parsed.recordCount) continue;
     const name = parsed.estimateId ? `estimate_${parsed.estimateId}.json` : `${path.basename(file, '.html')}.json`;
     await writeFile(path.join(outDir, name), JSON.stringify(parsed, null, 2), 'utf8');
@@ -253,7 +320,11 @@ async function main() {
   console.log(`[kjwwang] done out=${outDir}`);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}
+
+export { parseResolutionFromText, parseParts, parseGameLists, dedupe, parseSourceUpdatedAt };

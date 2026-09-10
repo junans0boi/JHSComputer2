@@ -3,7 +3,8 @@
  *
  * crawl-game-benchmarks.mjs가 수집한 game_*.json을 읽어
  * 게임별·해상도별·옵션별 추천 조합을 benchmark_builds로 저장한다.
- * 견적왕 원본에는 FPS 숫자가 없으므로 benchmark_fps_results는 만들지 않는다.
+ * 게임별 추천 조합 원본에는 FPS 숫자가 없으므로 benchmark_fps_results는 만들지 않는다.
+ * 견적 상세 HTML의 숫자 FPS는 sync-estimate-pages-to-db.mjs가 별도로 적재한다.
  */
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
