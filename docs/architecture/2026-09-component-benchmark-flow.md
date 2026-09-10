@@ -26,6 +26,9 @@ flowchart LR
   J[benchmark_component_tests\n버전·지표·단위·비교군] --> D
   K[benchmark_sources\n출처 provenance] --> D
   L[GameRecommendationCombo] -. 분리 유지 .-> M[GameFpsObservation]
+  N[KJWWANG RecommendationContextSnapshot] --> O[GET /benchmarks/recommendation-combos]
+  O --> P[RecommendationComboGroup\nCPU/GPU 집계·상세 맥락]
+  P -. FPS 아님 .-> L
 ```
 
 ### 견적왕 느린 증분 수집 흐름
@@ -58,6 +61,7 @@ flowchart LR
 | `ComponentBenchmarksService` | `getScores(partId)`, `compare(partIds, testId?)` | SQL 조회, SKU가 다른 동일 모델군 연결, evidence/test group 필터, median과 delta | fake `DataSource` service test |
 | `component-benchmark.ts` | 순수 정규화·비교·대표값 함수 | 정렬·중앙값·비교 가능성 규칙 | unit test |
 | `BenchmarkScoreComparison` | 비교 응답 → 반응형 화면 | CPU/GPU 분리, 카드/막대, 긴 이름·URL 줄바꿈, provenance 접기 | typecheck + browser smoke |
+| `BenchmarksService` 추천 조합 API | 견적왕 스냅샷 → 공개 조합 그룹·상세 맥락 | 출처 고정, CPU/GPU 집계, 게임·해상도·등급 보존, FPS 흐름과 분리 | service/controller test + API smoke |
 
 ## 깊이 평가
 
@@ -91,8 +95,13 @@ Agent와 서버가 모델군 정규화 규칙을 각각 구현하고 있다. 현
   컴포넌트를 사용한다.
 - 이번 검증 실행에서는 견적왕 증분 수집으로 2개 페이지를 페이지 사이 6초 이상
   간격으로 처리했고, dev DB에는
-  동일 출처의 2,099개 추천 스냅샷(73개 정규화 조합)을 최신값 정책으로 반영했다.
+  동일 출처의 원본 2,099개 추천 스냅샷을 최신값 정책으로 반영했다. 이 중 추천
+  맥락 필드가 완전한 2,098개를 API가 72개 공개 CPU/GPU 조합으로 집계하며,
+  맥락 필드가 없는 레거시 1건은 제외한다.
   전체 160개 게임 페이지는 기본 10개 배치로 계속 이어서 수집한다.
+- 견적왕 추천 조합 API는 `recommendationCount`·`gameCount`·`latestCapturedAt`과
+  원본 URL을 제공하며, 실제 FPS 결과 API와 별도 경계로 동작한다. 로컬 API smoke에서
+  `total=72`, 첫 조합 상세 `315개 맥락`, FPS 필드 미포함을 확인했다.
 
 ## QA 기록
 
