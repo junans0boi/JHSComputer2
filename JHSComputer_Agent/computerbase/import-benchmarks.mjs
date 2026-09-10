@@ -13,23 +13,43 @@ import mysql from 'mysql2/promise';
 import * as dotenv from 'dotenv';
 import * as cheerio from 'cheerio';
 
-const TEST_CPU = {
+const DEFAULT_TEST_CPU = {
   name: 'AMD Ryzen 7 9800X3D (ComputerBase 테스트 시스템)',
   model: 'ryzen7-9800x3d',
 };
 
 const GPU_DEFINITIONS = {
+  rtx5060ti16: { label: 'GeForce RTX 5060 Ti (16 GB)', name: 'NVIDIA GeForce RTX 5060 Ti 16GB' },
+  rtx5060ti8: { label: 'GeForce RTX 5060 Ti (8 GB)', name: 'NVIDIA GeForce RTX 5060 Ti 8GB' },
   rtx5060: { label: 'GeForce RTX 5060 (8 GB)', name: 'NVIDIA GeForce RTX 5060 8GB' },
+  rtx4060ti8: { label: 'GeForce RTX 4060 Ti (8 GB)', name: 'NVIDIA GeForce RTX 4060 Ti 8GB' },
+  rtx4060: { label: 'GeForce RTX 4060 (8 GB)', name: 'NVIDIA GeForce RTX 4060 8GB' },
+  rtx3060ti: { label: 'GeForce RTX 3060 Ti (8 GB)', name: 'NVIDIA GeForce RTX 3060 Ti 8GB' },
   rtx5070: { label: 'GeForce RTX 5070 (12 GB)', name: 'NVIDIA GeForce RTX 5070 12GB' },
   rtx5070ti: { label: 'GeForce RTX 5070 Ti (16 GB)', name: 'NVIDIA GeForce RTX 5070 Ti 16GB' },
   rtx5080: { label: 'GeForce RTX 5080 (16 GB)', name: 'NVIDIA GeForce RTX 5080 16GB' },
   rtx5090: { label: 'GeForce RTX 5090 (32 GB)', name: 'NVIDIA GeForce RTX 5090 32GB' },
+  rtx4070: { label: 'GeForce RTX 4070 (12 GB)', name: 'NVIDIA GeForce RTX 4070 12GB' },
+  rtx4070super: { label: 'GeForce RTX 4070 Super (12 GB)', name: 'NVIDIA GeForce RTX 4070 Super 12GB' },
+  rtx4070tisuper: { label: 'GeForce RTX 4070 Ti Super (16 GB)', name: 'NVIDIA GeForce RTX 4070 Ti Super 16GB' },
+  rtx4080super: { label: 'GeForce RTX 4080 Super (16 GB)', name: 'NVIDIA GeForce RTX 4080 Super 16GB' },
+  rtx4090: { label: 'GeForce RTX 4090 (24 GB)', name: 'NVIDIA GeForce RTX 4090 24GB' },
+  rtx3080: { label: 'GeForce RTX 3080 (10 GB)', name: 'NVIDIA GeForce RTX 3080 10GB' },
   rx9070xt: { label: 'Radeon RX 9070 XT (16 GB)', name: 'AMD Radeon RX 9070 XT 16GB' },
   rx9070: { label: 'Radeon RX 9070 (16 GB)', name: 'AMD Radeon RX 9070 16GB' },
   rx7800xt: { label: 'Radeon RX 7800 XT (16 GB)', name: 'AMD Radeon RX 7800 XT 16GB' },
   rx7900xt: { label: 'Radeon RX 7900 XT (20 GB)', name: 'AMD Radeon RX 7900 XT 20GB' },
   rx7900xtx: { label: 'Radeon RX 7900 XTX (24 GB)', name: 'AMD Radeon RX 7900 XTX 24GB' },
+  rx7900gre: { label: 'Radeon RX 7900 GRE (16 GB)', name: 'AMD Radeon RX 7900 GRE 16GB' },
+  rx7700xt: { label: 'Radeon RX 7700 XT (12 GB)', name: 'AMD Radeon RX 7700 XT 12GB' },
+  rx7600: { label: 'Radeon RX 7600 (8 GB)', name: 'AMD Radeon RX 7600 8GB' },
+  rx6800xt: { label: 'Radeon RX 6800 XT (16 GB)', name: 'AMD Radeon RX 6800 XT 16GB' },
+  rx6700xt: { label: 'Radeon RX 6700 XT (12 GB)', name: 'AMD Radeon RX 6700 XT 12GB' },
+  arcB580: { label: 'Arc B580 (12 GB)', name: 'Intel Arc B580 12GB' },
+  arcA770: { label: 'Arc A770 (16 GB)', name: 'Intel Arc A770 16GB' },
 };
+
+export const REQUEST_POLICY = Object.freeze({ betweenPagesMs: 6000, jitterMs: 2000, batchSize: 5, batchRestMs: 15000 });
 
 export const SOURCE_CONFIGS = [
   {
@@ -38,6 +58,7 @@ export const SOURCE_CONFIGS = [
     baseUrl: 'https://www.computerbase.de',
     articleKey: 'nvidia-geforce-rtx-5060-test.92811',
     pages: [3, 4, 5],
+    testCpu: DEFAULT_TEST_CPU,
     targetModels: Object.keys(GPU_DEFINITIONS),
     resolutionFilter: Object.fromEntries(Object.keys(GPU_DEFINITIONS).map((model) => [model, ['FHD', 'QHD']])),
   },
@@ -47,6 +68,7 @@ export const SOURCE_CONFIGS = [
     baseUrl: 'https://www.computerbase.de',
     articleKey: 'amd-radeon-rx-9070-xt-rx-9070-test.91578',
     pages: [3, 4, 5],
+    testCpu: DEFAULT_TEST_CPU,
     targetModels: Object.keys(GPU_DEFINITIONS),
     resolutionFilter: Object.fromEntries(Object.keys(GPU_DEFINITIONS).map((model) => [model, ['UHD']])),
   },
@@ -55,15 +77,24 @@ export const SOURCE_CONFIGS = [
 const GAME_ALIASES = new Map([
   ['Black Myth: Wukong', '검은 신화: 오공'],
   ['COD: Black Ops 6', '콜 오브 듀티 블랙옵스6'],
+  ['Dragon Age: The Veilguard', '드래곤 에이지: 더 베일가드'],
   ["Dragon's Dogma 2", '드래곤즈 도그마 2'],
+  ['Empire of the Ants', 'Empire of the Ants'],
+  ['F1 24', 'F1 24'],
   ['Ghost of Tsushima', '고스트 오브 쓰시마'],
   ['God of War: Ragnarök', '갓 오브 워 라그나로크'],
+  ['Horizon Forbidden West', '호라이즌 포비든 웨스트'],
+  ['Indiana Jones und der große Kreis', '인디아나 존스: 그레이트 서클'],
   ['Kingdom Come: Deliverance 2', '킹덤 컴 : 딜리버런스 2'],
+  ['Lego: Horizon Adventures', '레고 호라이즌 어드벤처'],
+  ['MechWarrior 5: Clans', 'MechWarrior 5: Clans'],
+  ['Outcast – A New Beginning', 'Outcast – A New Beginning'],
   ['Satisfactory', '새티스 팩토리(Satisfactory)'],
   ["Senua's Saga: Hellblade 2", '세누아의 전설: 헬블레이드 2'],
   ['Silent Hill 2', '사일런트 힐 2 (SILENT HILL 2)'],
   ['Spider-Man 2', 'Marvel\'s Spider-Man 2'],
   ['Stalker 2: Heart of Chornobyl', '스토커 2: 하트 오브 체르노빌'],
+  ['Star Wars Outlaws', 'Star Wars Outlaws'],
   ['Warhammer 40k: Space Marine 2', '워해머 40k 스페이스 마린 2'],
   ['Final Fantasy XVI', '파이널 판타지 16'],
   ['Frostpunk 2', '프로스트펑크 2 (Frostpunk 2)'],
@@ -144,9 +175,21 @@ export function parseComputerBasePage(html, { pageUrl, targetModels, resolutionF
   return records;
 }
 
-async function fetchRecords(config) {
+function sleep(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+async function waitBetweenRequests(index, policy = REQUEST_POLICY) {
+  if (index <= 0) return;
+  const jitter = Math.floor(Math.random() * (policy.jitterMs + 1));
+  await sleep(policy.betweenPagesMs + jitter);
+  if (index % policy.batchSize === 0) await sleep(policy.batchRestMs);
+}
+
+export async function fetchRecords(config, policy = REQUEST_POLICY) {
   const records = [];
-  for (const page of config.pages) {
+  for (const [index, page] of config.pages.entries()) {
+    await waitBetweenRequests(index, policy);
     const pageUrl = `${config.baseUrl}/artikel/grafikkarten/${config.articleKey}/seite-${page}`;
     const response = await fetch(pageUrl, { headers: { 'user-agent': 'JHSComputer-BenchmarkCollector/1.0' } });
     if (!response.ok) throw new Error(`ComputerBase 요청 실패: ${response.status} ${pageUrl}`);
@@ -163,7 +206,7 @@ async function fetchRecords(config) {
 function dedupeRecords(records) {
   const map = new Map();
   for (const record of records) {
-    const key = `${record.gpuModel}:${record.gameName}:${record.resolution}`;
+    const key = `${record.gpuModel}:${record.gameName}:${record.resolution}:${record.optionPreset}`;
     if (!map.has(key)) map.set(key, record);
   }
   return [...map.values()];
@@ -200,24 +243,26 @@ async function ensureGame(conn, gameName, cache) {
 async function syncComboResults(conn, { comboKey, cpuModel, gpuModel }) {
   const [rows] = await conn.execute(
     `SELECT BENCHMARK_GAME_ID AS gameId, RESOLUTION AS resolution,
+            b.EXTERNAL_BUILD_ID AS sourceConditionKey,
+            MAX(OPTION_KEY) AS optionKey,
             COUNT(RAW_FPS) AS sampleCount, AVG(RAW_FPS) AS rawFpsAvg,
             MIN(RAW_FPS) AS rawFpsMin, MAX(RAW_FPS) AS rawFpsMax,
             MIN(DISPLAY_FPS_MIN) AS displayFpsMin, MAX(DISPLAY_FPS_MAX) AS displayFpsMax,
             MAX(NORMALIZED_QUALITY) AS bestQuality, MAX(COMFORT_GRADE) AS comfortGrade
      FROM benchmark_fps_results r
      JOIN benchmark_builds b ON b.BENCHMARK_BUILD_ID = r.BENCHMARK_BUILD_ID
-     WHERE b.COMBO_KEY = ? GROUP BY BENCHMARK_GAME_ID, RESOLUTION`,
+     WHERE b.COMBO_KEY = ? GROUP BY BENCHMARK_GAME_ID, RESOLUTION, OPTION_KEY, b.EXTERNAL_BUILD_ID`,
     [comboKey],
   );
   await conn.execute('DELETE FROM benchmark_combo_game_results WHERE COMBO_KEY = ?', [comboKey]);
   for (const row of rows) {
     await conn.execute(
       `INSERT INTO benchmark_combo_game_results
-         (COMBO_KEY, CPU_MODEL, GPU_MODEL, BENCHMARK_GAME_ID, RESOLUTION,
+         (COMBO_KEY, CPU_MODEL, GPU_MODEL, BENCHMARK_GAME_ID, RESOLUTION, OPTION_KEY, SOURCE_CONDITION_KEY,
           SAMPLE_COUNT, RAW_FPS_AVG, RAW_FPS_MIN, RAW_FPS_MAX,
           DISPLAY_FPS_MIN, DISPLAY_FPS_MAX, BEST_QUALITY, COMFORT_GRADE)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [comboKey, cpuModel, gpuModel, row.gameId, row.resolution, Number(row.sampleCount ?? 0),
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [comboKey, cpuModel, gpuModel, row.gameId, row.resolution, row.optionKey ?? row.bestQuality ?? 'UNKNOWN', row.sourceConditionKey ?? 'UNKNOWN', Number(row.sampleCount ?? 0),
        row.rawFpsAvg, row.rawFpsMin, row.rawFpsMax, row.displayFpsMin, row.displayFpsMax,
        row.bestQuality ?? 'UNKNOWN', row.comfortGrade ?? '지원'],
     );
@@ -245,9 +290,10 @@ async function syncConfig(conn, config, records, gameCache, apply) {
   const result = [];
   for (const [gpuModel, gpuRecords] of byGpu) {
     const gpu = GPU_DEFINITIONS[gpuModel];
-    const comboKey = `computerbase-${TEST_CPU.model}-${gpuModel}`;
+    const testCpu = config.testCpu ?? DEFAULT_TEST_CPU;
+    const comboKey = `computerbase-${testCpu.model}-${gpuModel}`;
     const externalBuildId = `${config.articleKey}-${gpuModel}`;
-    const title = `${TEST_CPU.name} + ${gpu.name}`;
+    const title = `${testCpu.name} + ${gpu.name}`;
     const gameCount = new Set(gpuRecords.map((record) => record.gameName)).size;
     await conn.execute(
       `INSERT INTO benchmark_builds
@@ -257,9 +303,9 @@ async function syncConfig(conn, config, records, gameCache, apply) {
        ON DUPLICATE KEY UPDATE TITLE=VALUES(TITLE), COMBO_KEY=VALUES(COMBO_KEY),
          GAME_COUNT=VALUES(GAME_COUNT), FPS_RECORD_COUNT=VALUES(FPS_RECORD_COUNT),
          RAW_JSON=VALUES(RAW_JSON), UPDATED_DT=NOW()`,
-      [source.sourceId, externalBuildId, title, comboKey, TEST_CPU.name, TEST_CPU.model,
+      [source.sourceId, externalBuildId, title, comboKey, testCpu.name, testCpu.model,
        gpu.name, gpuModel, gameCount, gpuRecords.length,
-       JSON.stringify({ source: config.sourceName, sourceUrl: `${config.baseUrl}/artikel/grafikkarten/${config.articleKey}`, testSystem: TEST_CPU.name, evidenceType: 'SOURCE_REPORTED', capturedAt: new Date().toISOString() })],
+       JSON.stringify({ source: config.sourceName, sourceUrl: `${config.baseUrl}/artikel/grafikkarten/${config.articleKey}`, testSystem: testCpu.name, evidenceType: 'SOURCE_REPORTED', capturedAt: new Date().toISOString() })],
     );
     const [[build]] = await conn.execute('SELECT BENCHMARK_BUILD_ID AS buildId FROM benchmark_builds WHERE BENCHMARK_SOURCE_ID = ? AND EXTERNAL_BUILD_ID = ?', [source.sourceId, externalBuildId]);
     await conn.execute('DELETE FROM benchmark_fps_results WHERE BENCHMARK_BUILD_ID = ?', [build.buildId]);
@@ -269,16 +315,16 @@ async function syncConfig(conn, config, records, gameCache, apply) {
       const roundedFps = Math.round(record.fps);
       await conn.execute(
         `INSERT INTO benchmark_fps_results
-           (BENCHMARK_BUILD_ID, BENCHMARK_GAME_ID, RESOLUTION,
+           (BENCHMARK_BUILD_ID, BENCHMARK_GAME_ID, RESOLUTION, OPTION_KEY, SOURCE_CONDITION_KEY,
             RAW_OPTION_PRESET, NORMALIZED_QUALITY, RAW_FPS,
             DISPLAY_FPS_MIN, DISPLAY_FPS_MAX, COMFORT_GRADE, PLAYABLE, RAW_TEXT)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [build.buildId, gameId, record.resolution, record.optionPreset, normalizeQuality(record.optionPreset), roundedFps,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [build.buildId, gameId, record.resolution, record.optionPreset, config.articleKey, record.optionPreset, normalizeQuality(record.optionPreset), roundedFps,
          roundedFps, roundedFps, comfortGrade(record.fps), record.fps >= 30 ? 'Y' : 'N',
-         `${record.rawText} | 출처: ${record.pageUrl} | 테스트 시스템: ${TEST_CPU.name}`.slice(0, 100)],
+         `${record.rawText} | 출처: ${record.pageUrl} | 테스트 시스템: ${testCpu.name}`.slice(0, 100)],
       );
     }
-    const comboResultCount = await syncComboResults(conn, { comboKey, cpuModel: TEST_CPU.model, gpuModel });
+    const comboResultCount = await syncComboResults(conn, { comboKey, cpuModel: testCpu.model, gpuModel });
     result.push({ gpuModel, recordCount: gpuRecords.length, comboResultCount });
   }
   return result;

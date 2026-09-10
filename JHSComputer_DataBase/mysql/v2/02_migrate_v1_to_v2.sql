@@ -219,12 +219,14 @@ ALTER TABLE `benchmark_fps_results`
   ADD CONSTRAINT `fk_benchmark_fps_game`
     FOREIGN KEY (`GAME_ID`) REFERENCES `games` (`GAME_ID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- UNIQUE KEY 재구성 (BENCHMARK_GAME_ID 포함 → GAME_ID로)
+-- v1의 옵션·원본 테스트 조건 차원을 v2에서도 유지한다.
 ALTER TABLE `benchmark_fps_results`
-  DROP INDEX IF EXISTS `uk_benchmark_fps`;
+  ADD COLUMN IF NOT EXISTS `OPTION_KEY` VARCHAR(100) NOT NULL DEFAULT 'UNKNOWN' AFTER `RESOLUTION`,
+  ADD COLUMN IF NOT EXISTS `SOURCE_CONDITION_KEY` VARCHAR(160) NOT NULL DEFAULT 'UNKNOWN' AFTER `OPTION_KEY`;
 
 ALTER TABLE `benchmark_fps_results`
-  ADD UNIQUE KEY `uk_benchmark_fps` (`BENCHMARK_BUILD_ID`, `GAME_ID`, `RESOLUTION`);
+  DROP INDEX IF EXISTS `uk_benchmark_fps`,
+  ADD UNIQUE KEY `uk_benchmark_fps` (`BENCHMARK_BUILD_ID`, `GAME_ID`, `RESOLUTION`, `OPTION_KEY`, `SOURCE_CONDITION_KEY`);
 
 -- ============================================================
 -- STEP 8: benchmark_combo_game_results 재구성
@@ -259,7 +261,9 @@ ALTER TABLE `benchmark_combo_game_results`
   DROP COLUMN IF EXISTS `CPU_MODEL`,
   DROP COLUMN IF EXISTS `GPU_MODEL`,
   DROP COLUMN IF EXISTS `BENCHMARK_GAME_ID`,
-  ADD UNIQUE KEY `uk_benchmark_combo_game`        (`BENCHMARK_COMBO_ID`, `GAME_ID`, `RESOLUTION`),
+  ADD COLUMN IF NOT EXISTS `OPTION_KEY` VARCHAR(100) NOT NULL DEFAULT 'UNKNOWN' AFTER `RESOLUTION`,
+  ADD COLUMN IF NOT EXISTS `SOURCE_CONDITION_KEY` VARCHAR(160) NOT NULL DEFAULT 'UNKNOWN' AFTER `OPTION_KEY`,
+  ADD UNIQUE KEY `uk_benchmark_combo_game`        (`BENCHMARK_COMBO_ID`, `GAME_ID`, `RESOLUTION`, `OPTION_KEY`, `SOURCE_CONDITION_KEY`),
   ADD KEY        `idx_benchmark_combo_game_id`    (`GAME_ID`),
   ADD KEY        `idx_benchmark_combo_resolution` (`BENCHMARK_COMBO_ID`, `RESOLUTION`),
   ADD CONSTRAINT `fk_benchmark_combo_game_combo`

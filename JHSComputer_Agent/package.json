@@ -18,6 +18,7 @@
     "sync:computerbase:benchmarks": "node computerbase/import-benchmarks.mjs --env=../JHSComputer_Server/.env",
     "sync:computerbase:benchmarks:apply": "node computerbase/import-benchmarks.mjs --env=../JHSComputer_Server/.env --apply",
     "test:computerbase:component-benchmarks": "node --test computerbase/import-component-benchmarks.test.mjs",
+    "test:computerbase:benchmarks": "node --test computerbase/import-benchmarks.test.mjs computerbase/import-component-benchmarks.test.mjs",
     "sync:computerbase:component-benchmarks": "node computerbase/import-component-benchmarks.mjs --env=../JHSComputer_Server/.env",
     "sync:computerbase:component-benchmarks:apply": "node computerbase/import-component-benchmarks.mjs --env=../JHSComputer_Server/.env --apply",
     "crawl:wanggapc:html": "node wanggapc/collect-products.mjs --seed=../data --seed-url=https://wanggapc.com/ --limit=100 --out=../project/samples/wanggapc/html",
