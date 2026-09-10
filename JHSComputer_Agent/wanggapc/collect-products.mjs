@@ -4,9 +4,10 @@ import path from 'node:path';
 function parseArgs(argv) {
   const args = {
     seed: '../data',
+    seedUrl: 'https://wanggapc.com/',
     urls: '',
-    limit: 30,
-    delayMs: 1500,
+    limit: 100,
+    delayMs: 1200,
     out: '../project/samples/wanggapc/html',
   };
   for (const rawArg of argv) {
@@ -15,6 +16,7 @@ function parseArgs(argv) {
     const key = separatorIndex >= 0 ? normalizedArg.slice(0, separatorIndex) : normalizedArg;
     const value = separatorIndex >= 0 ? normalizedArg.slice(separatorIndex + 1) : '';
     if (key === 'seed') args.seed = value;
+    if (key === 'seed-url') args.seedUrl = value;
     if (key === 'urls') args.urls = value;
     if (key === 'limit') args.limit = Number(value);
     if (key === 'delay-ms') args.delayMs = Number(value);
@@ -72,6 +74,7 @@ async function fetchHtml(url) {
   return {
     ok: response.ok,
     status: response.status,
+    finalUrl: response.url,
     html: await response.text(),
   };
 }
@@ -81,9 +84,12 @@ async function main() {
   const urls = [
     ...new Set([
       ...args.urls.split(',').map((item) => item.trim()).filter(Boolean),
+      ...(args.seedUrl ? extractProductUrls((await fetchHtml(args.seedUrl)).html) : []),
       ...(await seedUrls(path.resolve(args.seed))),
     ]),
   ].slice(0, args.limit);
+
+  console.log(`[wanggapc] 상품 URL 발견: ${urls.length}개`);
 
   const runDir = path.resolve(args.out, timestampForPath());
   await mkdir(runDir, { recursive: true });
@@ -94,7 +100,7 @@ async function main() {
     const result = await fetchHtml(url);
     const fileName = `product_${productId}.html`;
     await writeFile(path.join(runDir, fileName), result.html, 'utf8');
-    results.push({ url, productId, status: result.status, ok: result.ok, fileName, bytes: result.html.length });
+    results.push({ url, finalUrl: result.finalUrl, productId, status: result.status, ok: result.ok, fileName, bytes: result.html.length });
     await sleep(args.delayMs);
   }
   await writeFile(path.join(runDir, 'summary.json'), JSON.stringify({ collectedAt: new Date().toISOString(), args, count: results.length, results }, null, 2));

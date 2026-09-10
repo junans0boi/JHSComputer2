@@ -11,10 +11,10 @@ import { Button, LinkButton } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { PageStack, PanelCard, SectionHeader } from '@/components/ui/PanelCard';
 import { SelectInput } from '@/components/ui/FormField';
-import { compuzoneCatalog, partCategories } from '@/lib/compuzone-catalog';
+import { partCategories } from '@/lib/compuzone-catalog';
 import { emptyPartFilters, filterParts, getCompatibilityHint, getFilterOptions, type PartFilterState } from '@/lib/part-filters';
 import { syncCartQuoteToServer } from '@/lib/server-cart';
-import { loadServerCatalog } from '@/lib/server-parts';
+import { loadServerCatalog, loadServerCategory } from '@/lib/server-parts';
 import { withDbPerformance } from '@/lib/server-performance';
 import { addQuoteToCart, loadManualQuantities, loadManualSelection, saveManualQuantities, selectManualPart } from '@/lib/v1-storage';
 import { buildCompatibility, defaultInput } from '@/lib/v1-estimator';
@@ -55,8 +55,11 @@ export default function PartsPage() {
   const [filters, setFilters] = useState<PartFilterState>(emptyPartFilters);
   const [manualSelection, setManualSelection] = useState<ManualSelection>({});
   const [detailPart, setDetailPart] = useState<CatalogPart | null>(null);
-  const [catalog, setCatalog] = useState<CatalogPart[]>(compuzoneCatalog);
+  const [catalog, setCatalog] = useState<CatalogPart[]>([]);
   const [catalogSource, setCatalogSource] = useState<'DB' | 'LOCAL'>('LOCAL');
+  const [loadedCategories, setLoadedCategories] = useState<PartCategory[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState<PartCategory[]>([]);
+  const [catalogError, setCatalogError] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>('POPULAR');
   const [quantityByPartId, setQuantityByPartId] = useState<Record<string, number>>({});
   const [cartMessage, setCartMessage] = useState('');
@@ -64,15 +67,27 @@ export default function PartsPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const category = params.get('category') as PartCategory | null;
+    const initialCategory = category && partCategories.includes(category) ? category : 'CPU';
     if (category && partCategories.includes(category)) setSelectedCategory(category);
     setManualSelection(loadManualSelection());
-    loadServerCatalog()
-      .then((items) => {
-        if (!items.length) return;
-        setCatalog(items);
+    setLoadingCategories([initialCategory]);
+    void loadServerCatalog({
+      priorityCategory: initialCategory,
+      onCategoryLoaded: (loadedCategory, items) => {
+        setCatalog((current) => mergeCatalogCategory(current, loadedCategory, items));
+        setLoadedCategories((current) => current.includes(loadedCategory) ? current : [...current, loadedCategory]);
+        setLoadingCategories((current) => current.filter((item) => item !== loadedCategory));
         setCatalogSource('DB');
-      })
-      .catch(() => setCatalogSource('LOCAL'));
+      },
+      onCategoryError: (failedCategory) => {
+        setLoadingCategories((current) => current.filter((item) => item !== failedCategory));
+        setCatalogError((current) => current ?? `${failedCategory} 데이터를 불러오지 못했습니다.`);
+      },
+    }).catch(() => {
+      setCatalogSource('LOCAL');
+      setLoadingCategories([]);
+      setCatalogError('JHS 부품 DB에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
+    });
   }, []);
 
   useEffect(() => {
@@ -80,6 +95,7 @@ export default function PartsPage() {
   }, [selectedCategory]);
 
   const categoryParts = useMemo(() => catalog.filter((part) => part.category === selectedCategory), [catalog, selectedCategory]);
+  const isLoadingCatalog = !loadedCategories.includes(selectedCategory) && loadingCategories.includes(selectedCategory);
   const options = useMemo(() => getFilterOptions(categoryParts), [categoryParts]);
   const currentFilterLayout = filterLayout[selectedCategory];
 
@@ -138,7 +154,7 @@ export default function PartsPage() {
           <div className="flex flex-col justify-between gap-4 border-b border-line pb-4 md:flex-row md:items-end">
             <SectionHeader
               action={<LinkButton href="/quote?mode=manual">수동 견적 보기</LinkButton>}
-              description={catalogSource === 'DB' ? 'DB에 적재된 컴퓨존 최신 수집 가격 기준입니다.' : '컴퓨존 수집 샘플 가격 기준입니다.'}
+              description={catalogSource === 'DB' ? 'JHS가 수집·검수한 최신 판매 가격 기준입니다.' : 'JHS 상품 데이터 기준으로 표시합니다.'}
               title="카테고리별 부품"
             />
           </div>
@@ -148,11 +164,25 @@ export default function PartsPage() {
               {partCategories.map((category) => (
                 <button
                   className={`rounded-xl border px-4 py-2 text-sm font-black transition ${
-                    selectedCategory === category ? 'border-brand bg-teal-50 text-brand shadow-sm' : 'border-line bg-white text-slate-600 hover:border-brand'
+                  selectedCategory === category ? 'border-brand bg-teal-50 text-brand shadow-sm' : 'border-line bg-white text-slate-600 hover:border-brand'
                   }`}
                   key={category}
                   onClick={() => {
                     setSelectedCategory(category);
+                    if (!loadedCategories.includes(category)) {
+                      setLoadingCategories((current) => current.includes(category) ? current : [...current, category]);
+                      void loadServerCategory(category)
+                        .then((items) => {
+                          setCatalog((current) => mergeCatalogCategory(current, category, items));
+                          setLoadedCategories((current) => current.includes(category) ? current : [...current, category]);
+                          setLoadingCategories((current) => current.filter((item) => item !== category));
+                          setCatalogSource('DB');
+                        })
+                        .catch(() => {
+                          setLoadingCategories((current) => current.filter((item) => item !== category));
+                          setCatalogError(`${category} 데이터를 불러오지 못했습니다.`);
+                        });
+                    }
                     window.history.replaceState(null, '', `/parts?category=${encodeURIComponent(category)}`);
                   }}
                   type="button"
@@ -257,7 +287,11 @@ export default function PartsPage() {
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
           <span className="text-sm font-bold text-slate-600">
-            <strong className="text-slate-900">{parts.length.toLocaleString()}개</strong> 표시 / 전체 {categoryParts.length.toLocaleString()}개
+            {isLoadingCatalog ? (
+              <span className="text-slate-400">부품 목록 불러오는 중...</span>
+            ) : (
+              <><strong className="text-slate-900">{parts.length.toLocaleString()}개</strong> 표시 / 전체 {categoryParts.length.toLocaleString()}개</>
+            )}
           </span>
           <SelectInput
             className="h-10 cursor-pointer text-slate-700 hover:border-brand"
@@ -272,8 +306,24 @@ export default function PartsPage() {
           </SelectInput>
         </div>
 
+        {isLoadingCatalog && (
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-2xl border border-line bg-panel p-4 animate-pulse">
+                <div className="h-40 rounded-xl bg-slate-100 mb-4" />
+                <div className="h-4 rounded bg-slate-100 mb-2 w-3/4" />
+                <div className="h-3 rounded bg-slate-100 w-1/2" />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {catalogError && !isLoadingCatalog && (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm font-bold text-amber-700">{catalogError}</div>
+        )}
+
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {parts.map((part) => {
+          {!isLoadingCatalog && parts.map((part) => {
             const compared = compareParts.some((item) => item.id === part.id);
             return (
               <PartProductCard
@@ -290,7 +340,7 @@ export default function PartsPage() {
             );
           })}
         </div>
-        {!parts.length && (
+        {!isLoadingCatalog && !catalogError && !parts.length && (
           <EmptyState
             action={<Button onClick={() => setFilters(emptyPartFilters)} type="button" variant="outline">필터 초기화</Button>}
             description="필터를 줄이거나 `수동 견적 호환만`을 꺼보세요."
@@ -311,10 +361,10 @@ function buildPartsCartQuote(selection: ManualSelection, quantities: Record<stri
     return [{
       category: part.category,
       name: part.name,
-      memo: quantity > 1 ? `${part.spec || '컴퓨존 카탈로그 선택'} · 수량 ${quantity}개` : part.spec || '컴퓨존 카탈로그 선택',
+      memo: quantity > 1 ? `${part.spec || 'JHS 상품 기준'} · 수량 ${quantity}개` : part.spec || 'JHS 상품 기준',
       price: part.price * quantity,
       quantity,
-      supplier: '컴퓨존 샘플 기준',
+      supplier: 'JHS 판매 데이터',
       productNo: part.productNo,
       imageUrl: part.imageUrl,
       detailUrl: part.detailUrl,
@@ -338,6 +388,10 @@ function buildPartsCartQuote(selection: ManualSelection, quantities: Record<stri
     total: subtotal + shippingFee,
     status: 'DRAFT',
   };
+}
+
+function mergeCatalogCategory(current: CatalogPart[], category: PartCategory, items: CatalogPart[]) {
+  return [...current.filter((part) => part.category !== category), ...items];
 }
 
 function FilterDropdown({

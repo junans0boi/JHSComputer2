@@ -3,9 +3,8 @@
 import { Search, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/Button';
-import { compuzoneCatalog } from '@/lib/compuzone-catalog';
 import { getIncompatibilityReason } from '@/lib/part-filters';
-import { loadServerCatalog } from '@/lib/server-parts';
+import { loadServerCategory } from '@/lib/server-parts';
 import type { CatalogPart, ManualSelection, PartCategory } from '@/lib/v1-types';
 
 export function PartSearchDialog({
@@ -19,17 +18,20 @@ export function PartSearchDialog({
   onClose: () => void;
   onSelect: (part: CatalogPart) => void;
 }) {
-  const [catalog, setCatalog] = useState<CatalogPart[]>(compuzoneCatalog);
+  const [catalog, setCatalog] = useState<CatalogPart[]>([]);
   const [keyword, setKeyword] = useState('');
   const [compatibleOnly, setCompatibleOnly] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadServerCatalog()
+    setIsLoading(true);
+    loadServerCategory(category)
       .then((items) => {
-        if (items.length) setCatalog(items);
+        setCatalog(items);
+        setIsLoading(false);
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => setIsLoading(false));
+  }, [category]);
 
   const parts = useMemo(() => {
     const normalizedKeyword = keyword.trim().toLowerCase();
@@ -77,7 +79,7 @@ export function PartSearchDialog({
 
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
           <div className="grid gap-3">
-            {parts.map((part) => {
+            {!isLoading && parts.map((part) => {
               const incompatibilityReason = getIncompatibilityReason(part, manualSelection);
               return (
                 <button
@@ -108,7 +110,12 @@ export function PartSearchDialog({
             })}
           </div>
 
-          {!parts.length && (
+          {isLoading && (
+            <div className="grid min-h-48 place-items-center rounded-2xl border border-dashed border-line text-center text-sm font-bold text-slate-500">
+              {category} 상품을 불러오는 중입니다.
+            </div>
+          )}
+          {!isLoading && !parts.length && (
             <div className="grid min-h-48 place-items-center rounded-2xl border border-dashed border-line text-center text-sm font-bold text-slate-500">
               조건에 맞는 부품이 없습니다.
             </div>

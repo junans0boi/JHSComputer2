@@ -36,7 +36,6 @@ export const emptyPartFilters: PartFilterState = {
   compatibleOnly: true,
 };
 
-const socketPatterns = ['AM5', 'AM4', 'LGA1851', 'LGA1700', 'LGA1200', 'LGA115X', '115X', '소켓1700', '소켓1851'];
 const memoryPatterns = ['DDR5', 'DDR4'];
 const formFactorPatterns = ['E-ATX', 'M-ATX', 'Micro-ATX', 'Mini-ITX', '미니ITX', 'ATX'];
 
@@ -44,7 +43,10 @@ export function getPartAttributes(part: CatalogPart): PartAttributes {
   const text = `${part.name} ${part.spec}`.toUpperCase();
   return {
     manufacturer: extractManufacturer(part.name),
-    sockets: unique(socketPatterns.flatMap((pattern) => (text.includes(pattern) ? [normalizeSocket(pattern)] : []))),
+    sockets: unique([
+      ...[...text.matchAll(/(?:LGA\s*\d{4}|소켓\s*\d{4}|AM[345]\+?)/gi)].map((match) => normalizeSocket(match[0])),
+      ...['LGA115X'].filter((socket) => text.includes(socket)),
+    ].filter((socket): socket is string => Boolean(socket))),
     memoryTypes: unique(memoryPatterns.filter((pattern) => text.includes(pattern))),
     wattage: extractWattage(text, part.category),
     formFactors: unique(formFactorPatterns.flatMap((pattern) => (text.includes(pattern.toUpperCase()) ? [normalizeFormFactor(pattern)] : []))),
@@ -253,7 +255,9 @@ function extractManufacturer(name: string) {
 }
 
 function extractWattage(text: string, category: PartCategory) {
-  const candidates = [...text.matchAll(/(\d{3,4})\s?W/g)].map((match) => Number(match[1]));
+  const candidates = category === '그래픽카드'
+    ? [...text.matchAll(/(?:TGP|TBP|소비전력)\s*[:：]?\s*(\d{2,4})\s?W/gi)].map((match) => Number(match[1]))
+    : [...text.matchAll(/(\d{3,4})\s?W/g)].map((match) => Number(match[1]));
   if (!candidates.length) return undefined;
   if (category === '파워') return Math.max(...candidates.filter((value) => value >= 300));
   return candidates[0];
@@ -280,10 +284,10 @@ function extractMaxNumber(text: string, patterns: RegExp[]) {
 }
 
 function normalizeSocket(socket: string) {
-  if (socket === '소켓1700') return 'LGA1700';
-  if (socket === '소켓1851') return 'LGA1851';
-  if (socket === '115X') return 'LGA115X';
-  return socket;
+  const normalized = socket.replace(/\s+/g, '').toUpperCase();
+  if (normalized.startsWith('소켓')) return `LGA${normalized.slice(2)}`;
+  if (/^\d{4}$/.test(normalized)) return `LGA${normalized}`;
+  return normalized;
 }
 
 function normalizeFormFactor(formFactor: string) {

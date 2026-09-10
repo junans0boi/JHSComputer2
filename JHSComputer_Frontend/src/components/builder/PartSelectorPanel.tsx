@@ -3,7 +3,7 @@
 import { Search, X, Plus, Cpu, Info } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useBuilderStore } from '@/lib/builder-store';
-import { loadServerCatalog } from '@/lib/server-parts';
+import { loadServerCategory } from '@/lib/server-parts';
 import { filterParts, getFilterOptions, getIncompatibilityReason, getCompatibilityHint } from '@/lib/part-filters';
 import { getProductStatus, statusClass } from '@/lib/common-codes';
 import type { CatalogPart, PartCategory } from '@/lib/v1-types';
@@ -31,14 +31,18 @@ type SortOrder = 'POPULAR' | 'PRICE_LOW' | 'PRICE_HIGH' | 'NEW' | 'REVIEW';
 export function PartSelectorPanel() {
   const { activeCategory, keyword, filters, manualSelection, catalog, setKeyword, setFilters, selectPart, setActiveCategory, setCatalog } = useBuilderStore();
   const [sortOrder, setSortOrder] = useState<SortOrder>('POPULAR');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    loadServerCatalog()
+    if (!activeCategory) return;
+    setIsLoading(true);
+    loadServerCategory(activeCategory)
       .then((items) => {
-        if (items.length) setCatalog(items);
+        setCatalog([...catalog.filter((part) => part.category !== activeCategory), ...items]);
+        setIsLoading(false);
       })
-      .catch(() => {});
-  }, [setCatalog]);
+      .catch(() => setIsLoading(false));
+  }, [activeCategory]);
 
   const categoryParts = useMemo(() => activeCategory ? catalog.filter((part) => part.category === activeCategory) : [], [catalog, activeCategory]);
   const options = useMemo(() => getFilterOptions(categoryParts), [categoryParts]);
@@ -83,7 +87,7 @@ export function PartSelectorPanel() {
           <h2 className="text-xl font-black flex items-center gap-2">
             {activeCategory} 선택
             <span className="text-xs font-bold bg-teal-50 text-brand px-2 py-1 rounded-full border border-brand/20">
-              {parts.length.toLocaleString()}개
+              {isLoading ? '불러오는 중' : `${parts.length.toLocaleString()}개`}
             </span>
           </h2>
           <button 
@@ -164,7 +168,7 @@ export function PartSelectorPanel() {
 
       {/* Part List */}
       <div className="grid gap-3">
-        {parts.map((part) => {
+        {!isLoading && parts.map((part) => {
           const status = getProductStatus(part);
           const isSelected = manualSelection[activeCategory]?.id === part.id;
           const incompatibilityReason = !filters.compatibleOnly ? getIncompatibilityReason(part, manualSelection) : null;
@@ -213,7 +217,13 @@ export function PartSelectorPanel() {
           );
         })}
 
-        {parts.length === 0 && (
+        {isLoading && (
+          <div className="py-12 text-center border-2 border-dashed border-line rounded-2xl bg-white">
+            <p className="text-sm font-bold text-slate-500">{activeCategory} 상품을 불러오는 중입니다.</p>
+          </div>
+        )}
+
+        {!isLoading && parts.length === 0 && (
           <div className="py-12 text-center border-2 border-dashed border-line rounded-2xl bg-white">
              <p className="text-sm font-bold text-slate-500">조건에 맞는 부품이 없습니다.</p>
              <button 

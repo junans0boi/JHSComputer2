@@ -17,8 +17,8 @@ export function PartDetailModal({ part, onClose }: Props) {
   const [current, setCurrent] = useState(0);
   const summarySections = buildSpecSummary(part);
 
-  const prev = useCallback(() => setCurrent((c) => (c - 1 + images.length) % images.length), [images.length]);
-  const next = useCallback(() => setCurrent((c) => (c + 1) % images.length), [images.length]);
+  const prev = useCallback(() => setCurrent((c) => (images.length ? (c - 1 + images.length) % images.length : 0)), [images.length]);
+  const next = useCallback(() => setCurrent((c) => (images.length ? (c + 1) % images.length : 0)), [images.length]);
 
   // Close on Escape, navigate with arrow keys
   useEffect(() => {
@@ -40,7 +40,7 @@ export function PartDetailModal({ part, onClose }: Props) {
     const controller = new AbortController();
     setIsLoading(true);
 
-    fetch(`/api/compuzone-detail?productNo=${encodeURIComponent(part.productNo)}`, {
+    fetch(`/compuzone-detail?productNo=${encodeURIComponent(part.productNo)}`, {
       signal: controller.signal,
     })
       .then((response) => (response.ok ? response.json() : { images: [] }))
@@ -73,7 +73,7 @@ export function PartDetailModal({ part, onClose }: Props) {
               rel="noreferrer"
               target="_blank"
             >
-              컴퓨존에서 보기
+              상품 상세 보기
               <ExternalLink size={13} />
             </a>
             <button
@@ -117,7 +117,7 @@ export function PartDetailModal({ part, onClose }: Props) {
 
           {isLoading && (
             <div className="rounded-xl border border-dashed border-line py-16 text-center text-sm font-bold text-slate-500">
-              컴퓨존 상세 스펙 이미지를 불러오는 중입니다.
+              상세 스펙 이미지를 불러오는 중입니다.
             </div>
           )}
 
@@ -125,7 +125,7 @@ export function PartDetailModal({ part, onClose }: Props) {
             <div className="rounded-xl border border-dashed border-line py-16 text-center text-sm text-slate-500">
               상세 스펙 이미지가 없습니다.{' '}
               <a className="font-black text-brand underline" href={part.detailUrl} rel="noreferrer" target="_blank">
-                컴퓨존 페이지
+                상품 상세 페이지
               </a>
               에서 직접 확인하세요.
             </div>

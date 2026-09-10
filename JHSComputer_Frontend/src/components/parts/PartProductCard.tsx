@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { getPartBadges } from '@/lib/common-codes';
 import { getPartAttributes } from '@/lib/part-filters';
+import { PART_PRODUCT_CARD_GRID_CLASS, PART_PRODUCT_IMAGE_CLASS, PART_PRODUCT_IMAGE_FRAME_CLASS } from '@/lib/part-image-layout';
 import type { CatalogPart } from '@/lib/v1-types';
 
 export function PartProductCard({
@@ -30,9 +31,9 @@ export function PartProductCard({
 
   return (
     <article className="group overflow-hidden rounded-2xl border border-line bg-white shadow-soft transition-shadow hover:shadow-md">
-      <div className="grid gap-4 p-4 sm:grid-cols-[120px_1fr]">
-        <div className="grid h-40 place-items-center rounded-xl bg-panel p-2 transition-colors group-hover:bg-white sm:h-28">
-          <img alt={part.name} className="max-h-full max-w-full object-contain" src={part.imageUrl} />
+      <div className={PART_PRODUCT_CARD_GRID_CLASS}>
+        <div className={PART_PRODUCT_IMAGE_FRAME_CLASS}>
+          <img alt={part.name} className={PART_PRODUCT_IMAGE_CLASS} src={part.imageUrl} />
         </div>
         <div className="min-w-0">
           <div className="flex items-center justify-between gap-2">
@@ -48,7 +49,7 @@ export function PartProductCard({
       <div className="border-t border-line bg-slate-50 p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <div className="text-[10px] font-bold text-slate-500">컴퓨존 기준가</div>
+            <div className="text-[10px] font-bold text-slate-500">JHS 기준가</div>
             <div className="text-xl font-black tracking-tight text-brand">{part.price.toLocaleString()}원</div>
           </div>
           <div className="flex flex-col gap-0.5 text-right">

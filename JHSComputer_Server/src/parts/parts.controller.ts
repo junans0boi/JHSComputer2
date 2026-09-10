@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Public } from '../auth';
 import { PartsService } from './parts.service';
 
 @Controller('parts')
@@ -6,6 +7,7 @@ export class PartsController {
   constructor(private readonly partsService: PartsService) {}
 
   @Get()
+  @Public()
   async getParts(
     @Query('categoryId') categoryId?: string,
     @Query('keyword') keyword?: string,
@@ -21,11 +23,13 @@ export class PartsController {
   }
 
   @Get('categories')
+  @Public()
   async getCategories() {
     return this.partsService.getCategories();
   }
 
   @Get(':id')
+  @Public()
   async getPartDetail(@Param('id') id: string) {
     return this.partsService.getPartDetail(parseInt(id, 10));
   }

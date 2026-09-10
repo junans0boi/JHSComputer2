@@ -1,6 +1,8 @@
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import mysql from 'mysql2/promise';
+import { parseSpecAttributes } from './spec-parser.mjs';
+import { upsertSpec as upsertParsedSpec } from './spec-db-upsert.mjs';
 
 const CATEGORY_CODE_MAP = {
   CPU: 'CPU',
@@ -75,35 +77,11 @@ function modelKey(product) {
   return `compuzone:${product.productNo}`;
 }
 
-function normalizeSocket(text) {
-  return text.match(/\b(AM3|AM4|AM5|LGA\s?1155|LGA\s?1200|LGA\s?1700|LGA\s?1851|LGA\s?1800)\b/i)?.[1]?.replace(/\s+/g, '').toUpperCase() ?? null;
-}
-
-function memoryType(text) {
-  return text.match(/\bDDR[3-5]\b/i)?.[0].toUpperCase() ?? null;
-}
-
-function numberMatch(text, regex) {
-  const match = text.match(regex);
-  return match ? Number(match[1]) : null;
-}
-
-function forms(text) {
-  return [...new Set(['E-ATX', 'ATX', 'M-ATX', 'M-ITX', 'ITX', 'Mini-ITX'].filter((form) => text.toUpperCase().includes(form.toUpperCase())))];
-}
-
 function parseAttrs(product) {
-  const text = `${product.name ?? ''} ${product.summarySpecText ?? ''}`;
-  return {
-    socket: normalizeSocket(text),
-    memoryType: memoryType(text),
-    capacityGb: numberMatch(text, /(\d+)\s?GB/i),
-    wattage: numberMatch(text, /(\d{3,4})\s?W/i),
-    gpuLengthMm: numberMatch(text, /(?:VGA|그래픽카드).*?(?:길이|최대길이).*?(\d{2,3})\s?m/i),
-    coolerHeightMm: numberMatch(text, /(?:CPU쿨러|쿨러).*?(?:높이|최대길이).*?(\d{2,3})\s?m/i),
-    forms: forms(text),
-    color: text.includes('화이트') ? 'WHITE' : text.includes('블랙') ? 'BLACK' : null,
-  };
+  return parseSpecAttributes({
+    name: product.name ?? '',
+    summarySpecText: product.summarySpecText ?? '',
+  });
 }
 
 async function scalar(connection, sql, params = []) {
@@ -135,27 +113,7 @@ async function upsertPart(connection, product, categoryId) {
 }
 
 async function upsertSpec(connection, partId, category, attrs) {
-  if (category === 'CPU' && attrs.socket) {
-    await connection.execute(`INSERT INTO cpu_specs (PART_ID, SOCKET, MEMORY_TYPES_JSON) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE SOCKET=VALUES(SOCKET), MEMORY_TYPES_JSON=VALUES(MEMORY_TYPES_JSON)`, [partId, attrs.socket, json(attrs.memoryType ? [attrs.memoryType] : [])]);
-  } else if (category === 'MAINBOARD' && attrs.socket) {
-    await connection.execute(`INSERT INTO mainboard_specs (PART_ID, SOCKET, FORM_FACTOR, MEMORY_TYPE) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE SOCKET=VALUES(SOCKET), FORM_FACTOR=VALUES(FORM_FACTOR), MEMORY_TYPE=VALUES(MEMORY_TYPE)`, [partId, attrs.socket, attrs.forms[0] ?? null, attrs.memoryType]);
-  } else if (category === 'RAM' && attrs.memoryType && attrs.capacityGb) {
-    await connection.execute(`INSERT INTO ram_specs (PART_ID, MEMORY_TYPE, CAPACITY_GB) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE MEMORY_TYPE=VALUES(MEMORY_TYPE), CAPACITY_GB=VALUES(CAPACITY_GB)`, [partId, attrs.memoryType, attrs.capacityGb]);
-  } else if (category === 'SSD') {
-    await connection.execute(`INSERT INTO storage_specs (PART_ID, STORAGE_TYPE, FORM_FACTOR, INTERFACE_TEXT, CAPACITY_GB) VALUES (?, 'SSD', ?, ?, ?) ON DUPLICATE KEY UPDATE FORM_FACTOR=VALUES(FORM_FACTOR), INTERFACE_TEXT=VALUES(INTERFACE_TEXT), CAPACITY_GB=VALUES(CAPACITY_GB)`, [partId, attrs.forms[0] ?? 'M.2', 'NVMe', attrs.capacityGb ?? 0]);
-  } else if (category === 'PSU' && attrs.wattage) {
-    await connection.execute(`INSERT INTO psu_specs (PART_ID, FORM_FACTOR, RATED_WATTAGE) VALUES (?, 'ATX', ?) ON DUPLICATE KEY UPDATE RATED_WATTAGE=VALUES(RATED_WATTAGE)`, [partId, attrs.wattage]);
-  } else if (category === 'CASE') {
-    await connection.execute(`INSERT INTO case_specs (PART_ID, CASE_TYPE, COLOR, SUPPORTED_BOARD_FORMS_JSON, MAX_GPU_LENGTH_MM, MAX_COOLER_HEIGHT_MM) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE SUPPORTED_BOARD_FORMS_JSON=VALUES(SUPPORTED_BOARD_FORMS_JSON), MAX_GPU_LENGTH_MM=VALUES(MAX_GPU_LENGTH_MM), MAX_COOLER_HEIGHT_MM=VALUES(MAX_COOLER_HEIGHT_MM)`, [partId, attrs.forms.includes('ATX') ? 'ATX' : null, attrs.color, json(attrs.forms), attrs.gpuLengthMm, attrs.coolerHeightMm]);
-  } else if (category === 'COOLER') {
-    await connection.execute(`INSERT INTO cooler_specs (PART_ID, COOLER_TYPE, COLOR, SUPPORTED_SOCKETS_JSON, HEIGHT_MM) VALUES (?, 'AIR', ?, ?, ?) ON DUPLICATE KEY UPDATE SUPPORTED_SOCKETS_JSON=VALUES(SUPPORTED_SOCKETS_JSON), HEIGHT_MM=VALUES(HEIGHT_MM)`, [partId, attrs.color, json(attrs.socket ? [attrs.socket] : []), attrs.coolerHeightMm]);
-  } else if (category === 'GPU') {
-    await connection.execute(`INSERT INTO gpu_specs (PART_ID, CHIPSET_MAKER, CHIPSET_NAME, MEMORY_GB, LENGTH_MM) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE MEMORY_GB=VALUES(MEMORY_GB), LENGTH_MM=VALUES(LENGTH_MM)`, [partId, productMaker(attrs), null, attrs.capacityGb, attrs.gpuLengthMm]);
-  }
-}
-
-function productMaker() {
-  return null;
+  return upsertParsedSpec(connection, partId, category, attrs);
 }
 
 async function upsertSupplierProduct(connection, product, supplierId, crawlTargetId) {
@@ -168,18 +126,23 @@ async function upsertSupplierProduct(connection, product, supplierId, crawlTarge
   };
   await connection.execute(
     `INSERT INTO supplier_products
-      (SUPPLIER_ID, CRAWL_TARGET_ID, EXTERNAL_PRODUCT_ID, PRODUCT_NAME, PRODUCT_URL, IMAGE_URL, SUMMARY_SPEC_TEXT, RAW_SPEC_JSON, SPEC_PARSE_STATUS, SPEC_CAPTURED_DT, REVIEW_COUNT, RATING, LAST_SEEN_DT)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'PARSED', NOW(), ?, ?, NOW())
+      (SUPPLIER_ID, CRAWL_TARGET_ID, EXTERNAL_PRODUCT_ID, PRODUCT_NAME, PRODUCT_URL, IMAGE_URL, SUMMARY_SPEC_TEXT, RAW_SPEC_JSON, SPEC_PARSE_STATUS, SPEC_CAPTURED_DT, REVIEW_COUNT, RATING, MATCH_STATUS, MATCH_CONFIDENCE, LAST_SEEN_DT)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'PARSED', NOW(), ?, ?, 'AUTO_MATCHED', 100, NOW())
      ON DUPLICATE KEY UPDATE
       PRODUCT_NAME=VALUES(PRODUCT_NAME), PRODUCT_URL=VALUES(PRODUCT_URL), IMAGE_URL=VALUES(IMAGE_URL), SUMMARY_SPEC_TEXT=VALUES(SUMMARY_SPEC_TEXT),
-      RAW_SPEC_JSON=VALUES(RAW_SPEC_JSON), SPEC_PARSE_STATUS='PARSED', SPEC_CAPTURED_DT=NOW(), REVIEW_COUNT=VALUES(REVIEW_COUNT), RATING=VALUES(RATING), LAST_SEEN_DT=NOW(), UPDATED_DT=NOW()`,
+      RAW_SPEC_JSON=VALUES(RAW_SPEC_JSON), SPEC_PARSE_STATUS='PARSED', SPEC_CAPTURED_DT=NOW(), REVIEW_COUNT=VALUES(REVIEW_COUNT), RATING=VALUES(RATING), MATCH_STATUS='AUTO_MATCHED', MATCH_CONFIDENCE=100, LAST_SEEN_DT=NOW(), UPDATED_DT=NOW()`,
     [supplierId, crawlTargetId, product.productNo, product.name, product.detailUrl, product.imageUrl, product.summarySpecText, json(rawSpec), product.review?.count ?? null, product.review?.rate ?? null],
   );
   return scalar(connection, 'SELECT SUPPLIER_PRODUCT_ID FROM supplier_products WHERE SUPPLIER_ID = ? AND EXTERNAL_PRODUCT_ID = ?', [supplierId, product.productNo]);
 }
 
 async function upsertOfferAndPrice(connection, product, supplierProductId, partId) {
-  const price = product.pricing?.discountPrice ?? product.pricing?.listPrice ?? 0;
+  const publicPrice = product.pricing?.listPrice ?? product.pricing?.discountPrice ?? null;
+  const benefitPrice = product.pricing?.discountPrice ?? product.pricing?.listPrice ?? null;
+  const discountAmount = publicPrice != null && benefitPrice != null
+    ? Math.max(Number(publicPrice) - Number(benefitPrice), 0)
+    : null;
+  const stockStatus = product.flags?.isBuyable ? 'AVAILABLE' : 'UNKNOWN';
   await connection.execute(
     `INSERT INTO supplier_offers
       (SUPPLIER_PRODUCT_ID, PART_ID, EXTERNAL_OFFER_ID, OFFER_NAME, OFFER_KIND, ATTRIBUTES_JSON, IS_DEFAULT, IS_ACTIVE, LAST_SEEN_DT, RAW_JSON)
@@ -188,11 +151,34 @@ async function upsertOfferAndPrice(connection, product, supplierProductId, partI
     [supplierProductId, partId, product.productNo, product.name, json(parseAttrs(product)), json(product)],
   );
   const offerId = await scalar(connection, 'SELECT SUPPLIER_OFFER_ID FROM supplier_offers WHERE SUPPLIER_PRODUCT_ID = ? AND EXTERNAL_OFFER_ID = ?', [supplierProductId, product.productNo]);
+  if (publicPrice == null && benefitPrice == null) {
+    await connection.execute(
+      `UPDATE supplier_offers
+       SET CURRENT_PUBLIC_PRICE = NULL,
+           CURRENT_BENEFIT_PRICE = NULL,
+           CURRENT_STOCK_STATUS = 'UNKNOWN',
+           CURRENT_PRICE_DT = NULL,
+           UPDATED_DT = NOW()
+       WHERE SUPPLIER_OFFER_ID = ?`,
+      [offerId],
+    );
+    return;
+  }
   await connection.execute(
     `INSERT INTO supplier_offer_prices
       (SUPPLIER_OFFER_ID, PUBLIC_PRICE, BENEFIT_PRICE, DISCOUNT_AMOUNT, STOCK_STATUS, SOURCE_TYPE, CAPTURED_DT, RAW_JSON)
      VALUES (?, ?, ?, ?, ?, 'CRAWL', NOW(), ?)`,
-    [offerId, product.pricing?.listPrice ?? price, price, product.pricing?.discountRate ?? null, product.flags?.isBuyable ? 'AVAILABLE' : 'UNKNOWN', json(product.pricing)],
+    [offerId, publicPrice ?? 0, benefitPrice, discountAmount, stockStatus, json(product.pricing)],
+  );
+  await connection.execute(
+    `UPDATE supplier_offers
+     SET CURRENT_PUBLIC_PRICE = ?,
+         CURRENT_BENEFIT_PRICE = ?,
+         CURRENT_STOCK_STATUS = ?,
+         CURRENT_PRICE_DT = NOW(),
+         UPDATED_DT = NOW()
+     WHERE SUPPLIER_OFFER_ID = ?`,
+    [publicPrice, benefitPrice, stockStatus, offerId],
   );
 }
 
@@ -226,9 +212,16 @@ async function main() {
       'SELECT CRAWL_TARGET_ID FROM supplier_crawl_targets WHERE SUPPLIER_ID = ? AND PART_CATEGORY_ID = ? ORDER BY CRAWL_PRIORITY ASC LIMIT 1',
       [supplierId, categoryId],
     );
-    const partId = await upsertPart(connection, product, categoryId);
-    const supplierProductId = await upsertSupplierProduct(connection, product, supplierId, crawlTargetId);
-    await upsertOfferAndPrice(connection, product, supplierProductId, partId);
+    await connection.beginTransaction();
+    try {
+      const partId = await upsertPart(connection, product, categoryId);
+      const supplierProductId = await upsertSupplierProduct(connection, product, supplierId, crawlTargetId);
+      await upsertOfferAndPrice(connection, product, supplierProductId, partId);
+      await connection.commit();
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    }
     synced += 1;
     if (synced % 50 === 0) console.log(`[db] synced ${synced}/${products.length}`);
   }
