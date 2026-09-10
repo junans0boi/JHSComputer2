@@ -77,6 +77,7 @@ export class DatabaseSetupService {
       '05_benchmark_schema.sql',
       '06_cart_schema.sql',
       '07_recommendation_posts.sql',
+      '09_component_benchmark_scores.sql',
     ];
 
     try {

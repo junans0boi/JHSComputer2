@@ -291,6 +291,31 @@ PRICE_APPROVAL_REQUIRED → ADMIN_REVIEW → WAITING_DEPOSIT → DEPOSIT_CONFIRM
 
 성능 숫자의 출처와 신뢰 수준이다. `MEASURED`, `SOURCE_REPORTED`, `DERIVED`, `NONE`을 구분하며, 근거 없는 수치를 실측으로 표시하지 않는다.
 
+### 부품 벤치마크 테스트 (ComponentBenchmarkTest)
+
+부품 점수를 비교할 수 있게 만드는 벤치마크의 이름·버전·점수 지표·대상(CPU/GPU)·단위를 함께 정의한 기준이다. 테스트 버전이나 점수 지표가 다르면 같은 부품군이라도 같은 비교 집합으로 취급하지 않는다.
+_Avoid_: 벤치마크 점수(테스트·버전·지표가 생략된 표현)
+
+### 부품 벤치마크 관측값 (ComponentBenchmarkObservation)
+
+하나의 표준 부품에 대해 특정 `ComponentBenchmarkTest`를 특정 시스템·드라이버·설정으로 실행하거나 출처가 보고한 원본 점수 한 건이다. 출처 URL, 측정 조건, 근거 유형을 잃지 않으며 다른 관측값과 섞어 원본처럼 바꾸지 않는다.
+_Avoid_: 부품 평균점수(원본 관측값과 집계값을 혼동하는 표현)
+
+### 대표 점수 (RepresentativeScore)
+
+같은 부품·같은 테스트·같은 버전·같은 점수 지표에 속한 관측값을 화면에 요약한 값이다. 비교 화면에 표시할 수 있지만 단일 실측값이나 최고 점수와 동일한 의미로 표시하지 않는다.
+_Avoid_: 종합점수(서로 다른 테스트의 점수를 합산한 표현)
+
+### 게임 추천 조합 (GameRecommendationCombo)
+
+게임·예산·해상도·품질 조건에 대해 외부 출처가 제안한 CPU/GPU 조합이다. 추천 조합이 존재한다는 사실만으로 해당 조합의 FPS 숫자나 해상도별 측정값이 존재한다고 보지 않는다.
+_Avoid_: 게임 성능 데이터(추천 조합과 숫자 관측값을 합치는 표현)
+
+### 게임 FPS 관측값 (GameFpsObservation)
+
+특정 CPU/GPU 조합을 특정 게임·해상도·품질·게임 버전·드라이버·테스트 시스템 조건으로 측정하거나 출처가 보고한 FPS 숫자다. 조건이 빠진 평균값은 해상도별 FPS로 복제하지 않는다.
+_Avoid_: 지원 해상도(해상도 지원 문구와 FPS 숫자를 혼동하는 표현)
+
 ### 공개 카탈로그 승인 게이트 (PublicCatalogApprovalGate)
 
 크롤러가 적재한 표준 부품을 공개 카탈로그·자동 견적에 노출할지 결정하는 운영 정책이다. 기본값은 관리자 승인 부품만 공개하지만, 운영자가 `PUBLIC_PART_APPROVAL_REQUIRED=false`를 명시한 환경에서는 활성 상태이며 현재 가격·재고가 있는 판매 단위를 공개한다. 부품 목록과 자동 견적은 같은 게이트 의미를 사용해야 한다.
@@ -321,15 +346,31 @@ AI 추론 workload의 후보 품질을 판단하는 기준이다. 모델 크기�
 1. 빌드·타입체크 상태 확인 (몇 달 만에 재개이므로 의존성 상태 점검)
 2. 벤치마크 데이터 현황 파악 (Agent에서 수집된 데이터가 DB에 실제로 얼마나 있는지)
 3. 게임 FPS 데이터의 품질과 출처 정리 (영상에 쓰려면 신뢰도 기준이 필요)
-4. 미완료 E2E 흐름 (주문 전환, 관리자 상태 변경) 닫기
+4. 부품 벤치마크 관측값의 출처·버전·라이선스 및 표준 부품 매칭 검증
+5. 미완료 E2E 흐름 (주문 전환, 관리자 상태 변경) 닫기
 
 ### 데이터 수집 출처
 | 사이트 | 수집 내용 | 스크립트 위치 |
 |---|---|---|
-| 컴퓨존 (compuzone.co.kr) | 부품 목록·가격·스펙 | `JHSComputer_Agent/compuzone/` |
-| 견적왕 (kjwwang.com) | CPU/GPU 조합 견적, 게임 FPS | `JHSComputer_Agent/kjwwang/` |
-| 왕가PC (wanggapc.com) | 조립 PC 상품 구성·가격 | `JHSComputer_Agent/wanggapc/` |
-| 다나와 (danawa.com) | 상품 스펙 표 | `JHSComputer_Agent/danawa/` |
+| 컴퓨존 (compuzone.co.kr) | 공급처 상품·가격·후기·상세 스펙·이미지 | `JHSComputer_Agent/compuzone/` |
+| 견적왕 (kjwwang.com) | 게임별 추천 조합·예산·해상도 정보; 실제 FPS 숫자와 조건은 원문 검증 후 별도 관측값으로 적재 | `JHSComputer_Agent/kjwwang/` |
+| 왕가PC (wanggapc.com) | 실제 조립 PC 구성·가격; 게임 FPS 숫자와 조건은 원문 검증 후 별도 관측값으로 적재 | `JHSComputer_Agent/wanggapc/` |
+| ComputerBase (computerbase.de) | 게임별 해상도 FPS 원본 및 하드웨어 리뷰 차트 후보 출처 | `JHSComputer_Agent/computerbase/` |
+| Blender Open Data (opendata.blender.org) | 공개 라이선스 범위를 확인한 Blender 관측값 후보 | `JHSComputer_Agent/benchmarks/` |
+| 다나와 (danawa.com) | 상품 스펙 표 보강용 후보 | `JHSComputer_Agent/danawa/` |
+
+### 2026-09-10 부품 벤치마크 비교 세로 슬라이스
+
+- [x] `benchmark_component_tests`와 `benchmark_component_observations`를 기존 게임 FPS 데이터와 분리해 추가
+- [x] ComputerBase Cinebench R23·2024.1 CPU, 3DMark Fire Strike Overall·Time Spy Graphics GPU 원본 행을 조건·URL·근거 유형과 함께 수집
+- [x] `ComponentBenchmarksService`에서 동일 테스트·버전·지표·대상·단위만 대표값과 delta로 비교하며, 버전 미상 3DMark는 `UNSPECIFIED@articleKey` 범위로 섞이지 않게 처리
+- [x] 표준 부품 SKU가 여러 개로 모호하게 매칭되면 `PART_ID=NULL`로 보존하고 임의 SKU에 공개 비교값을 귀속하지 않음
+- [x] `/benchmarks`와 `/quote` 견적 상세가 CPU/GPU를 분리한 공용 비교 UI를 사용
+- [x] 왕가PC·견적왕의 추천 조합과 실제 FPS 관측값을 분리하고, 숫자·조건 없는 FPS를 생성하지 않음
+- [ ] JHS 직접 측정(`MEASURED`) 수집 장비·절차와 추가 출처별 이용 조건 확정
+
+아키텍처 흐름과 다음 정규화 공통 모듈 기회는
+`docs/architecture/2026-09-component-benchmark-flow.md`에 기록한다.
 
 ---
 
