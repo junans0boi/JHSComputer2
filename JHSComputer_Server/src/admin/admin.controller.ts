@@ -5,8 +5,11 @@ import { JwtAuthGuard, Roles, RolesGuard } from '../auth';
 
 const ALLOWED_SCRIPTS = [
   'sync:kjwwang:benchmark-db',
+  'crawl:kjwwang:benchmarks',
+  'sync:kjwwang:live-db',
   'crawl:compuzone:samples',
   'sync:compuzone:db',
+  'repair:compuzone:specs',
   'crawl:wanggapc:html',
   'sync:wanggapc:builds-db',
   'generate:jhs-recommendations',

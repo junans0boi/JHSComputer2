@@ -27,7 +27,8 @@ const modeName = isFull ? '전체 크롤링 (월 1회)' : '샘플 크롤링 (주
 const PIPELINE_STEPS = [
   isFull ? 'crawl:compuzone:full' : 'crawl:compuzone:samples',
   'sync:compuzone:db',
-  'sync:kjwwang:benchmark-db',
+  'crawl:kjwwang:benchmarks',
+  'sync:kjwwang:live-db',
   'crawl:wanggapc:html',
   'parse:wanggapc:latest',
   'sync:wanggapc:builds-db',

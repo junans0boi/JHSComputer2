@@ -362,13 +362,17 @@ export default function AdminPage() {
 const PIPELINE_STEPS = [
   'crawl:compuzone:samples',
   'sync:compuzone:db',
-  'sync:kjwwang:benchmark-db',
+  'crawl:kjwwang:benchmarks',
+  'sync:kjwwang:live-db',
   'crawl:wanggapc:html',
   'sync:wanggapc:builds-db',
   'generate:jhs-recommendations',
 ];
 
 const AGENTS = [
+  { scriptName: 'repair:compuzone:specs',       label: '컴퓨존 스펙 재파싱',   desc: '기존 컴퓨존 원본으로 specs 테이블 갱신', emoji: '🧩' },
+  { scriptName: 'crawl:kjwwang:benchmarks',     label: '견적왕 게임 견적 수집', desc: '견적왕 최신 게임별 추천 조합 수집', emoji: '📥' },
+  { scriptName: 'sync:kjwwang:live-db',         label: '견적왕 → DB 동기화',    desc: '게임별 추천 조합을 benchmark DB 반영', emoji: '🗄️' },
   { scriptName: 'sync:kjwwang:benchmark-db',   label: '게임 벤치마크 → DB',  desc: 'kjwwang FPS 데이터 싱크',   emoji: '🎮' },
   { scriptName: 'crawl:compuzone:samples',      label: '컴퓨존 샘플 크롤링', desc: '주간 샘플 가격 수집',        emoji: '🕷️' },
   { scriptName: 'sync:compuzone:db',            label: '컴퓨존 → DB 동기화', desc: '크롤 결과 DB 반영',          emoji: '🗄️' },
@@ -481,7 +485,7 @@ function AgentRunner({ accessToken }: { accessToken?: string }) {
                 )}
               </div>
               <p className="mt-1 text-xs text-slate-400">
-                6단계 자동 순서 실행 · Discord 알림 포함
+                7단계 자동 순서 실행 · Discord 알림 포함
               </p>
               {/* 단계 목록 */}
               <div className="mt-3 flex flex-wrap items-center gap-1">
