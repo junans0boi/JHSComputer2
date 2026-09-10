@@ -28,6 +28,28 @@ flowchart LR
   L[GameRecommendationCombo] -. 분리 유지 .-> M[GameFpsObservation]
 ```
 
+### 견적왕 느린 증분 수집 흐름
+
+```mermaid
+flowchart LR
+  A[KJWWANG 게임 목록] --> B[페이지 단위 수집기\n6초+지터·배치 휴식]
+  B --> C[(progress.json\n원자적 체크포인트)]
+  B --> D[game_*.json\n최신 페이지 스냅샷]
+  D --> E[RecommendationContextKey\n출처·게임·해상도·등급·플랫폼·CPU/GPU]
+  E --> F[(benchmark_builds\nupsert 최신값)]
+  F --> G[공개 CPU/GPU 조합\nPublicComboKey로 그룹]
+  H[견적왕 추천 문구] -. 실제 FPS 아님 .-> F
+  I[ComputerBase·실측 FPS] --> J[GameFpsObservation]
+  J -. 별도 근거 .-> G
+```
+
+수집기와 DB 동기화기는 서로 다른 seam을 가진다. 수집기는 요청 속도·재시도·조건부
+요청·중단 후 재개를 책임지고, 동기화기는 출처 맥락별 최신값과 중복 제거를 책임진다.
+따라서 견적왕의 추천 조합이 존재한다는 사실을 실제 FPS 관측값으로 승격하지 않는다.
+`progress.json`은 임시 파일을 먼저 쓴 뒤 `rename`하여 중단 중에도 직전 체크포인트를
+보존한다. 공개 화면에서는 동일 CPU/GPU를 한 조합으로 묶되, 내부에는 게임·해상도·
+등급별 추천 맥락을 유지한다.
+
 ## 모듈과 seam
 
 | 모듈 | 외부 인터페이스 | 내부에 숨기는 복잡성 | 검증 seam |
@@ -67,6 +89,10 @@ Agent와 서버가 모델군 정규화 규칙을 각각 구현하고 있다. 현
   벤치마크가 실제로 연결된 유일한 표준 부품일 때만 ID를 전달한다.
 - `/benchmarks`에서 CPU와 GPU 비교 패널이 분리되고, 견적 상세는 같은 공용
   컴포넌트를 사용한다.
+- 이번 검증 실행에서는 견적왕 증분 수집으로 2개 페이지를 페이지 사이 6초 이상
+  간격으로 처리했고, dev DB에는
+  동일 출처의 2,099개 추천 스냅샷(73개 정규화 조합)을 최신값 정책으로 반영했다.
+  전체 160개 게임 페이지는 기본 10개 배치로 계속 이어서 수집한다.
 
 ## QA 기록
 

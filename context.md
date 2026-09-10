@@ -316,6 +316,20 @@ _Avoid_: 게임 성능 데이터(추천 조합과 숫자 관측값을 합치는 
 특정 CPU/GPU 조합을 특정 게임·해상도·품질·게임 버전·드라이버·테스트 시스템 조건으로 측정하거나 출처가 보고한 FPS 숫자다. 조건이 빠진 평균값은 해상도별 FPS로 복제하지 않는다.
 _Avoid_: 지원 해상도(해상도 지원 문구와 FPS 숫자를 혼동하는 표현)
 
+### 추천 맥락 스냅샷 (RecommendationContextSnapshot)
+
+외부 출처가 특정 게임·해상도·추천 등급·플랫폼·CPU/GPU 조합에 대해 마지막으로
+확인한 추천 상태다. 같은 CPU/GPU라도 게임·해상도·등급이 다르면 서로 다른 추천
+맥락이며, 고객용 조합 목록에서는 하나의 공개 조합 아래에 맥락으로 묶는다.
+_Avoid_: 중복 조합(추천 맥락이 다른 행을 무조건 같은 데이터로 삭제하는 표현)
+
+### 최신 관측값 (LatestObservation)
+
+같은 출처와 같은 관측 식별자에서 가장 최근에 확인된 값이다. 최신값을 공개하더라도
+원문 URL과 확인 시각을 숨기지 않으며, 값이 없다는 이유로 이전 FPS나 벤치마크 점수를
+새 조건에 복제하지 않는다.
+_Avoid_: 실시간 값(수집 시각과 갱신 정책이 없는 표현)
+
 ### 공개 카탈로그 승인 게이트 (PublicCatalogApprovalGate)
 
 크롤러가 적재한 표준 부품을 공개 카탈로그·자동 견적에 노출할지 결정하는 운영 정책이다. 기본값은 관리자 승인 부품만 공개하지만, 운영자가 `PUBLIC_PART_APPROVAL_REQUIRED=false`를 명시한 환경에서는 활성 상태이며 현재 가격·재고가 있는 판매 단위를 공개한다. 부품 목록과 자동 견적은 같은 게이트 의미를 사용해야 한다.
@@ -353,9 +367,9 @@ AI 추론 workload의 후보 품질을 판단하는 기준이다. 모델 크기�
 | 사이트 | 수집 내용 | 스크립트 위치 |
 |---|---|---|
 | 컴퓨존 (compuzone.co.kr) | 공급처 상품·가격·후기·상세 스펙·이미지 | `JHSComputer_Agent/compuzone/` |
-| 견적왕 (kjwwang.com) | 게임별 추천 조합·예산·해상도 정보; 실제 FPS 숫자와 조건은 원문 검증 후 별도 관측값으로 적재 | `JHSComputer_Agent/kjwwang/` |
+| 견적왕 (kjwwang.com) | 느린 증분 방식의 게임별 추천 조합·예산·해상도 정보; 같은 추천 맥락은 최신값으로 유지하고 실제 FPS는 별도 검증 | `JHSComputer_Agent/kjwwang/` |
 | 왕가PC (wanggapc.com) | 실제 조립 PC 구성·가격; 게임 FPS 숫자와 조건은 원문 검증 후 별도 관측값으로 적재 | `JHSComputer_Agent/wanggapc/` |
-| ComputerBase (computerbase.de) | 게임별 해상도 FPS 원본 및 하드웨어 리뷰 차트 후보 출처 | `JHSComputer_Agent/computerbase/` |
+| ComputerBase (computerbase.de) | 게임별 해상도 FPS 원본 및 하드웨어 리뷰 차트 후보 출처; 현재 게임 FPS는 고정 테스트 CPU·10개 GPU·14개 게임 범위 | `JHSComputer_Agent/computerbase/` |
 | Blender Open Data (opendata.blender.org) | 공개 라이선스 범위를 확인한 Blender 관측값 후보 | `JHSComputer_Agent/benchmarks/` |
 | 다나와 (danawa.com) | 상품 스펙 표 보강용 후보 | `JHSComputer_Agent/danawa/` |
 
@@ -367,6 +381,9 @@ AI 추론 workload의 후보 품질을 판단하는 기준이다. 모델 크기�
 - [x] 표준 부품 SKU가 여러 개로 모호하게 매칭되면 `PART_ID=NULL`로 보존하고 임의 SKU에 공개 비교값을 귀속하지 않음
 - [x] `/benchmarks`와 `/quote` 견적 상세가 CPU/GPU를 분리한 공용 비교 UI를 사용
 - [x] 왕가PC·견적왕의 추천 조합과 실제 FPS 관측값을 분리하고, 숫자·조건 없는 FPS를 생성하지 않음
+- [x] 견적왕 수집 정책을 느린 증분·체크포인트·동일 추천 맥락 최신 갱신으로 정의
+- [ ] 견적왕 전체 대상 페이지를 소량 배치로 증분 수집하고 최신 추천 스냅샷을 검증
+- [ ] ComputerBase 게임 FPS를 현재 고정 CPU·10개 GPU 범위에서 추가 GPU/CPU 기사로 확장
 - [ ] JHS 직접 측정(`MEASURED`) 수집 장비·절차와 추가 출처별 이용 조건 확정
 
 아키텍처 흐름과 다음 정규화 공통 모듈 기회는
