@@ -2,19 +2,27 @@ import { AppShell } from '@/components/AppShell';
 import { BenchmarkComboList } from '@/components/benchmarks/BenchmarkComboList';
 import { BenchmarkGameTable } from '@/components/benchmarks/BenchmarkGameTable';
 import { BenchmarkScoreComparison } from '@/components/benchmarks/BenchmarkScoreComparison';
+import { BenchmarkRecommendationSection } from '@/components/benchmarks/BenchmarkRecommendationSection';
 import { BenchmarkSummaryCards } from '@/components/benchmarks/BenchmarkSummaryCards';
-import { loadBenchmarkCombos, loadBenchmarkSummary, loadComboGameResults, loadComponentBenchmarkComparison } from '@/lib/server-benchmarks';
+import { loadBenchmarkCombos, loadBenchmarkSummary, loadComboGameResults, loadComponentBenchmarkComparison, loadRecommendationComboDetail, loadRecommendationCombos } from '@/lib/server-benchmarks';
 
-export default async function BenchmarksPage(props: { searchParams: Promise<{ comboKey?: string }> }) {
+export default async function BenchmarksPage(props: { searchParams: Promise<{ comboKey?: string; recommendationComboRef?: string }> }) {
   const searchParams = await props.searchParams;
-  const summary = await loadBenchmarkSummary();
-  const combos = await loadBenchmarkCombos(200, true);
+  const [summary, combos, recommendationCombos] = await Promise.all([
+    loadBenchmarkSummary(),
+    loadBenchmarkCombos(200, true),
+    loadRecommendationCombos(200),
+  ]);
   const selectedCombo = searchParams.comboKey ?? combos.items.find((combo) => combo.hasFpsEvidence)?.publicComboRef ?? combos.items[0]?.publicComboRef ?? combos.items[0]?.comboKey;
   const selectedComboInfo = combos.items.find((combo) => combo.publicComboRef === selectedCombo || combo.comboKey === selectedCombo);
-  const games = selectedCombo ? await loadComboGameResults(selectedCombo, 999) : { items: [], total: 0 };
-  const [cpuBenchmarks, gpuBenchmarks] = await Promise.all([
+  const requestedRecommendationRef = searchParams.recommendationComboRef;
+  const selectedRecommendation = recommendationCombos.items.find((combo) => combo.publicComboRef === requestedRecommendationRef) ?? recommendationCombos.items[0];
+  const selectedRecommendationRef = selectedRecommendation?.publicComboRef;
+  const [games, cpuBenchmarks, gpuBenchmarks, recommendationDetail] = await Promise.all([
+    selectedCombo ? loadComboGameResults(selectedCombo, 999) : Promise.resolve({ items: [], total: 0 }),
     loadComponentBenchmarkComparison([selectedComboInfo?.cpuPartId ?? 0]),
     loadComponentBenchmarkComparison([selectedComboInfo?.gpuPartId ?? 0]),
+    loadRecommendationComboDetail(selectedRecommendationRef, 120),
   ]);
 
   return (
@@ -45,6 +53,14 @@ export default async function BenchmarksPage(props: { searchParams: Promise<{ co
             {selectedComboInfo?.gpuPartId && <BenchmarkScoreComparison data={gpuBenchmarks} title="대표 조합의 GPU 벤치마크" />}
           </div>
         )}
+        <BenchmarkRecommendationSection
+          combos={recommendationCombos.items}
+          detail={recommendationDetail}
+          error={recommendationCombos.error}
+          selectedComboKey={selectedCombo}
+          selectedRef={selectedRecommendation?.publicComboRef ?? selectedRecommendationRef}
+          total={recommendationCombos.total}
+        />
       </section>
     </AppShell>
   );
