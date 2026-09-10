@@ -20,6 +20,15 @@ type ComboGamesParams = {
   limit: number;
 };
 
+type RecommendationComboSearchParams = {
+  q?: string;
+  cpu?: string;
+  gpu?: string;
+  game?: string;
+  resolution?: string;
+  limit: number;
+};
+
 type QuotePerformanceParams = {
   parts: Array<{ category?: string; name?: string }>;
   games: string[];
@@ -177,6 +186,151 @@ export class BenchmarksService {
     const items = mergePublicCombos(rows.map((row: any) => toPublicCombo(row)));
     await this.attachComponentPartIds(items);
     return { items, total: items.length };
+  }
+
+  async getRecommendationCombos(params: RecommendationComboSearchParams) {
+    const where = validKjwwangRecommendationConditions();
+    const values: unknown[] = [];
+    const requestedResolution = params.resolution === '4K' ? 'UHD' : params.resolution;
+
+    if (params.q) {
+      where.push(`(
+        b.COMBO_KEY LIKE ? OR b.CPU_MODEL LIKE ? OR b.GPU_MODEL LIKE ? OR
+        b.CPU_NAME LIKE ? OR b.GPU_NAME LIKE ? OR
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.gameName')) LIKE ?
+      )`);
+      const q = `%${params.q}%`;
+      values.push(q, q, q, q, q, q);
+    }
+    if (params.cpu) {
+      where.push('(b.CPU_MODEL LIKE ? OR b.CPU_NAME LIKE ?)');
+      values.push(`%${params.cpu}%`, `%${params.cpu}%`);
+    }
+    if (params.gpu) {
+      where.push('(b.GPU_MODEL LIKE ? OR b.GPU_NAME LIKE ?)');
+      values.push(`%${params.gpu}%`, `%${params.gpu}%`);
+    }
+    if (params.game) {
+      where.push("JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.gameName')) LIKE ?");
+      values.push(`%${params.game}%`);
+    }
+    if (requestedResolution) {
+      where.push("JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.resolution')) = ?");
+      values.push(requestedResolution);
+    }
+
+    const rows = await this.dataSource.query(
+      `
+      SELECT
+        b.COMBO_KEY AS comboKey,
+        b.CPU_MODEL AS cpuModel,
+        b.GPU_MODEL AS gpuModel,
+        b.CPU_NAME AS cpuName,
+        b.GPU_NAME AS gpuName,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.gameId')) AS gameId,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.gameName')) AS gameName,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.resolution')) AS resolution,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.tier')) AS tier,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.platform')) AS platform,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.crawledAt')) AS capturedAt
+      FROM benchmark_builds b
+      JOIN benchmark_sources s ON s.BENCHMARK_SOURCE_ID = b.BENCHMARK_SOURCE_ID
+      WHERE ${where.join(' AND ')}
+      ORDER BY capturedAt DESC, b.BENCHMARK_BUILD_ID DESC
+      `,
+      values,
+    );
+
+    if (!rows.length) return { items: [], total: 0 };
+
+    const allGroupRows = await this.dataSource.query(
+      `
+      SELECT
+        b.COMBO_KEY AS comboKey,
+        b.CPU_MODEL AS cpuModel,
+        b.GPU_MODEL AS gpuModel,
+        b.CPU_NAME AS cpuName,
+        b.GPU_NAME AS gpuName
+      FROM benchmark_builds b
+      JOIN benchmark_sources s ON s.BENCHMARK_SOURCE_ID = b.BENCHMARK_SOURCE_ID
+      WHERE ${validKjwwangRecommendationConditions().join(' AND ')}
+      `,
+    );
+
+    const grouped = groupRecommendationSnapshots(rows, allGroupRows);
+    const items = grouped
+      .sort((left, right) => right.recommendationCount - left.recommendationCount
+        || String(right.latestCapturedAt ?? '').localeCompare(String(left.latestCapturedAt ?? ''))
+        || left.publicComboName.localeCompare(right.publicComboName))
+      .slice(0, limitValue(params.limit, 200, 50));
+    return { items, total: grouped.length };
+  }
+
+  async getRecommendationComboDetail(comboRef: string, limit = 500) {
+    const internalComboKeys = await this.resolveRecommendationComboKeys(comboRef);
+    if (!internalComboKeys.length) return null;
+    const placeholders = internalComboKeys.map(() => '?').join(', ');
+    const detailConditions = [...validKjwwangRecommendationConditions(), `b.COMBO_KEY IN (${placeholders})`].join(' AND ');
+    const [combo] = await this.dataSource.query(
+      `
+      SELECT
+        MIN(b.COMBO_KEY) AS comboKey,
+        MIN(b.CPU_MODEL) AS cpuModel,
+        MIN(b.GPU_MODEL) AS gpuModel,
+        MIN(b.CPU_NAME) AS cpuName,
+        MIN(b.GPU_NAME) AS gpuName,
+        COUNT(DISTINCT b.BENCHMARK_BUILD_ID) AS recommendationCount,
+        COUNT(DISTINCT JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.gameId'))) AS gameCount,
+        MAX(JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.crawledAt'))) AS latestCapturedAt
+      FROM benchmark_builds b
+      JOIN benchmark_sources s ON s.BENCHMARK_SOURCE_ID = b.BENCHMARK_SOURCE_ID
+      WHERE ${detailConditions}
+      `,
+      internalComboKeys,
+    );
+
+    if (!combo || Number(combo.recommendationCount ?? 0) === 0) return null;
+
+    const contextCountRows = await this.dataSource.query(
+      `
+      SELECT COUNT(*) AS total
+      FROM benchmark_builds b
+      JOIN benchmark_sources s ON s.BENCHMARK_SOURCE_ID = b.BENCHMARK_SOURCE_ID
+      WHERE ${detailConditions}
+      `,
+      internalComboKeys,
+    );
+    const contextRows = await this.dataSource.query(
+      `
+      SELECT
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.gameId')) AS gameId,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.gameName')) AS gameName,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.resolution')) AS resolution,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.tier')) AS tier,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.platform')) AS platform,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.priceRange')) AS priceRange,
+        CAST(JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.price')) AS UNSIGNED) AS price,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.sourceUrl')) AS sourceUrl,
+        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.crawledAt')) AS capturedAt
+      FROM benchmark_builds b
+      JOIN benchmark_sources s ON s.BENCHMARK_SOURCE_ID = b.BENCHMARK_SOURCE_ID
+      WHERE ${detailConditions}
+      ORDER BY gameName ASC, FIELD(resolution, 'FHD', 'QHD', 'UHD'), tier ASC, capturedAt DESC
+      LIMIT ?
+      `,
+      [...internalComboKeys, limitValue(limit, 500, 500)],
+    );
+
+    return {
+      combo: toRecommendationCombo(combo, comboRef),
+      contexts: contextRows.map((row: any) => ({
+        ...row,
+        price: row.price == null ? null : Number(row.price),
+        sourceCode: 'KJWWANG',
+        sourceName: '견적왕',
+      })),
+      total: Number(contextCountRows[0]?.total ?? 0),
+    };
   }
 
   async getComboDetail(comboKey: string) {
@@ -608,10 +762,120 @@ export class BenchmarksService {
     const resolved = rows.map((row: any) => String(row.comboKey)).filter(Boolean);
     return resolved.length ? resolved : uniqueCandidates.slice(0, 1);
   }
+
+  private async resolveRecommendationComboKeys(publicComboRef: string) {
+    const decoded = decodePublicComboRef(publicComboRef);
+    const decodedCandidates = Array.isArray(decoded) ? [...new Set(decoded)] : [];
+    if (decodedCandidates.length <= 1) return this.resolveInternalComboKeys(publicComboRef);
+
+    const placeholders = decodedCandidates.map(() => '?').join(', ');
+    const rows = await this.dataSource.query(
+      `
+      SELECT
+        b.COMBO_KEY AS comboKey,
+        MIN(b.CPU_MODEL) AS cpuModel,
+        MIN(b.GPU_MODEL) AS gpuModel,
+        MIN(b.CPU_NAME) AS cpuName,
+        MIN(b.GPU_NAME) AS gpuName
+      FROM benchmark_builds b
+      JOIN benchmark_sources s ON s.BENCHMARK_SOURCE_ID = b.BENCHMARK_SOURCE_ID
+      WHERE ${validKjwwangRecommendationConditions().join(' AND ')}
+        AND b.COMBO_KEY IN (${placeholders})
+      GROUP BY b.COMBO_KEY
+      `,
+      decodedCandidates,
+    );
+    if (rows.length !== decodedCandidates.length) return [];
+    const publicGroups = new Set(rows.map((row: any) => recommendationGroupKey(row)));
+    return publicGroups.size === 1 ? decodedCandidates : [];
+  }
 }
 
 function toPublicComboKey(comboKey: unknown) {
   return String(comboKey ?? '').replace(/^(?:kjwwang|wanggapc)-/i, '');
+}
+
+function toRecommendationCombo(row: any, publicComboRef = toPublicComboRef(String(row.comboKey ?? ''))) {
+  const publicCpuModel = formatPublicCpuModel(row.cpuModel, row.cpuName);
+  const publicGpuModel = formatPublicGpuModel(row.gpuModel, row.gpuName);
+  const publicComboKey = buildPublicRecommendationComboKey(row);
+  return {
+    comboKey: toPublicComboKey(row.comboKey),
+    publicComboKey,
+    publicComboRef,
+    publicCpuModel,
+    publicGpuModel,
+    publicComboName: formatPublicComboName(row.cpuModel, row.gpuModel, row.cpuName, row.gpuName),
+    cpuModel: publicCpuModel,
+    gpuModel: publicGpuModel,
+    sourceCode: 'KJWWANG',
+    sourceName: '견적왕',
+    recommendationCount: Number(row.recommendationCount ?? 0),
+    gameCount: Number(row.gameCount ?? 0),
+    latestCapturedAt: row.latestCapturedAt ?? null,
+  };
+}
+
+function buildPublicRecommendationComboKey(row: any) {
+  const cpuKey = normalizeComponentModelKey(formatPublicCpuModel(row.cpuModel, row.cpuName), 'CPU').replace(/^cpu:/, '');
+  const gpuKey = normalizeComponentModelKey(formatPublicGpuModel(row.gpuModel, row.gpuName), 'GPU').replace(/^gpu:/, '');
+  return `${cpuKey}-${gpuKey}`.replace(/:/g, '-');
+}
+
+function validKjwwangRecommendationConditions() {
+  return [
+    "s.SOURCE_CODE = 'KJWWANG'",
+    "JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.gameId')) IS NOT NULL",
+    "JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.gameName')) IS NOT NULL",
+    "JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.resolution')) IS NOT NULL",
+    "JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.tier')) IS NOT NULL",
+    "JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.platform')) IS NOT NULL",
+    "JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.crawledAt')) IS NOT NULL",
+  ];
+}
+
+function groupRecommendationSnapshots(rows: any[], allGroupRows: any[]) {
+  const allInternalKeysByGroup = new Map<string, Set<string>>();
+  for (const row of allGroupRows) {
+    const groupKey = recommendationGroupKey(row);
+    const internalComboKeys = allInternalKeysByGroup.get(groupKey) ?? new Set<string>();
+    if (row.comboKey) internalComboKeys.add(String(row.comboKey));
+    allInternalKeysByGroup.set(groupKey, internalComboKeys);
+  }
+
+  const groups = new Map<string, { rows: any[]; internalComboKeys: Set<string> }>();
+  for (const row of rows) {
+    const publicCpuModel = formatPublicCpuModel(row.cpuModel, row.cpuName);
+    const publicGpuModel = formatPublicGpuModel(row.gpuModel, row.gpuName);
+    const groupKey = recommendationGroupKey(row);
+    const group = groups.get(groupKey) ?? {
+      rows: [],
+      internalComboKeys: new Set(allInternalKeysByGroup.get(groupKey) ?? []),
+    };
+    group.rows.push({ ...row, publicCpuModel, publicGpuModel });
+    if (row.comboKey) group.internalComboKeys.add(String(row.comboKey));
+    groups.set(groupKey, group);
+  }
+
+  return [...groups.values()].map(({ rows: snapshots, internalComboKeys }) => {
+    const first = snapshots[0];
+    const latestCapturedAt = snapshots
+      .map((row) => row.capturedAt)
+      .filter(Boolean)
+      .sort()
+      .at(-1) ?? null;
+    const gameIds = new Set(snapshots.map((row) => row.gameId).filter(Boolean));
+    return toRecommendationCombo({
+      ...first,
+      recommendationCount: snapshots.length,
+      gameCount: gameIds.size,
+      latestCapturedAt,
+    }, toPublicComboRef([...internalComboKeys].sort()));
+  });
+}
+
+function recommendationGroupKey(row: any) {
+  return buildPublicRecommendationComboKey(row).toLowerCase();
 }
 
 function toPublicCombo(row: any) {

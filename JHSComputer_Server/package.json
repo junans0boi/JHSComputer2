@@ -8,7 +8,8 @@
     "start:dev": "nest start --watch",
     "typecheck": "tsc --noEmit",
     "test:quote-profile": "node --test --require ts-node/register/transpile-only test/quote-profile.test.ts",
-    "test:parts-public-catalog": "node --test --require ts-node/register/transpile-only test/parts.public-catalog.test.ts"
+    "test:parts-public-catalog": "node --test --require ts-node/register/transpile-only test/parts.public-catalog.test.ts",
+    "test:benchmarks": "node --test --require ts-node/register/transpile-only test/benchmarks.service.test.ts test/benchmarks.controller.test.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

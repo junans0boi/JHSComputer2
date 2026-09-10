@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query } from '@nestjs/common';
 import { Public } from '../auth';
 import { BenchmarksService } from './benchmarks.service';
 import { ComponentBenchmarksService } from './component-benchmarks.service';
@@ -42,6 +42,37 @@ export class BenchmarksController {
       includeNoFps: includeNoFps === 'true',
       limit: Number(limit) || 50,
     });
+  }
+
+  @Get('recommendation-combos')
+  @Public()
+  async getRecommendationCombos(
+    @Query('q') q?: string,
+    @Query('cpu') cpu?: string,
+    @Query('gpu') gpu?: string,
+    @Query('game') game?: string,
+    @Query('resolution') resolution?: string,
+    @Query('limit') limit = '50',
+  ) {
+    return this.benchmarksService.getRecommendationCombos({
+      q,
+      cpu,
+      gpu,
+      game,
+      resolution,
+      limit: Number(limit) || 50,
+    });
+  }
+
+  @Get('recommendation-combos/:comboRef')
+  @Public()
+  async getRecommendationComboDetail(
+    @Param('comboRef') comboRef: string,
+    @Query('limit') limit = '500',
+  ) {
+    const result = await this.benchmarksService.getRecommendationComboDetail(comboRef, Number(limit) || 500);
+    if (!result) throw new NotFoundException('추천 조합을 찾을 수 없습니다.');
+    return result;
   }
 
   @Get('recommended-builds')
