@@ -28,7 +28,8 @@ flowchart LR
   L[GameRecommendationCombo] -. 분리 유지 .-> M[GameFpsObservation]
   N[KJWWANG RecommendationContextSnapshot] --> O[GET /benchmarks/recommendation-combos]
   O --> P[RecommendationComboGroup\nCPU/GPU 집계·상세 맥락]
-  P -. FPS 아님 .-> L
+  P --> Q[/benchmarks 추천 조합 영역]
+  P -. FPS 아님 .-> M
 ```
 
 ### 견적왕 느린 증분 수집 흐름
@@ -62,6 +63,7 @@ flowchart LR
 | `component-benchmark.ts` | 순수 정규화·비교·대표값 함수 | 정렬·중앙값·비교 가능성 규칙 | unit test |
 | `BenchmarkScoreComparison` | 비교 응답 → 반응형 화면 | CPU/GPU 분리, 카드/막대, 긴 이름·URL 줄바꿈, provenance 접기 | typecheck + browser smoke |
 | `BenchmarksService` 추천 조합 API | 견적왕 스냅샷 → 공개 조합 그룹·상세 맥락 | 출처 고정, CPU/GPU 집계, 게임·해상도·등급 보존, FPS 흐름과 분리 | service/controller test + API smoke |
+| `/benchmarks` 추천 조합 영역 | API 응답 → JHS 추천 맥락 카드 | FPS 영역과 선택 상태 분리, 긴 텍스트·URL의 반응형 표시 | typecheck + browser smoke |
 
 ## 깊이 평가
 
