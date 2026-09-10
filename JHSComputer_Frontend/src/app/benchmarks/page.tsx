@@ -7,8 +7,9 @@ import { loadBenchmarkCombos, loadBenchmarkSummary, loadComboGameResults } from 
 export default async function BenchmarksPage(props: { searchParams: Promise<{ comboKey?: string }> }) {
   const searchParams = await props.searchParams;
   const summary = await loadBenchmarkSummary();
-  const combos = await loadBenchmarkCombos(12);
-  const selectedCombo = searchParams.comboKey ?? combos.items[0]?.comboKey;
+  const combos = await loadBenchmarkCombos(200, true);
+  const selectedCombo = searchParams.comboKey ?? combos.items.find((combo) => combo.hasFpsEvidence)?.publicComboRef ?? combos.items[0]?.publicComboRef ?? combos.items[0]?.comboKey;
+  const selectedComboInfo = combos.items.find((combo) => combo.publicComboRef === selectedCombo || combo.comboKey === selectedCombo);
   const games = selectedCombo ? await loadComboGameResults(selectedCombo, 999) : { items: [], total: 0 };
 
   return (
@@ -27,7 +28,11 @@ export default async function BenchmarksPage(props: { searchParams: Promise<{ co
 
         <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(300px,420px)_minmax(0,1fr)]">
           <BenchmarkComboList combos={combos.items} total={combos.total} />
-          <BenchmarkGameTable comboKey={selectedCombo} games={games.items} />
+          <BenchmarkGameTable
+            comboName={selectedComboInfo?.publicComboName}
+            hasFpsEvidence={selectedComboInfo?.hasFpsEvidence}
+            games={games.items}
+          />
         </div>
       </section>
     </AppShell>

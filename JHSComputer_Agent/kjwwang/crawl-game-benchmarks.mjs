@@ -2,11 +2,13 @@
  * kjwwang.com 게임별 FPS 벤치마크 크롤러
  * action=detail&game=<id> 페이지에서 CPU/GPU 조합 및 가격대 데이터 수집
  */
+import * as cheerio from 'cheerio';
 import iconv from 'iconv-lite';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const BASE_URL = 'https://kjwwang.com';
+const HOME_URL = `${BASE_URL}/`;
 
 // 주요 게임 목록 (게임ID: 게임명)
 const TARGET_GAMES = {
@@ -36,6 +38,32 @@ function sleep(ms) {
   return new Promise(r => setTimeout(r, ms));
 }
 
+function clean(value = '') {
+  return value.replace(/\s+/g, ' ').trim();
+}
+
+function parseArgs(argv) {
+  const args = {
+    homeUrl: HOME_URL,
+    gameIds: '',
+    limit: 100,
+    delayMs: 1500,
+    out: '../project/samples/kjwwang/benchmarks',
+  };
+  for (const rawArg of argv) {
+    const normalizedArg = rawArg.replace(/^--/, '');
+    const separatorIndex = normalizedArg.indexOf('=');
+    const key = separatorIndex >= 0 ? normalizedArg.slice(0, separatorIndex) : normalizedArg;
+    const value = separatorIndex >= 0 ? normalizedArg.slice(separatorIndex + 1) : '';
+    if (key === 'home-url') args.homeUrl = value || HOME_URL;
+    if (key === 'game-ids') args.gameIds = value;
+    if (key === 'limit') args.limit = Number(value);
+    if (key === 'delay-ms') args.delayMs = Number(value);
+    if (key === 'out') args.out = value;
+  }
+  return args;
+}
+
 async function fetchGamePage(gameId) {
   const url = `${BASE_URL}/shop/pc_estimate.html?action=detail&game=${gameId}`;
   const response = await fetch(url, {
@@ -52,6 +80,38 @@ async function fetchGamePage(gameId) {
     ? iconv.decode(buffer, 'euc-kr')
     : iconv.decode(buffer, 'euc-kr'); // kjwwang은 항상 euc-kr
   return { ok: response.ok, status: response.status, html, url };
+}
+
+async function fetchHome(url) {
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      'Accept-Language': 'ko-KR,ko;q=0.9',
+      Accept: 'text/html,application/xhtml+xml',
+    },
+  });
+  const buffer = Buffer.from(await response.arrayBuffer());
+  const contentType = response.headers.get('content-type') ?? '';
+  const html = /euc-kr|ks_c_5601/i.test(contentType)
+    ? iconv.decode(buffer, 'euc-kr')
+    : iconv.decode(buffer, 'euc-kr');
+  return { ok: response.ok, status: response.status, html };
+}
+
+function extractGameTargets(html) {
+  const $ = cheerio.load(html, { decodeEntities: false });
+  const targets = [];
+  const seen = new Set();
+  $('a[href*="pc_estimate.html"][href*="action=detail"][href*="game="]').each((_, anchor) => {
+    const href = $(anchor).attr('href');
+    if (!href) return;
+    const url = new URL(href.replaceAll('&amp;', '&'), BASE_URL);
+    const gameId = Number(url.searchParams.get('game'));
+    if (!Number.isInteger(gameId) || seen.has(gameId)) return;
+    seen.add(gameId);
+    targets.push({ gameId, gameName: clean($(anchor).text()) || TARGET_GAMES[gameId] || `game-${gameId}` });
+  });
+  return targets;
 }
 
 function parseGamePage(html, gameId, fallbackName) {
@@ -125,15 +185,34 @@ function extractBuilds(html, resolution) {
 }
 
 async function main() {
-  const outDir = path.resolve('../project/samples/kjwwang/benchmarks');
+  const args = parseArgs(process.argv.slice(2));
+  const outDir = path.resolve(args.out);
   await mkdir(outDir, { recursive: true });
 
   const allResults = [];
-  const gameIds = Object.keys(TARGET_GAMES).map(Number);
+  let targets = [];
+  if (args.gameIds) {
+    targets = args.gameIds
+      .split(',')
+      .map(value => Number(value.trim()))
+      .filter(Number.isInteger)
+      .map(gameId => ({ gameId, gameName: TARGET_GAMES[gameId] || `game-${gameId}` }));
+  } else {
+    try {
+      const home = await fetchHome(args.homeUrl);
+      if (!home.ok) throw new Error(`게임 목록 HTTP ${home.status}`);
+      targets = extractGameTargets(home.html);
+      console.log(`[kjwwang] 게임 목록 발견: ${targets.length}개 (HTTP ${home.status})`);
+    } catch (err) {
+      console.warn(`[kjwwang] 게임 목록 자동 발견 실패: ${err.message}`);
+    }
+  }
+  if (targets.length === 0) throw new Error('게임 목록에서 상세 링크를 찾지 못해 수집을 중단합니다.');
+  if (args.limit > 0) targets = targets.slice(0, args.limit);
 
-  for (const [i, gameId] of gameIds.entries()) {
-    const gameName = TARGET_GAMES[gameId];
-    console.log(`[kjwwang] ${i + 1}/${gameIds.length} 크롤링: ${gameName} (game=${gameId})`);
+  for (const [i, target] of targets.entries()) {
+    const { gameId, gameName } = target;
+    console.log(`[kjwwang] ${i + 1}/${targets.length} 크롤링: ${gameName} (game=${gameId})`);
 
     try {
       const { ok, status, html } = await fetchGamePage(gameId);
@@ -151,8 +230,8 @@ async function main() {
       console.error(`  [ERR] ${err.message}`);
     }
 
-    if (i < gameIds.length - 1) {
-      await sleep(2000);
+    if (i < targets.length - 1) {
+      await sleep(args.delayMs);
     }
   }
 
@@ -160,6 +239,7 @@ async function main() {
     path.join(outDir, 'summary.json'),
     JSON.stringify({
       crawledAt: new Date().toISOString(),
+      requestedGames: targets.length,
       totalGames: allResults.length,
       games: allResults.map(r => ({ gameId: r.gameId, gameName: r.gameName, buildCounts: Object.fromEntries(Object.entries(r.builds).map(([k, v]) => [k, v.length])) })),
     }, null, 2),

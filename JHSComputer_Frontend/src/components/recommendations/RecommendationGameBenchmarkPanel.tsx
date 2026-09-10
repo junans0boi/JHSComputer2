@@ -28,7 +28,7 @@ export function RecommendationGameBenchmarkPanel({ games }: { games: Recommendat
           <div>
             <h2 className="text-lg font-black">게임 성능</h2>
             <p className="mt-0.5 text-sm text-slate-500">
-              실제 벤치마크 DB 기준 · {grouped.length.toLocaleString()} / {totalGames.toLocaleString()}개 게임
+              {evidenceLabel(games)} · {grouped.length.toLocaleString()} / {totalGames.toLocaleString()}개 게임
             </p>
           </div>
         </div>
@@ -94,11 +94,17 @@ export function RecommendationGameBenchmarkPanel({ games }: { games: Recommendat
 
 function renderCell(game?: RecommendationPostGame) {
   if (!game) return <span className="text-xs font-bold text-slate-400">데이터 없음</span>;
+  const fpsMin = Number(game.fpsMin);
+  const fpsMax = Number(game.fpsMax);
+  const hasMeasuredFps = Number.isFinite(fpsMin) && Number.isFinite(fpsMax) && fpsMin > 0 && fpsMax > 0;
   return (
     <div>
-      <div className="font-black text-brand">{Number(game.fpsMin ?? 0)}~{Number(game.fpsMax ?? 0)} FPS</div>
+      <div className={`font-black ${hasMeasuredFps ? 'text-brand' : 'text-slate-400'}`}>
+        {hasMeasuredFps ? `${fpsMin}~${fpsMax} FPS` : 'FPS 측정값 없음'}
+      </div>
       <div className="mt-0.5 text-xs font-bold text-slate-500">
-        {qualityLabel(game.qualityPreset)} · {gradeLabel(game.comfortGrade)}
+        {qualityLabel(game.qualityPreset)} · {gradeLabel(game.comfortGrade)} · {evidenceLabel([game])}
+        {game.sampleCount ? ` · 표본 ${game.sampleCount}` : ''}
       </div>
     </div>
   );
@@ -143,4 +149,12 @@ function gradeLabel(value?: string | null) {
     PLAYABLE: '플레이 가능',
   };
   return value ? labels[value] ?? value : '등급 정보';
+}
+
+function evidenceLabel(games: RecommendationPostGame[]) {
+  const types = new Set(games.map((game) => game.evidenceType));
+  if (types.has('MEASURED') && types.size === 1) return '실측 데이터';
+  if (types.has('DERIVED')) return '추정·보정 포함';
+  if (types.has('SOURCE_REPORTED')) return '출처 보고값';
+  return '근거 확인 필요';
 }

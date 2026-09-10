@@ -5,6 +5,9 @@ export function BenchmarkSummaryCards({ summary }: { summary: BenchmarkSummary }
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       <StatCard label="견적 샘플" value={summary.buildCount} />
       <StatCard label="전체 조합" value={summary.totalComboCount} />
+      {summary.sourceComboCount && summary.sourceComboCount !== summary.totalComboCount && (
+        <StatCard label="원천 조합" value={summary.sourceComboCount} />
+      )}
       <StatCard label="FPS 조합" value={summary.fpsComboCount} />
       <StatCard label="게임" value={summary.gameCount} />
       <StatCard label="FPS 원본" value={summary.fpsResultCount} />

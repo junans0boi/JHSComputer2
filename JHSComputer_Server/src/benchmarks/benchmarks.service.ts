@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
+import { formatPublicComboName, formatPublicCpuModel, formatPublicGpuModel } from './public-model-labels';
 
 type ComboSearchParams = {
   q?: string;
@@ -45,15 +46,40 @@ export class BenchmarksService {
         b.COMBO_KEY AS comboKey,
         MIN(b.CPU_MODEL) AS cpuModel,
         MIN(b.GPU_MODEL) AS gpuModel,
-        COUNT(DISTINCT b.BENCHMARK_BUILD_ID) AS sampleCount
+        MIN(b.CPU_NAME) AS cpuName,
+        MIN(b.GPU_NAME) AS gpuName,
+        COUNT(DISTINCT b.BENCHMARK_BUILD_ID) AS buildSampleCount,
+        COUNT(DISTINCT r.BENCHMARK_GAME_ID) AS gameCount,
+        COUNT(r.BENCHMARK_COMBO_GAME_RESULT_ID) AS resultCount
       FROM benchmark_builds b
       JOIN benchmark_combo_game_results r ON r.COMBO_KEY = b.COMBO_KEY
       GROUP BY b.COMBO_KEY
-      ORDER BY sampleCount DESC, comboKey ASC
+      ORDER BY buildSampleCount DESC, comboKey ASC
       LIMIT 10
     `);
 
-    return { ...summary, topCombos };
+    const publicComboRows = await this.dataSource.query(`
+      SELECT
+        b.COMBO_KEY AS comboKey,
+        MIN(b.CPU_MODEL) AS cpuModel,
+        MIN(b.GPU_MODEL) AS gpuModel,
+        MIN(b.CPU_NAME) AS cpuName,
+        MIN(b.GPU_NAME) AS gpuName,
+        COUNT(DISTINCT b.BENCHMARK_BUILD_ID) AS buildSampleCount,
+        COUNT(DISTINCT r.BENCHMARK_GAME_ID) AS gameCount,
+        COUNT(r.BENCHMARK_COMBO_GAME_RESULT_ID) AS resultCount
+      FROM benchmark_builds b
+      LEFT JOIN benchmark_combo_game_results r ON r.COMBO_KEY = b.COMBO_KEY
+      GROUP BY b.COMBO_KEY
+    `);
+    const publicComboCount = mergePublicCombos(publicComboRows.map((row: any) => toPublicCombo(row))).length;
+
+    return {
+      ...summary,
+      sourceComboCount: summary.totalComboCount,
+      totalComboCount: String(publicComboCount),
+      topCombos: mergePublicCombos(topCombos.map((combo: any) => toPublicCombo(combo))),
+    };
   }
 
   async getGames(params: { q?: string; limit: number }) {
@@ -63,14 +89,13 @@ export class BenchmarksService {
       where.push('GAME_NAME LIKE ?');
       values.push(`%${params.q}%`);
     }
-    values.push(Math.min(params.limit, 300));
+    values.push(limitValue(params.limit, 300, 100));
 
     const rows = await this.dataSource.query(
       `
       SELECT
         BENCHMARK_GAME_ID AS gameId,
-        GAME_NAME AS gameName,
-        SLUG AS slug
+        GAME_NAME AS gameName
       FROM benchmark_games
       ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
       ORDER BY GAME_NAME ASC
@@ -123,7 +148,7 @@ export class BenchmarksService {
       )`);
     }
 
-    values.push(Math.min(params.limit, 200));
+    values.push(limitValue(params.limit, 200, 50));
     const rows = await this.dataSource.query(
       `
       SELECT
@@ -145,49 +170,52 @@ export class BenchmarksService {
       values,
     );
 
-    return { items: rows, total: rows.length };
+    const items = mergePublicCombos(rows.map((row: any) => toPublicCombo(row)));
+    return { items, total: items.length };
   }
 
   async getComboDetail(comboKey: string) {
+    const internalComboKeys = await this.resolveInternalComboKeys(comboKey);
+    const placeholders = internalComboKeys.map(() => '?').join(', ');
     const [combo] = await this.dataSource.query(
       `
       SELECT
-        COMBO_KEY AS comboKey,
+        MIN(COMBO_KEY) AS comboKey,
         MIN(CPU_MODEL) AS cpuModel,
         MIN(GPU_MODEL) AS gpuModel,
         MIN(CPU_NAME) AS cpuName,
         MIN(GPU_NAME) AS gpuName,
         COUNT(*) AS buildSampleCount
       FROM benchmark_builds
-      WHERE COMBO_KEY = ?
-      GROUP BY COMBO_KEY
+      WHERE COMBO_KEY IN (${placeholders})
       `,
-      [comboKey],
+      internalComboKeys,
     );
 
-    if (!combo) return null;
+    if (!combo || Number(combo.buildSampleCount ?? 0) === 0) return null;
 
     const builds = await this.dataSource.query(
       `
       SELECT
         BENCHMARK_BUILD_ID AS buildId,
-        EXTERNAL_BUILD_ID AS externalBuildId,
         TITLE AS title,
         GAME_COUNT AS gameCount,
         FPS_RECORD_COUNT AS fpsRecordCount
       FROM benchmark_builds
-      WHERE COMBO_KEY = ?
+      WHERE COMBO_KEY IN (${placeholders})
       ORDER BY GAME_COUNT DESC, EXTERNAL_BUILD_ID ASC
       `,
-      [comboKey],
+      internalComboKeys,
     );
 
-    return { ...combo, builds };
+    return { ...toPublicCombo(combo), publicComboRef: comboKey, builds };
   }
 
   async getComboGames(params: ComboGamesParams) {
-    const where = ['r.COMBO_KEY = ?'];
-    const values: unknown[] = [params.comboKey];
+    const internalComboKeys = await this.resolveInternalComboKeys(params.comboKey);
+    const comboPlaceholders = internalComboKeys.map(() => '?').join(', ');
+    const where = [`r.COMBO_KEY IN (${comboPlaceholders})`];
+    const values: unknown[] = [...internalComboKeys];
 
     if (params.game) {
       where.push('g.GAME_NAME LIKE ?');
@@ -198,7 +226,7 @@ export class BenchmarksService {
       values.push(params.resolution);
     }
 
-    values.push(Math.min(params.limit, 500));
+    values.push(limitValue(params.limit, 500, 200));
 
     const rows = await this.dataSource.query(
       `
@@ -213,7 +241,13 @@ export class BenchmarksService {
         r.DISPLAY_FPS_MIN AS displayFpsMin,
         r.DISPLAY_FPS_MAX AS displayFpsMax,
         r.BEST_QUALITY AS bestQuality,
-        r.COMFORT_GRADE AS comfortGrade
+        r.COMFORT_GRADE AS comfortGrade,
+        (
+          SELECT GROUP_CONCAT(DISTINCT source.SOURCE_NAME ORDER BY source.SOURCE_NAME SEPARATOR ', ')
+          FROM benchmark_builds sourceBuild
+          JOIN benchmark_sources source ON source.BENCHMARK_SOURCE_ID = sourceBuild.BENCHMARK_SOURCE_ID
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY
+        ) AS sourceNames
       FROM benchmark_combo_game_results r
       JOIN benchmark_games g ON g.BENCHMARK_GAME_ID = r.BENCHMARK_GAME_ID
       WHERE ${where.join(' AND ')}
@@ -223,7 +257,8 @@ export class BenchmarksService {
       values,
     );
 
-    return { items: rows, total: rows.length };
+    const items = collapseSourceReportedResolutionRows(rows.map((row: any) => ({ ...row, ...benchmarkEvidence(row) })));
+    return { items, total: items.length };
   }
 
   async getQuotePerformance(params: QuotePerformanceParams) {
@@ -266,7 +301,7 @@ export class BenchmarksService {
     return {
       items,
       total: items.length,
-      combo,
+      combo: combo ? toPublicCombo(combo) : null,
     };
   }
 
@@ -404,39 +439,38 @@ export class BenchmarksService {
         r.RAW_FPS_MIN AS rawFpsMin,
         r.RAW_FPS_MAX AS rawFpsMax,
         r.BEST_QUALITY AS bestQuality,
-        r.COMFORT_GRADE AS comfortGrade
+        r.COMFORT_GRADE AS comfortGrade,
+        (
+          SELECT GROUP_CONCAT(DISTINCT source.SOURCE_NAME ORDER BY source.SOURCE_NAME SEPARATOR ', ')
+          FROM benchmark_builds sourceBuild
+          JOIN benchmark_sources source ON source.BENCHMARK_SOURCE_ID = sourceBuild.BENCHMARK_SOURCE_ID
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY
+        ) AS sourceNames
       FROM benchmark_combo_game_results r
       JOIN benchmark_games g ON g.BENCHMARK_GAME_ID = r.BENCHMARK_GAME_ID
       WHERE ${params.where.join(' AND ')}
       ORDER BY ${priorityOrder} g.GAME_NAME ASC, FIELD(r.RESOLUTION, 'FHD', 'QHD', 'UHD')
       LIMIT ?
       `,
-      [...params.values, ...priorityValues, Math.min(params.limit, 200)],
+      [...params.values, ...priorityValues, limitValue(params.limit, 200, 80)],
     );
   }
 
-  async getRecommendedBuilds(params: { source?: string; q?: string; limit: number }) {
+  async getRecommendedBuilds(params: { q?: string; limit: number }) {
     const where: string[] = [];
     const values: unknown[] = [];
 
-    if (params.source) {
-      where.push('s.SOURCE_CODE = ?');
-      values.push(params.source);
-    }
     if (params.q) {
       where.push('(b.TITLE LIKE ? OR b.COMBO_KEY LIKE ? OR b.CPU_MODEL LIKE ? OR b.GPU_MODEL LIKE ?)');
       values.push(`%${params.q}%`, `%${params.q}%`, `%${params.q}%`, `%${params.q}%`);
     }
 
-    values.push(Math.min(params.limit, 100));
+    values.push(limitValue(params.limit, 100, 30));
 
     const rows = await this.dataSource.query(
       `
       SELECT
         b.BENCHMARK_BUILD_ID AS buildId,
-        s.SOURCE_CODE AS sourceCode,
-        s.SOURCE_NAME AS sourceName,
-        b.EXTERNAL_BUILD_ID AS externalBuildId,
         b.TITLE AS title,
         b.COMBO_KEY AS comboKey,
         b.CPU_MODEL AS cpuModel,
@@ -444,21 +478,21 @@ export class BenchmarksService {
         b.CPU_NAME AS cpuName,
         b.GPU_NAME AS gpuName,
         CAST(JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.price')) AS UNSIGNED) AS price,
-        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.url')) AS sourceUrl,
-        JSON_EXTRACT(b.RAW_JSON, '$.keywords') AS keywords,
         COUNT(p.BENCHMARK_BUILD_PART_ID) AS partCount
       FROM benchmark_builds b
-      JOIN benchmark_sources s ON s.BENCHMARK_SOURCE_ID = b.BENCHMARK_SOURCE_ID
       LEFT JOIN benchmark_build_parts p ON p.BENCHMARK_BUILD_ID = b.BENCHMARK_BUILD_ID
       ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
-      GROUP BY b.BENCHMARK_BUILD_ID, s.SOURCE_CODE, s.SOURCE_NAME
+      GROUP BY b.BENCHMARK_BUILD_ID
       ORDER BY price ASC, b.BENCHMARK_BUILD_ID DESC
       LIMIT ?
       `,
       values,
     );
 
-    return { items: rows, total: rows.length };
+    return {
+      items: rows.map((row: any) => toPublicCombo(row)),
+      total: rows.length,
+    };
   }
 
   async getRecommendedBuild(buildId: number) {
@@ -466,20 +500,14 @@ export class BenchmarksService {
       `
       SELECT
         b.BENCHMARK_BUILD_ID AS buildId,
-        s.SOURCE_CODE AS sourceCode,
-        s.SOURCE_NAME AS sourceName,
-        b.EXTERNAL_BUILD_ID AS externalBuildId,
         b.TITLE AS title,
         b.COMBO_KEY AS comboKey,
         b.CPU_MODEL AS cpuModel,
         b.GPU_MODEL AS gpuModel,
         b.CPU_NAME AS cpuName,
         b.GPU_NAME AS gpuName,
-        CAST(JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.price')) AS UNSIGNED) AS price,
-        JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.url')) AS sourceUrl,
-        JSON_EXTRACT(b.RAW_JSON, '$.keywords') AS keywords
+        CAST(JSON_UNQUOTE(JSON_EXTRACT(b.RAW_JSON, '$.price')) AS UNSIGNED) AS price
       FROM benchmark_builds b
-      JOIN benchmark_sources s ON s.BENCHMARK_SOURCE_ID = b.BENCHMARK_SOURCE_ID
       WHERE b.BENCHMARK_BUILD_ID = ?
       `,
       [buildId],
@@ -511,8 +539,132 @@ export class BenchmarksService {
       [buildId],
     );
 
-    return { ...build, parts };
+    return { ...toPublicCombo(build), parts };
   }
+
+  private async resolveInternalComboKeys(publicComboKey: string) {
+    const decodedComboKeys = decodePublicComboRef(publicComboKey);
+    const decodedCandidates = Array.isArray(decodedComboKeys) ? decodedComboKeys : decodedComboKeys ? [decodedComboKeys] : [];
+    const candidates = [
+      ...decodedCandidates,
+      publicComboKey,
+      `kjwwang-${publicComboKey}`,
+      `wanggapc-${publicComboKey}`,
+    ].filter(Boolean) as string[];
+    const uniqueCandidates = [...new Set(candidates)];
+    const placeholders = uniqueCandidates.map(() => '?').join(', ');
+    const rows = await this.dataSource.query(
+      `
+      SELECT COMBO_KEY AS comboKey
+      FROM benchmark_builds
+      WHERE COMBO_KEY IN (${placeholders})
+      ORDER BY FIELD(COMBO_KEY, ${placeholders})
+      `,
+      [...uniqueCandidates, ...uniqueCandidates],
+    );
+    const resolved = rows.map((row: any) => String(row.comboKey)).filter(Boolean);
+    return resolved.length ? resolved : uniqueCandidates.slice(0, 1);
+  }
+}
+
+function toPublicComboKey(comboKey: unknown) {
+  return String(comboKey ?? '').replace(/^(?:kjwwang|wanggapc)-/i, '');
+}
+
+function toPublicCombo(row: any) {
+  const internalComboKey = String(row.comboKey ?? '');
+  const comboKey = toPublicComboKey(row.comboKey);
+  const publicCpuModel = formatPublicCpuModel(row.cpuModel, row.cpuName);
+  const publicGpuModel = formatPublicGpuModel(row.gpuModel, row.gpuName);
+  const resultCount = Number(row.resultCount ?? 0);
+  return {
+    ...row,
+    comboKey,
+    publicComboRef: toPublicComboRef(internalComboKey),
+    cpuModel: publicCpuModel,
+    gpuModel: publicGpuModel,
+    publicCpuModel,
+    publicGpuModel,
+    publicComboName: formatPublicComboName(row.cpuModel, row.gpuModel, row.cpuName, row.gpuName),
+    hasFpsEvidence: resultCount > 0 || Number(row.gameCount ?? 0) > 0,
+  };
+}
+
+function toPublicComboRef(internalComboKey: string | string[]) {
+  const keys = Array.isArray(internalComboKey) ? [...new Set(internalComboKey)].sort() : [internalComboKey];
+  const payload = keys.length === 1 ? keys[0] : JSON.stringify(keys);
+  return `combo_${Buffer.from(payload, 'utf8').toString('base64url')}`;
+}
+
+function decodePublicComboRef(publicComboKey: string) {
+  if (!publicComboKey.startsWith('combo_')) return null;
+  try {
+    const decoded = Buffer.from(publicComboKey.slice('combo_'.length), 'base64url').toString('utf8');
+    if (decoded.startsWith('[')) {
+      const keys = JSON.parse(decoded);
+      return Array.isArray(keys) ? keys.filter((key): key is string => typeof key === 'string' && key.length > 0) : null;
+    }
+    return decoded;
+  } catch {
+    return null;
+  }
+}
+
+function mergePublicCombos(rows: any[]) {
+  const groups = new Map<string, any>();
+  for (const row of rows) {
+    const groupKey = `${row.publicCpuModel ?? row.cpuModel}::${row.publicGpuModel ?? row.gpuModel}`.toLowerCase();
+    const decodedRef = decodePublicComboRef(String(row.publicComboRef ?? ''));
+    const internalComboKeys = Array.isArray(decodedRef)
+      ? decodedRef
+      : decodedRef
+        ? [decodedRef]
+        : [String(row.comboKey ?? '')];
+    const current = groups.get(groupKey);
+    if (!current) {
+      groups.set(groupKey, { ...row, __internalComboKeys: internalComboKeys });
+      continue;
+    }
+
+    current.__internalComboKeys.push(...internalComboKeys);
+    current.buildSampleCount = sumCount(current.buildSampleCount, row.buildSampleCount);
+    current.resultCount = sumCount(current.resultCount, row.resultCount);
+    current.gameCount = Math.max(Number(current.gameCount ?? 0), Number(row.gameCount ?? 0));
+    current.hasFpsEvidence = Boolean(current.hasFpsEvidence || row.hasFpsEvidence);
+    current.publicComboRef = toPublicComboRef(current.__internalComboKeys);
+  }
+
+  return [...groups.values()].map(({ __internalComboKeys, ...row }) => row);
+}
+
+function sumCount(left: unknown, right: unknown) {
+  const total = Number(left ?? 0) + Number(right ?? 0);
+  return Number.isFinite(total) ? total : 0;
+}
+
+export function collapseSourceReportedResolutionRows(rows: any[]) {
+  const grouped = new Map<string, any[]>();
+  rows.forEach((row) => {
+    const key = `${row.gameId ?? row.gameName}`;
+    const group = grouped.get(key) ?? [];
+    group.push(row);
+    grouped.set(key, group);
+  });
+
+  const result: any[] = [];
+  for (const group of grouped.values()) {
+    const signatures = new Set(group.map((row) => `${row.rawFpsAvg}-${row.rawFpsMin}-${row.rawFpsMax}-${row.displayFpsMin ?? row.fpsMin}-${row.displayFpsMax ?? row.fpsMax}`));
+    if (group.length > 1 && group.every((row) => row.evidenceType === 'SOURCE_REPORTED') && signatures.size === 1) {
+      const first = group[0];
+      result.push({
+        ...first,
+        evidenceNote: '해상도별 독립 실측값이 없어 원본 보고값 1건만 표시합니다.',
+      });
+    } else {
+      result.push(...group);
+    }
+  }
+  return result;
 }
 
 function findPartName(parts: Array<{ category?: string; name?: string }>, categories: string[]) {
@@ -602,7 +754,7 @@ function mapQuotePerformanceRow(row: any) {
 }
 
 function normalizeQuotePerformanceRows(rows: any[]) {
-  const items = rows.filter(hasMeasuredFps).map(mapQuotePerformanceRow);
+  const items = collapseSourceReportedResolutionRows(rows.filter(hasMeasuredFps).map(mapQuotePerformanceRow));
   const groupMap = new Map<string, typeof items>();
 
   items.forEach((item) => {
@@ -613,7 +765,7 @@ function normalizeQuotePerformanceRows(rows: any[]) {
 
   return items.map((item) => {
     const group = groupMap.get(item.game) ?? [];
-    if (!shouldAdjustResolutionBuckets(group)) return item;
+    if (item.evidenceType === 'SOURCE_REPORTED' || !shouldAdjustResolutionBuckets(group)) return item;
 
     const baseline = group.find((result) => result.resolution === 'FHD') ?? group[0];
     const multiplier = getResolutionFpsMultiplier(item.resolution);
@@ -678,12 +830,22 @@ function benchmarkEvidence(row: any) {
     && displayMin === Math.round(rawAvg * 0.85)
     && displayMax === Math.round(rawAvg * 1.15);
 
-  if (hasSyntheticDisplayRange || sampleCount <= 1) {
+  if (hasSyntheticDisplayRange) {
     return {
       isEstimated: true,
       evidenceType: 'SOURCE_REPORTED',
       confidence: 'LOW',
       evidenceNote: '게임당 평균 보고값이며 해상도별 독립 실측을 확인할 수 없습니다.',
+    };
+  }
+
+  if (sampleCount <= 1) {
+    const sourceNames = String(row.sourceNames ?? '').trim();
+    return {
+      isEstimated: true,
+      evidenceType: 'SOURCE_REPORTED',
+      confidence: 'LOW',
+      evidenceNote: `${sourceNames ? `${sourceNames} ` : ''}원문에 표시된 게임별 평균 FPS입니다. 우리 서버 직접 실측값이 아니며 테스트 조건을 함께 확인해주세요.`,
     };
   }
 
@@ -693,4 +855,9 @@ function benchmarkEvidence(row: any) {
     confidence: sampleCount >= 3 ? 'MEDIUM' : 'LOW',
     evidenceNote: '원본 FPS 집계값입니다. 테스트 조건을 함께 확인해주세요.',
   };
+}
+
+function limitValue(value: number, maximum: number, fallback: number) {
+  if (!Number.isFinite(value)) return fallback;
+  return Math.min(maximum, Math.max(1, Math.floor(value)));
 }

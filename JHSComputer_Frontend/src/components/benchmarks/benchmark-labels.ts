@@ -9,6 +9,8 @@ export const comfortGradeLabels: Record<string, string> = {
 };
 
 export const qualityLabels: Record<string, string> = {
+  NATIVE: '네이티브',
+  QUALITY: '품질 모드',
   ULTRA: '울트라',
   HIGH: '높음',
   BALANCED: '균형',

@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Public } from '../auth';
 import { BenchmarksService } from './benchmarks.service';
 
 @Controller('benchmarks')
@@ -6,16 +7,19 @@ export class BenchmarksController {
   constructor(private readonly benchmarksService: BenchmarksService) {}
 
   @Get('summary')
+  @Public()
   async getSummary() {
     return this.benchmarksService.getSummary();
   }
 
   @Get('games')
+  @Public()
   async getGames(@Query('q') q?: string, @Query('limit') limit = '100') {
     return this.benchmarksService.getGames({ q, limit: Number(limit) || 100 });
   }
 
   @Get('combos')
+  @Public()
   async getCombos(
     @Query('q') q?: string,
     @Query('cpu') cpu?: string,
@@ -37,29 +41,31 @@ export class BenchmarksController {
   }
 
   @Get('recommended-builds')
+  @Public()
   async getRecommendedBuilds(
-    @Query('source') source?: string,
     @Query('q') q?: string,
     @Query('limit') limit = '30',
   ) {
     return this.benchmarksService.getRecommendedBuilds({
-      source,
       q,
       limit: Number(limit) || 30,
     });
   }
 
   @Get('recommended-builds/:buildId')
+  @Public()
   async getRecommendedBuild(@Param('buildId') buildId: string) {
     return this.benchmarksService.getRecommendedBuild(Number(buildId));
   }
 
   @Get('combos/:comboKey')
+  @Public()
   async getComboDetail(@Param('comboKey') comboKey: string) {
     return this.benchmarksService.getComboDetail(comboKey);
   }
 
   @Get('combos/:comboKey/games')
+  @Public()
   async getComboGames(
     @Param('comboKey') comboKey: string,
     @Query('game') game?: string,
@@ -75,6 +81,7 @@ export class BenchmarksController {
   }
 
   @Post('quote-performance')
+  @Public()
   async getQuotePerformance(
     @Body()
     body: {

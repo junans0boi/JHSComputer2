@@ -5,6 +5,7 @@ export type BenchmarkSummary = {
   gameCount: string;
   fpsResultCount: string;
   comboGameResultCount: string;
+  sourceComboCount?: string;
   topCombos: BenchmarkCombo[];
 };
 
@@ -18,6 +19,11 @@ export type BenchmarkCombo = {
   gameCount?: string;
   resultCount?: string;
   sampleCount?: string;
+  publicCpuModel?: string;
+  publicGpuModel?: string;
+  publicComboName?: string;
+  publicComboRef?: string;
+  hasFpsEvidence?: boolean;
 };
 
 export type BenchmarkGameResult = {
@@ -32,9 +38,13 @@ export type BenchmarkGameResult = {
   displayFpsMax: number | null;
   bestQuality: string;
   comfortGrade: string;
+  isEstimated?: boolean;
+  evidenceType?: 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
+  confidence?: 'HIGH' | 'MEDIUM' | 'LOW';
+  evidenceNote?: string;
 };
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:6002/api';
+const apiBaseUrl = process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3010/api';
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -58,8 +68,11 @@ export async function loadBenchmarkSummary() {
   });
 }
 
-export async function loadBenchmarkCombos(limit = 12) {
-  return getJson<{ items: BenchmarkCombo[]; total: number }>(`/benchmarks/combos?limit=${limit}`, { items: [], total: 0 });
+export async function loadBenchmarkCombos(limit = 200, includeNoFps = true) {
+  return getJson<{ items: BenchmarkCombo[]; total: number }>(
+    `/benchmarks/combos?limit=${limit}&includeNoFps=${includeNoFps ? 'true' : 'false'}`,
+    { items: [], total: 0 },
+  );
 }
 
 export async function loadComboGameResults(comboKey: string, limit = 18) {
