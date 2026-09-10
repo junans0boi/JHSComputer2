@@ -28,10 +28,22 @@ export type BenchmarkCombo = {
   gpuPartId?: number;
 };
 
+export type BenchmarkSelectorOptions = {
+  cpus: Array<{ value: string; label: string; comboCount: number }>;
+  gpus: Array<{ value: string; label: string; comboCount: number }>;
+  combos: Array<Pick<BenchmarkCombo, 'publicComboRef' | 'publicComboName' | 'publicCpuModel' | 'publicGpuModel' | 'cpuPartId' | 'gpuPartId' | 'gameCount' | 'resultCount'>>;
+  total: number;
+};
+
 export type BenchmarkGameResult = {
   gameId: string;
   gameName: string;
   resolution: 'FHD' | 'QHD' | 'UHD';
+  optionPreset?: string;
+  sourceConditionKey?: string;
+  sourceNames?: string;
+  sourceUrl?: string;
+  testSystem?: string;
   sampleCount: number;
   rawFpsAvg: string;
   rawFpsMin: number;
@@ -116,6 +128,15 @@ export async function loadBenchmarkCombos(limit = 200, includeNoFps = true) {
     `/benchmarks/combos?limit=${limit}&includeNoFps=${includeNoFps ? 'true' : 'false'}`,
     { items: [], total: 0 },
   );
+}
+
+export async function loadBenchmarkSelectorOptions() {
+  return getJson<BenchmarkSelectorOptions>('/benchmarks/selector-options', {
+    cpus: [],
+    gpus: [],
+    combos: [],
+    total: 0,
+  });
 }
 
 export async function loadComboGameResults(comboKey: string, limit = 18) {

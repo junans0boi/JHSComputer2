@@ -1,84 +1,110 @@
 import type { BenchmarkGameResult } from '@/lib/server-benchmarks';
 import { getGameLogo } from '@/lib/game-assets';
-import { comfortGradeLabels, qualityLabels, resolutionLabel } from './benchmark-labels';
+import { comfortGradeLabels, qualityLabels } from './benchmark-labels';
+
+const RESOLUTIONS: BenchmarkGameResult['resolution'][] = ['FHD', 'QHD', 'UHD'];
 
 export function BenchmarkGameTable({ comboName, hasFpsEvidence, games }: { comboName?: string; hasFpsEvidence?: boolean; games: BenchmarkGameResult[] }) {
-  const groupedGames = games.reduce<Record<string, BenchmarkGameResult[]>>((acc, item) => {
-    acc[item.gameName] = [...(acc[item.gameName] ?? []), item];
-    return acc;
-  }, {});
+  const rows = groupGames(games);
 
   return (
-    <div className="rounded-3xl border border-line bg-white p-4 shadow-soft sm:p-5">
-      <div>
-        <p className="text-sm font-bold text-slate-500">대표 조합</p>
-        <h2 className="mt-1 break-all text-xl font-black">{comboName ?? '데이터 없음'}</h2>
-        <p className="mt-2 text-sm text-slate-600">
-          {hasFpsEvidence ? '수집된 성능 근거를 게임별 예상 범위와 체감 등급으로 정리했습니다.' : '이 조합은 수집되었지만 아직 연결된 FPS 근거가 없습니다.'}
+    <section className="min-w-0 rounded-3xl border border-line bg-white p-4 shadow-soft sm:p-5">
+      <div className="min-w-0">
+        <p className="text-sm font-bold text-slate-500">선택한 FPS 근거 조합</p>
+        <h2 className="mt-1 safe-break text-xl font-black text-slate-950">{comboName ?? 'CPU와 GPU 조합을 선택하세요'}</h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {hasFpsEvidence ? '게임과 옵션별로 실제 확인된 해상도 FPS만 표시합니다. 빈 칸은 해당 해상도 원본이 없다는 뜻입니다.' : '선택한 CPU·GPU 조합의 해상도별 FPS 근거가 없습니다. 다른 FPS 근거 조합을 선택해 주세요.'}
         </p>
       </div>
-      <div className="mt-5 grid gap-3">
-        {Object.entries(groupedGames).map(([gameName, results]) => {
-          const logo = getGameLogo(gameName);
-          return (
-            <article className="rounded-2xl border border-line bg-slate-50 p-4" key={gameName}>
-              <div className="flex items-center gap-3">
-                <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br ${logo.tone} text-xs font-black text-white shadow-sm`}>
-                  {logo.initials}
-                </span>
-                <div>
-                  <h3 className="safe-break font-black text-slate-950">{gameName}</h3>
-                  <p className="text-xs font-bold text-slate-500">해상도별 추천 옵션과 예상 FPS</p>
-                </div>
-              </div>
-              <div className="mt-4 grid gap-2 md:grid-cols-3">
-                {results.map((item) => (
-                  <div className="rounded-xl border border-line bg-white p-3" key={`${item.gameId}-${item.resolution}`}>
-                    <div className="flex items-center justify-between gap-2">
-                      <strong className="text-sm">{resolutionLabel(item.resolution)}</strong>
-                      <span className="rounded-full bg-teal-50 px-2 py-1 text-[11px] font-black text-brand">
-                        {comfortGradeLabels[item.comfortGrade] ?? item.comfortGrade}
-                      </span>
-                    </div>
-                    <div className="mt-2 text-lg font-black text-slate-950">
-                      {formatFps(item)}
-                    </div>
-                    <div className="mt-1 text-xs font-bold text-slate-500">
-                      옵션 {qualityLabels[item.bestQuality] ?? item.bestQuality}
-                    </div>
-                    <div className="mt-1 text-[11px] font-bold text-slate-400">
-                      근거 {evidenceLabel(item.evidenceType)} · 표본 {item.sampleCount ?? 0}회
-                    </div>
-                    {item.evidenceNote && (
-                      <div className="mt-2 text-[11px] leading-4 text-slate-500">{item.evidenceNote}</div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </article>
-          );
-        })}
-        {games.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-line p-8 text-center text-sm font-bold text-slate-500">
-            {hasFpsEvidence ? '아직 표시할 게임 성능 데이터가 없습니다.' : '이 조합의 성능 데이터는 준비 중입니다. 수집 조합 자체는 왼쪽 목록에서 확인할 수 있습니다.'}
-          </div>
-        )}
-      </div>
+
+      {rows.length ? (
+        <div className="mt-5 min-w-0 overflow-x-auto rounded-2xl border border-line">
+          <table className="w-full min-w-[760px] border-collapse text-left">
+            <thead className="bg-slate-50 text-xs font-black text-slate-600">
+              <tr>
+                <th className="w-16 px-3 py-3" scope="col">로고</th>
+                <th className="min-w-48 px-3 py-3" scope="col">게임명</th>
+                <th className="min-w-28 px-3 py-3" scope="col">옵션</th>
+                <th className="min-w-36 px-3 py-3" scope="col">FHD</th>
+                <th className="min-w-36 px-3 py-3" scope="col">QHD</th>
+                <th className="min-w-36 px-3 py-3" scope="col">4K</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-line">
+              {rows.map((row) => {
+                const logo = getGameLogo(row.gameName);
+                return (
+                  <tr className="align-top" key={row.key}>
+                    <td className="px-3 py-3">
+                      <span className={`grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br ${logo.tone} text-[10px] font-black text-white shadow-sm`} title={row.gameName}>{logo.initials}</span>
+                    </td>
+                    <th className="safe-break px-3 py-3 text-sm font-black text-slate-950" scope="row">{row.gameName}</th>
+                    <td className="safe-break px-3 py-3 text-xs font-bold text-slate-600">{formatOption(row.quality)}</td>
+                    {RESOLUTIONS.map((resolution) => <td className="px-3 py-3" key={resolution}>{renderCell(row.cells[resolution])}</td>)}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="mt-5 rounded-2xl border border-dashed border-line bg-slate-50 p-8 text-center text-sm font-bold leading-6 text-slate-500">
+          {hasFpsEvidence ? '선택한 조합에 연결된 게임별 FPS 원본이 아직 없습니다.' : 'FPS 근거가 있는 CPU·GPU 조합을 선택하면 게임 표가 표시됩니다.'}
+        </div>
+      )}
+    </section>
+  );
+}
+
+type GameRow = {
+  key: string;
+  gameName: string;
+  quality: string;
+  cells: Partial<Record<BenchmarkGameResult['resolution'], BenchmarkGameResult>>;
+};
+
+function groupGames(games: BenchmarkGameResult[]): GameRow[] {
+  const grouped = new Map<string, GameRow>();
+  for (const game of games) {
+    const quality = game.optionPreset || game.bestQuality || 'UNKNOWN';
+    const key = `${game.gameId}:${quality}:${game.sourceConditionKey ?? 'UNKNOWN'}`;
+    const row = grouped.get(key) ?? { key, gameName: game.gameName, quality, cells: {} };
+    row.cells[game.resolution] = game;
+    grouped.set(key, row);
+  }
+  return [...grouped.values()].sort((left, right) => left.gameName.localeCompare(right.gameName, 'ko') || left.quality.localeCompare(right.quality));
+}
+
+function renderCell(item?: BenchmarkGameResult) {
+  if (!item) return <span className="text-sm font-bold text-slate-300">—</span>;
+  return (
+    <div className="min-w-0">
+      <strong className="block whitespace-nowrap text-sm font-black text-slate-950">{formatFps(item)} <span className="text-xs text-brand">({comfortGradeLabels[item.comfortGrade] ?? item.comfortGrade})</span></strong>
+      <span className="mt-1 block text-[11px] font-bold text-slate-400">{evidenceLabel(item.evidenceType)} · {item.sampleCount ?? 0}회</span>
+      {item.evidenceNote && <span className="mt-1 block safe-break text-[11px] leading-4 text-slate-500">{item.evidenceNote}</span>}
+      {(item.sourceNames || item.testSystem) && <span className="mt-1 block safe-break text-[10px] leading-4 text-slate-400">{item.sourceNames ?? '원본'}{item.testSystem ? ` · 테스트 ${item.testSystem}` : ''}</span>}
+      {item.sourceUrl && <a className="mt-1 block break-all text-[10px] font-bold text-brand underline" href={item.sourceUrl} rel="noreferrer" target="_blank">원본 조건 보기</a>}
     </div>
   );
 }
 
 function formatFps(item: BenchmarkGameResult) {
-  if (!item.displayFpsMin || !item.displayFpsMax) {
-    return item.rawFpsAvg ? `${Math.round(Number(item.rawFpsAvg))} FPS` : '-';
+  const average = Number(item.rawFpsAvg);
+  if (Number.isFinite(average) && average > 0) return `${Math.round(average)} FPS`;
+  if (item.displayFpsMin && item.displayFpsMax) {
+    return item.displayFpsMin === item.displayFpsMax ? `${item.displayFpsMin} FPS` : `${item.displayFpsMin}~${item.displayFpsMax} FPS`;
   }
-  if (item.displayFpsMin === item.displayFpsMax) return `${item.displayFpsMin} FPS`;
-  return `${item.displayFpsMin}~${item.displayFpsMax} FPS`;
+  return '—';
 }
 
 function evidenceLabel(type?: BenchmarkGameResult['evidenceType']) {
-  if (type === 'MEASURED') return '측정 집계값';
-  if (type === 'SOURCE_REPORTED') return '출처 보고값';
-  if (type === 'DERIVED') return '추정값';
-  return '없음';
+  if (type === 'MEASURED') return '직접 측정';
+  if (type === 'SOURCE_REPORTED') return '출처 보고';
+  if (type === 'DERIVED') return '파생값';
+  return '근거 없음';
+}
+
+function formatOption(value: string) {
+  const normalized = value.replace(/^\s*[–-]\s*/, '').trim();
+  return (qualityLabels[value] ?? normalized) || '옵션 미상';
 }

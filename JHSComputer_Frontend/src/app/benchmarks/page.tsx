@@ -1,20 +1,22 @@
 import { AppShell } from '@/components/AppShell';
-import { BenchmarkComboList } from '@/components/benchmarks/BenchmarkComboList';
 import { BenchmarkGameTable } from '@/components/benchmarks/BenchmarkGameTable';
+import { BenchmarkSelector } from '@/components/benchmarks/BenchmarkSelector';
 import { BenchmarkScoreComparison } from '@/components/benchmarks/BenchmarkScoreComparison';
 import { BenchmarkRecommendationSection } from '@/components/benchmarks/BenchmarkRecommendationSection';
 import { BenchmarkSummaryCards } from '@/components/benchmarks/BenchmarkSummaryCards';
-import { loadBenchmarkCombos, loadBenchmarkSummary, loadComboGameResults, loadComponentBenchmarkComparison, loadRecommendationComboDetail, loadRecommendationCombos } from '@/lib/server-benchmarks';
+import { loadBenchmarkSelectorOptions, loadBenchmarkSummary, loadComboGameResults, loadComponentBenchmarkComparison, loadRecommendationComboDetail, loadRecommendationCombos } from '@/lib/server-benchmarks';
 
-export default async function BenchmarksPage(props: { searchParams: Promise<{ comboKey?: string; recommendationComboRef?: string }> }) {
+export default async function BenchmarksPage(props: { searchParams: Promise<{ comboKey?: string; cpu?: string; gpu?: string; recommendationComboRef?: string }> }) {
   const searchParams = await props.searchParams;
-  const [summary, combos, recommendationCombos] = await Promise.all([
+  const [summary, selectorOptions, recommendationCombos] = await Promise.all([
     loadBenchmarkSummary(),
-    loadBenchmarkCombos(200, true),
+    loadBenchmarkSelectorOptions(),
     loadRecommendationCombos(200),
   ]);
-  const selectedCombo = searchParams.comboKey ?? combos.items.find((combo) => combo.hasFpsEvidence)?.publicComboRef ?? combos.items[0]?.publicComboRef ?? combos.items[0]?.comboKey;
-  const selectedComboInfo = combos.items.find((combo) => combo.publicComboRef === selectedCombo || combo.comboKey === selectedCombo);
+  const selectedComboInfo = selectorOptions.combos.find((combo) => combo.publicComboRef === searchParams.comboKey)
+    ?? selectorOptions.combos.find((combo) => combo.publicCpuModel === searchParams.cpu && combo.publicGpuModel === searchParams.gpu)
+    ?? (!searchParams.cpu && !searchParams.gpu ? selectorOptions.combos[0] : undefined);
+  const selectedCombo = selectedComboInfo?.publicComboRef;
   const requestedRecommendationRef = searchParams.recommendationComboRef;
   const selectedRecommendation = recommendationCombos.items.find((combo) => combo.publicComboRef === requestedRecommendationRef) ?? recommendationCombos.items[0];
   const selectedRecommendationRef = selectedRecommendation?.publicComboRef;
@@ -39,20 +41,24 @@ export default async function BenchmarksPage(props: { searchParams: Promise<{ co
           </div>
         </div>
 
-        <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(300px,420px)_minmax(0,1fr)]">
-          <BenchmarkComboList combos={combos.items} total={combos.total} />
-          <BenchmarkGameTable
-            comboName={selectedComboInfo?.publicComboName}
-            hasFpsEvidence={selectedComboInfo?.hasFpsEvidence}
-            games={games.items}
-          />
+        <div className="grid min-w-0 gap-5">
+          <section className="min-w-0 rounded-3xl border border-line bg-white p-4 shadow-soft sm:p-5">
+            <div className="mb-4">
+              <p className="text-sm font-black text-brand">FPS 조합 선택</p>
+              <h2 className="mt-1 text-xl font-black text-slate-950">CPU와 GPU를 골라 성능 확인</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">FPS 원본이 있는 조합만 선택지로 제공합니다. 추천 조합 수와 FPS 근거 조합 수는 별도입니다.</p>
+            </div>
+            <BenchmarkSelector options={selectorOptions} selectedCpu={searchParams.cpu ?? selectedComboInfo?.publicCpuModel} selectedGpu={searchParams.gpu ?? selectedComboInfo?.publicGpuModel} />
+          </section>
+          <BenchmarkGameTable comboName={selectedComboInfo?.publicComboName} hasFpsEvidence={Boolean(selectedComboInfo)} games={games.items} />
         </div>
-        {(selectedComboInfo?.cpuPartId || selectedComboInfo?.gpuPartId) && (
-          <div className="grid min-w-0 gap-5 lg:grid-cols-2">
-            {selectedComboInfo?.cpuPartId && <BenchmarkScoreComparison data={cpuBenchmarks} title="대표 조합의 CPU 벤치마크" />}
-            {selectedComboInfo?.gpuPartId && <BenchmarkScoreComparison data={gpuBenchmarks} title="대표 조합의 GPU 벤치마크" />}
-          </div>
+        {selectedComboInfo?.cpuPartId && (
+          <section className="grid min-w-0 gap-5 lg:grid-cols-2">
+            <BenchmarkScoreComparison data={cpuBenchmarks} title="Cinebench 2024 · 싱글코어" testName="Cinebench 2024" metric="SINGLE_CORE" compact />
+            <BenchmarkScoreComparison data={cpuBenchmarks} title="Cinebench 2024 · 멀티코어" testName="Cinebench 2024" metric="MULTI_CORE" compact />
+          </section>
         )}
+        {selectedComboInfo?.gpuPartId && <BenchmarkScoreComparison data={gpuBenchmarks} title="선택 GPU 벤치마크 비교" />}
         <BenchmarkRecommendationSection
           combos={recommendationCombos.items}
           detail={recommendationDetail}

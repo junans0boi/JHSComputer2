@@ -29,6 +29,12 @@ type RecommendationComboSearchParams = {
   limit: number;
 };
 
+export type BenchmarkSelectorOption = {
+  value: string;
+  label: string;
+  comboCount: number;
+};
+
 type QuotePerformanceParams = {
   parts: Array<{ category?: string; name?: string }>;
   games: string[];
@@ -82,7 +88,9 @@ export class BenchmarksService {
       LEFT JOIN benchmark_combo_game_results r ON r.COMBO_KEY = b.COMBO_KEY
       GROUP BY b.COMBO_KEY
     `);
-    const publicComboCount = mergePublicCombos(publicComboRows.map((row: any) => toPublicCombo(row))).length;
+    const publicCombos = mergePublicCombos(publicComboRows.map((row: any) => toPublicCombo(row)));
+    const publicComboCount = publicCombos.length;
+    const publicFpsComboCount = publicCombos.filter((combo) => combo.hasFpsEvidence).length;
 
     const publicTopCombos = mergePublicCombos(topCombos.map((combo: any) => toPublicCombo(combo)));
     await this.attachComponentPartIds(publicTopCombos);
@@ -90,6 +98,7 @@ export class BenchmarksService {
     return {
       ...summary,
       sourceComboCount: summary.totalComboCount,
+      fpsComboCount: String(publicFpsComboCount),
       totalComboCount: String(publicComboCount),
       topCombos: publicTopCombos,
     };
@@ -161,7 +170,7 @@ export class BenchmarksService {
       )`);
     }
 
-    values.push(limitValue(params.limit, 200, 50));
+    values.push(limitValue(params.limit, 1000, 50));
     const rows = await this.dataSource.query(
       `
       SELECT
@@ -186,6 +195,29 @@ export class BenchmarksService {
     const items = mergePublicCombos(rows.map((row: any) => toPublicCombo(row)));
     await this.attachComponentPartIds(items);
     return { items, total: items.length };
+  }
+
+  async getSelectorOptions() {
+    const { items } = await this.getCombos({ includeNoFps: false, limit: 1000 });
+    const fpsCombos = items.filter((combo) => combo.hasFpsEvidence);
+    const cpuCounts = countSelectorValues(fpsCombos.map((combo) => combo.publicCpuModel ?? combo.cpuModel));
+    const gpuCounts = countSelectorValues(fpsCombos.map((combo) => combo.publicGpuModel ?? combo.gpuModel));
+
+    return {
+      cpus: selectorOptions(cpuCounts),
+      gpus: selectorOptions(gpuCounts),
+      combos: fpsCombos.map((combo) => ({
+        publicComboRef: combo.publicComboRef,
+        publicComboName: combo.publicComboName,
+        publicCpuModel: combo.publicCpuModel,
+        publicGpuModel: combo.publicGpuModel,
+        cpuPartId: combo.cpuPartId,
+        gpuPartId: combo.gpuPartId,
+        gameCount: Number(combo.gameCount ?? 0),
+        resultCount: Number(combo.resultCount ?? 0),
+      })),
+      total: fpsCombos.length,
+    };
   }
 
   async getRecommendationCombos(params: RecommendationComboSearchParams) {
@@ -393,6 +425,8 @@ export class BenchmarksService {
         g.BENCHMARK_GAME_ID AS gameId,
         g.GAME_NAME AS gameName,
         r.RESOLUTION AS resolution,
+        r.OPTION_KEY AS optionPreset,
+        r.SOURCE_CONDITION_KEY AS sourceConditionKey,
         r.SAMPLE_COUNT AS sampleCount,
         r.RAW_FPS_AVG AS rawFpsAvg,
         r.RAW_FPS_MIN AS rawFpsMin,
@@ -405,8 +439,18 @@ export class BenchmarksService {
           SELECT GROUP_CONCAT(DISTINCT source.SOURCE_NAME ORDER BY source.SOURCE_NAME SEPARATOR ', ')
           FROM benchmark_builds sourceBuild
           JOIN benchmark_sources source ON source.BENCHMARK_SOURCE_ID = sourceBuild.BENCHMARK_SOURCE_ID
-          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY
-        ) AS sourceNames
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceNames,
+        (
+          SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.sourceUrl')))
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceUrl,
+        (
+          SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.testSystem')))
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS testSystem
       FROM benchmark_combo_game_results r
       JOIN benchmark_games g ON g.BENCHMARK_GAME_ID = r.BENCHMARK_GAME_ID
       WHERE ${where.join(' AND ')}
@@ -416,7 +460,7 @@ export class BenchmarksService {
       values,
     );
 
-    const items = collapseSourceReportedResolutionRows(rows.map((row: any) => ({ ...row, ...benchmarkEvidence(row) })));
+    const items = rows.map((row: any) => ({ ...row, ...benchmarkEvidence(row) }));
     return { items, total: items.length };
   }
 
@@ -591,6 +635,8 @@ export class BenchmarksService {
         g.BENCHMARK_GAME_ID AS gameId,
         g.GAME_NAME AS gameName,
         r.RESOLUTION AS resolution,
+        r.OPTION_KEY AS optionPreset,
+        r.SOURCE_CONDITION_KEY AS sourceConditionKey,
         r.SAMPLE_COUNT AS sampleCount,
         r.RAW_FPS_AVG AS rawFpsAvg,
         r.DISPLAY_FPS_MIN AS displayFpsMin,
@@ -603,8 +649,18 @@ export class BenchmarksService {
           SELECT GROUP_CONCAT(DISTINCT source.SOURCE_NAME ORDER BY source.SOURCE_NAME SEPARATOR ', ')
           FROM benchmark_builds sourceBuild
           JOIN benchmark_sources source ON source.BENCHMARK_SOURCE_ID = sourceBuild.BENCHMARK_SOURCE_ID
-          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY
-        ) AS sourceNames
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceNames,
+        (
+          SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.sourceUrl')))
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS sourceUrl,
+        (
+          SELECT MAX(JSON_UNQUOTE(JSON_EXTRACT(sourceBuild.RAW_JSON, '$.testSystem')))
+          FROM benchmark_builds sourceBuild
+          WHERE sourceBuild.COMBO_KEY = r.COMBO_KEY AND sourceBuild.EXTERNAL_BUILD_ID = r.SOURCE_CONDITION_KEY
+        ) AS testSystem
       FROM benchmark_combo_game_results r
       JOIN benchmark_games g ON g.BENCHMARK_GAME_ID = r.BENCHMARK_GAME_ID
       WHERE ${params.where.join(' AND ')}
@@ -949,10 +1005,26 @@ function sumCount(left: unknown, right: unknown) {
   return Number.isFinite(total) ? total : 0;
 }
 
+function countSelectorValues(values: Array<unknown>) {
+  const counts = new Map<string, number>();
+  for (const value of values) {
+    const normalized = String(value ?? '').trim();
+    if (!normalized) continue;
+    counts.set(normalized, (counts.get(normalized) ?? 0) + 1);
+  }
+  return counts;
+}
+
+function selectorOptions(counts: Map<string, number>): BenchmarkSelectorOption[] {
+  return [...counts.entries()]
+    .sort(([left], [right]) => left.localeCompare(right, 'ko'))
+    .map(([value, comboCount]) => ({ value, label: value, comboCount }));
+}
+
 export function collapseSourceReportedResolutionRows(rows: any[]) {
   const grouped = new Map<string, any[]>();
   rows.forEach((row) => {
-    const key = `${row.gameId ?? row.gameName}`;
+    const key = `${row.gameId ?? row.gameName}:${row.optionPreset ?? row.bestQuality ?? 'UNKNOWN'}:${row.sourceConditionKey ?? 'UNKNOWN'}`;
     const group = grouped.get(key) ?? [];
     group.push(row);
     grouped.set(key, group);
@@ -1048,6 +1120,8 @@ function mapQuotePerformanceRow(row: any) {
   return {
     game: row.gameName,
     resolution: row.resolution === 'UHD' ? '4K' : row.resolution,
+    optionPreset: row.optionPreset,
+    sourceConditionKey: row.sourceConditionKey,
     grade: mapComfortGrade(row.comfortGrade, fpsMin),
     fpsMin,
     fpsMax: Math.max(fpsMin, fpsMax),
@@ -1065,13 +1139,15 @@ function normalizeQuotePerformanceRows(rows: any[]) {
   const groupMap = new Map<string, typeof items>();
 
   items.forEach((item) => {
-    const group = groupMap.get(item.game) ?? [];
+    const key = `${item.game}:${item.optionPreset ?? 'UNKNOWN'}:${item.sourceConditionKey ?? 'UNKNOWN'}`;
+    const group = groupMap.get(key) ?? [];
     group.push(item);
-    groupMap.set(item.game, group);
+    groupMap.set(key, group);
   });
 
   return items.map((item) => {
-    const group = groupMap.get(item.game) ?? [];
+    const key = `${item.game}:${item.optionPreset ?? 'UNKNOWN'}:${item.sourceConditionKey ?? 'UNKNOWN'}`;
+    const group = groupMap.get(key) ?? [];
     if (item.evidenceType === 'SOURCE_REPORTED' || !shouldAdjustResolutionBuckets(group)) return item;
 
     const baseline = group.find((result) => result.resolution === 'FHD') ?? group[0];

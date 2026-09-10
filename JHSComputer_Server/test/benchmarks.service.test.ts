@@ -217,6 +217,43 @@ test('returns collected combos without FPS and marks the evidence state separate
   assert.equal(result.items[1]?.hasFpsEvidence, false);
 });
 
+test('selector options contain only FPS-evidence CPU/GPU combos', async () => {
+  const service = new BenchmarksService(fakeDataSource(async (sql) => {
+    if (sql.includes('GROUP BY b.COMBO_KEY')) {
+      return [
+        {
+          comboKey: 'fps-combo',
+          cpuModel: 'ryzen7-9800x3d',
+          gpuModel: 'rx9070xt',
+          cpuName: 'AMD Ryzen 7 9800X3D',
+          gpuName: 'AMD Radeon RX 9070 XT 16GB',
+          buildSampleCount: 2,
+          gameCount: 14,
+          resultCount: 42,
+        },
+        {
+          comboKey: 'recommendation-only',
+          cpuModel: 'i5-14400f',
+          gpuModel: 'rtx5060',
+          cpuName: 'Intel Core i5-14400F',
+          gpuName: 'NVIDIA RTX 5060',
+          buildSampleCount: 10,
+          gameCount: 0,
+          resultCount: 0,
+        },
+      ];
+    }
+    return [];
+  }));
+
+  const result = await service.getSelectorOptions();
+
+  assert.deepEqual(result.cpus.map((option) => option.value), ['Ryzen7 9800X3D']);
+  assert.deepEqual(result.gpus.map((option) => option.value), ['RX 9070XT']);
+  assert.equal(result.total, 1);
+  assert.equal(result.combos[0]?.publicComboName, 'Ryzen7 9800X3D + RX 9070XT');
+});
+
 test('does not attach an arbitrary SKU when a benchmark-backed model family is ambiguous', async () => {
   const service = new BenchmarksService(fakeDataSource(async (sql) => {
     if (sql.includes('GROUP BY b.COMBO_KEY')) {
@@ -292,7 +329,7 @@ test('merges source combo keys that resolve to the same public CPU/GPU combinati
   assert.match(result.items[0]?.publicComboRef ?? '', /^combo_/);
 });
 
-test('does not present duplicated source-reported resolution values as independent FPS data', async () => {
+test('preserves source-reported rows when each resolution is explicitly present', async () => {
   const service = new BenchmarksService(fakeDataSource(async (sql) => {
     if (sql.includes('FROM benchmark_combo_game_results r')) {
       return ['FHD', 'QHD', 'UHD'].map((resolution) => ({
@@ -317,10 +354,11 @@ test('does not present duplicated source-reported resolution values as independe
 
   const result = await service.getComboGames({ comboKey: 'combo_9600', limit: 200 });
 
-  assert.equal(result.total, 1);
+  assert.equal(result.total, 3);
   assert.equal(result.items[0]?.resolution, 'FHD');
   assert.equal(result.items[0]?.evidenceType, 'SOURCE_REPORTED');
-  assert.match(result.items[0]?.evidenceNote ?? '', /해상도별 독립/);
+  assert.equal(result.items[1]?.resolution, 'QHD');
+  assert.equal(result.items[2]?.resolution, 'UHD');
 });
 
 test('returns no detail for an unknown public combo reference', async () => {

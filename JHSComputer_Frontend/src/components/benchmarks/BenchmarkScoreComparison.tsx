@@ -2,8 +2,9 @@ import type { ComponentBenchmarkComparison, ComponentBenchmarkDeviceType, Compon
 
 const DEVICE_LABELS: Record<ComponentBenchmarkDeviceType, string> = { CPU: 'CPU 점수', GPU: 'GPU 점수' };
 
-export function BenchmarkScoreComparison({ data, title = '부품 벤치마크 비교' }: { data: ComponentBenchmarkComparison; title?: string }) {
-  const groups = groupScores(data.items);
+export function BenchmarkScoreComparison({ data, title = '부품 벤치마크 비교', testName, metric, compact = false }: { data: ComponentBenchmarkComparison; title?: string; testName?: string; metric?: string; compact?: boolean }) {
+  const filteredItems = data.items.filter((item) => (!testName || item.test.name === testName) && (!metric || item.test.metric === metric));
+  const groups = groupScores(filteredItems);
   const devices = (['CPU', 'GPU'] as ComponentBenchmarkDeviceType[]).filter((device) => Boolean(groups.get(device)?.length));
 
   return (
@@ -16,7 +17,9 @@ export function BenchmarkScoreComparison({ data, title = '부품 벤치마크 �
         </p>
       </div>
 
-      {devices.length ? (
+      {devices.length ? compact ? (
+        <CompactScoreTable data={data} items={filteredItems} />
+      ) : (
         <div className="mt-5 grid min-w-0 gap-5">
           {devices.map((device) => (
             <div className="min-w-0" key={device}>
@@ -32,10 +35,45 @@ export function BenchmarkScoreComparison({ data, title = '부품 벤치마크 �
         </div>
       ) : (
         <div className="mt-5 rounded-2xl border border-dashed border-line bg-slate-50 p-6 text-sm font-bold leading-6 text-slate-500">
-          {data.reason ?? '이 부품과 일치하는 벤치마크 데이터가 아직 없습니다.'}
+          {testName || metric ? '선택한 테스트 조건의 점수가 아직 없습니다.' : data.reason ?? '이 부품과 일치하는 벤치마크 데이터가 아직 없습니다.'}
         </div>
       )}
     </section>
+  );
+}
+
+function CompactScoreTable({ data, items }: { data: ComponentBenchmarkComparison; items: ComponentBenchmarkScoreItem[] }) {
+  return (
+    <div className="mt-5 min-w-0 overflow-x-auto rounded-2xl border border-line">
+      <table className="w-full min-w-[620px] border-collapse text-left">
+        <thead className="bg-slate-50 text-xs font-black text-slate-600">
+          <tr>
+            <th className="px-3 py-3" scope="col">부품</th>
+            <th className="px-3 py-3" scope="col">점수</th>
+            <th className="px-3 py-3" scope="col">선택 부품 대비</th>
+            <th className="px-3 py-3" scope="col">근거</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-line">
+          {items.map((item) => {
+            const isSelected = item.partId === data.selectedPartId;
+            return (
+              <tr className="align-top" key={`${item.partId}-${item.test.id}-${item.evidenceType}`}>
+                <th className="safe-break px-3 py-3 text-sm font-black text-slate-950" scope="row">
+                  {isSelected && <span className="mr-2 inline-block rounded-full bg-teal-50 px-2 py-1 text-[10px] text-brand">선택</span>}
+                  {item.partName}
+                </th>
+                <td className="whitespace-nowrap px-3 py-3 text-sm font-black text-slate-950">{formatScore(item.score)} {item.test.unit}</td>
+                <td className={`whitespace-nowrap px-3 py-3 text-xs font-black ${item.deltaFromSelected == null ? 'text-slate-400' : item.deltaFromSelected >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                  {item.deltaFromSelected == null ? '기준' : formatDelta(item.deltaFromSelected, item.deltaPercentFromSelected)}
+                </td>
+                <td className="px-3 py-3 text-xs font-bold text-slate-500">{evidenceLabel(item.evidenceType)} · {item.observationCount}회</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

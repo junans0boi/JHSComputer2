@@ -44,6 +44,12 @@ export class BenchmarksController {
     });
   }
 
+  @Get('selector-options')
+  @Public()
+  async getSelectorOptions() {
+    return this.benchmarksService.getSelectorOptions();
+  }
+
   @Get('recommendation-combos')
   @Public()
   async getRecommendationCombos(

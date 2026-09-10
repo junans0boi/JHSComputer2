@@ -8,7 +8,7 @@ export function BenchmarkSummaryCards({ summary }: { summary: BenchmarkSummary }
       {summary.sourceComboCount && summary.sourceComboCount !== summary.totalComboCount && (
         <StatCard label="원천 조합" value={summary.sourceComboCount} />
       )}
-      <StatCard label="FPS 조합" value={summary.fpsComboCount} />
+      <StatCard label="FPS 근거 조합" value={summary.fpsComboCount} />
       <StatCard label="게임" value={summary.gameCount} />
       <StatCard label="FPS 원본" value={summary.fpsResultCount} />
       <StatCard label="가공 결과" value={summary.comboGameResultCount} />
