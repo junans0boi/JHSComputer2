@@ -16,9 +16,17 @@ export type QuotePreviewPart = {
   stockStatus: string;
   priceCheckedAt: string;
   isDefault: boolean;
+  reviewCount?: number | null;
+  rating?: number | null;
+  summarySpecText?: string | null;
+  displaySpecText?: string;
+  detailImages?: string[];
   partId: string;
   category: string;
   partName: string;
+  manufacturer?: string | null;
+  trustScore?: number;
+  trustLabel?: 'VERIFIED_MANUFACTURER' | 'ADMIN_APPROVED' | 'POPULAR' | 'SPEC_VERIFIED' | 'UNVERIFIED';
 };
 
 export type QuotePerformanceEvidence = {
@@ -75,10 +83,12 @@ export function candidateToQuote(candidate: QuotePreviewCandidate, profile: Quot
     memo: `${part.offerName} · ${part.stockStatus} · ${new Date(part.priceCheckedAt).toLocaleDateString('ko-KR')} 가격 확인`,
     price: part.priceWon,
     quantity: 1,
-    supplier: part.supplierCode ?? '컴퓨존',
+    supplier: 'JHS 판매 데이터',
     productNo: part.externalProductId,
     imageUrl: part.imageUrl ?? undefined,
     detailUrl: part.productUrl,
+    detailImages: part.detailImages ?? [],
+    specSummary: part.displaySpecText ?? part.summarySpecText ?? undefined,
     offerId: part.offerId,
     offerName: part.offerName,
     stockStatus: part.stockStatus,
@@ -100,6 +110,12 @@ export function candidateToQuote(candidate: QuotePreviewCandidate, profile: Quot
     input,
     parts,
     performance,
+    performanceEvidence: {
+      evidenceType: candidate.performanceEvidence.evidenceType,
+      confidence: candidate.performanceEvidence.confidence,
+      sampleCount: candidate.performanceEvidence.sampleCount,
+      note: candidate.performanceEvidence.note,
+    },
     compatibility,
     subtotal: candidate.subtotalWon,
     assemblyFee: candidate.assemblyFeeWon,

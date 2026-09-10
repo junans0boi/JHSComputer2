@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 import { getSession } from '@/lib/auth-client';
+import { QuotePartList } from '@/components/ui/QuotePartList';
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:6002/api';
 
@@ -42,6 +43,25 @@ export default function QuoteDetailPage() {
     return <div className="p-8 text-center text-red-500">견적을 찾을 수 없습니다.</div>;
   }
 
+  const quoteParts = (quote.items ?? []).map((item: any) => {
+    const snapshotPart = quote.snapshotJson?.parts?.find((part: any) => part.offerId === item.supplierOfferId);
+    return {
+      id: String(item.id),
+      category: item.partCategory?.categoryName ?? '부품',
+      name: item.part?.canonicalName ?? item.supplierOffer?.offerName ?? '부품 정보 확인 필요',
+      productNo: snapshotPart?.productNo,
+      price: item.currentPublicPrice,
+      quantity: item.quantity ?? 1,
+      supplier: snapshotPart?.supplier,
+      metadata: [
+        item.supplierOfferId ? `판매 단위 ${item.supplierOfferId}` : undefined,
+        snapshotPart?.stockStatus,
+        snapshotPart?.priceCheckedAt ? `${new Date(snapshotPart.priceCheckedAt).toLocaleString('ko-KR')} 가격 확인` : undefined,
+        snapshotPart?.productNo ? `상품번호 ${snapshotPart.productNo}` : undefined,
+      ].filter(Boolean).join(' · '),
+    };
+  });
+
   return (
     <main className="min-h-screen px-5 py-6 text-ink md:px-8 bg-gray-50">
       <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-5">
@@ -55,24 +75,9 @@ export default function QuoteDetailPage() {
 
         <section className="bg-white rounded-lg border border-line p-5 shadow-sm">
           <h2 className="text-lg font-bold mb-4">구성 부품</h2>
-          <div className="grid gap-3">
-            {quote.items?.map((item: any) => (
-              <div key={item.id} className="grid gap-3 p-3 border border-line rounded-md bg-panel sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
-                <div className="min-w-0">
-                  <span className="text-xs font-bold text-brand block mb-1">{item.partCategory?.categoryName}</span>
-                  <span className="part-name text-sm">{item.part?.canonicalName}</span>
-                </div>
-                <div className="shrink-0 font-bold text-sm sm:text-right">
-                  {item.currentPublicPrice.toLocaleString()}원
-                  <span className="mt-1 block text-xs font-medium text-gray-500">{item.supplierOffer?.offerName ?? item.part?.canonicalName}</span>
-                  <span className="block text-xs font-medium text-gray-500">판매 단위 {item.supplierOfferId ?? '확인 필요'}</span>
-                </div>
-              </div>
-            ))}
-            {(!quote.items || quote.items.length === 0) && (
+          {quoteParts.length > 0 ? <QuotePartList parts={quoteParts} /> : (
               <div className="text-sm text-gray-500">부품이 없습니다.</div>
             )}
-          </div>
         </section>
 
         {quote.snapshotJson?.preview && (

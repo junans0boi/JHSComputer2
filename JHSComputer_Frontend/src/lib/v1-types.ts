@@ -17,6 +17,12 @@ export type CatalogPart = {
   reviewCount: number;
   reviewRate: number;
   badges: string[];
+  status?: string;
+  isAdminApproved?: boolean;
+  adminPriority?: number;
+  popularityScore?: number;
+  specStatus?: string;
+  stockStatus?: string;
 };
 
 export type QuoteInput = {
@@ -39,6 +45,8 @@ export type QuotePart = {
   productNo?: string;
   imageUrl?: string;
   detailUrl?: string;
+  detailImages?: string[];
+  specSummary?: string;
   offerId?: string;
   offerName?: string;
   stockStatus?: string;
@@ -61,6 +69,13 @@ export type PerformanceResult = {
   bestQuality?: string;
 };
 
+export type PerformanceEvidenceSummary = {
+  evidenceType: 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
+  sampleCount: number;
+  note: string;
+};
+
 export type Quote = {
   id: string;
   serverQuoteId?: string;
@@ -70,6 +85,7 @@ export type Quote = {
   input: QuoteInput;
   parts: QuotePart[];
   performance: PerformanceResult[];
+  performanceEvidence?: PerformanceEvidenceSummary;
   compatibility: string[];
   subtotal: number;
   assemblyFee: number;

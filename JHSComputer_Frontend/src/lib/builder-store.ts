@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { CatalogPart, ManualQuantities, ManualSelection, PartCategory } from './v1-types';
 import { emptyPartFilters, type PartFilterState } from './part-filters';
-import { compuzoneCatalog, partCategories } from './compuzone-catalog';
+import { partCategories } from './compuzone-catalog';
 import { clearManualSelection, loadManualQuantities, removeManualPart, saveManualQuantities, saveManualSelection, selectManualPart } from './v1-storage';
 
 interface BuilderState {
@@ -31,7 +31,7 @@ interface BuilderState {
 export const useBuilderStore = create<BuilderState>()(
   persist(
     (set) => ({
-      catalog: compuzoneCatalog,
+      catalog: [],
       manualSelection: {},
       manualQuantities: loadManualQuantities(),
       activeCategory: null,

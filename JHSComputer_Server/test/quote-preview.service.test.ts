@@ -14,10 +14,17 @@ test('preview service loads only active sellable catalog units and returns candi
     sourcePart('ram', 'RAM', { ramSpec: { memoryType: 'DDR5', capacityGb: 32 } }),
     sourcePart('gpu', 'GPU', { gpuSpec: { memoryGb: 8, recommendedPsuW: 550, powerConsumptionW: 170, lengthMm: '220' } }),
     sourcePart('ssd', 'SSD', { storageSpec: { capacityGb: 1024 } }),
-    sourcePart('psu', 'PSU', { psuSpec: { ratedWattage: 750 } }),
+    sourcePart('psu', 'PSU', { psuSpec: { ratedWattage: 750, certification: '80PLUS GOLD' } }),
     sourcePart('case', 'CASE', { caseSpec: { supportedBoardFormsJson: ['ATX'], maxGpuLengthMm: '400', maxCoolerHeightMm: '170' } }),
     sourcePart('cooler', 'CPU_COOLER', { coolerSpec: { supportedSocketsJson: ['AM5'], heightMm: '160' } }),
   ];
+  Object.assign(sourceParts[0], {
+    manufacturer: 'AMD',
+    popularityScore: '900',
+    specStatus: 'PARSED_FROM_CRAWL',
+    isAdminApproved: true,
+  });
+  Object.assign(sourceParts[0].supplierOffers[0].product, { reviewCount: 900, rating: '4.9' });
   const service = new QuotePreviewService(fakeRepository(sourceParts), fakeConfig(), fakeBenchmarks({
     items: [{
       game: 'APEX',
@@ -45,6 +52,12 @@ test('preview service loads only active sellable catalog units and returns candi
   assert.equal(result.status, 'READY');
   assert.equal(result.candidates[0].parts.length, 8);
   assert.equal(result.candidates[0].parts[0].externalProductId, 'product-cpu');
+  assert.equal(result.candidates[0].parts[0].manufacturer, 'AMD');
+  assert.equal(result.candidates[0].parts[0].reviewCount, 900);
+  assert.equal(result.candidates[0].parts[0].rating, 4.9);
+  assert.equal(result.candidates[0].parts[0].summarySpecText, 'CPU product spec');
+  assert.match(result.candidates[0].parts[0].displaySpecText ?? '', /6코어/);
+  assert.deepEqual(result.candidates[0].parts[0].detailImages, ['https://example.test/detail.jpg']);
   assert.equal(result.candidates[0].performanceEvidence.evidenceType, 'MEASURED');
   assert.equal(result.candidates[0].performanceEvidence.sampleCount, 3);
   assert.equal(result.candidates[0].performanceEvidence.results[0]?.game, 'APEX');
@@ -108,6 +121,10 @@ function sourcePart(partId: string, code: string, specs: Record<string, unknown>
   return {
     id: partId,
     canonicalName: `${code} name`,
+    manufacturer: 'TEST',
+    popularityScore: '0',
+    specStatus: 'PARSED_FROM_CRAWL',
+    isAdminApproved: true,
     category: { code },
     ...specs,
     supplierOffers: [{
@@ -126,6 +143,10 @@ function sourcePart(partId: string, code: string, specs: Record<string, unknown>
         productName: `${code} product`,
         productUrl: `https://example.test/${partId}`,
         imageUrl: null,
+        summarySpecText: `${code} product spec`,
+        rawSpecJson: { detailImages: ['https://example.test/detail.jpg'] },
+        reviewCount: 0,
+        rating: null,
       },
     }],
   };

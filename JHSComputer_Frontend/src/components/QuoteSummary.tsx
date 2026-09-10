@@ -59,9 +59,9 @@ export function QuoteGamePerformancePanel({ quote }: { quote: Quote }) {
           <Gauge className="text-accent" size={20} />
           <h2 className="text-lg font-black">게임 성능 예상</h2>
         </div>
-        {groupedPerformance.length > 0 && (
+        {(groupedPerformance.length > 0 || quote.performanceEvidence) && (
           <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-black text-brand">
-            실제 DB {groupedPerformance.length}개 게임 · {hasResolutionAdjusted ? '해상도 보정 포함' : 'FHD/QHD/4K'}
+            {quote.performanceEvidence ? evidenceSummaryLabel(quote.performanceEvidence.evidenceType) : performanceEvidenceLabel(quote.performance)} · {groupedPerformance.length}개 게임
           </span>
         )}
       </div>
@@ -126,6 +126,9 @@ export function QuoteGamePerformancePanel({ quote }: { quote: Quote }) {
                           <div className="mt-0.5 flex flex-wrap items-center gap-1 font-bold text-slate-500">
                             <span>{item.grade}</span>
                             {item.isResolutionAdjusted && <span className="rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-black text-amber-700">DB 기반 보정</span>}
+                            {item.evidenceType === 'SOURCE_REPORTED' && <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-slate-600">보고값</span>}
+                            {item.evidenceType === 'DERIVED' && <span className="rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-black text-amber-700">추정값</span>}
+                            {item.sampleCount ? <span className="text-[10px]">표본 {item.sampleCount}</span> : null}
                           </div>
                         </>
                       ) : (
@@ -139,7 +142,7 @@ export function QuoteGamePerformancePanel({ quote }: { quote: Quote }) {
           );
         }) : (
           <div className="rounded-xl border border-dashed border-line bg-panel p-4 text-sm font-bold text-slate-500">
-            {quote.performance.length ? '검색 조건에 맞는 게임이 없습니다.' : '현재 CPU/GPU 조합에 연결된 실제 벤치마크 DB가 없습니다. 더미 성능은 표시하지 않습니다.'}
+            {quote.performanceEvidence ? quote.performanceEvidence.note : quote.performance.length ? '검색 조건에 맞는 게임이 없습니다.' : '현재 CPU/GPU 조합에 연결된 실제 벤치마크 DB가 없습니다. 더미 성능은 표시하지 않습니다.'}
           </div>
         )}
       </div>
@@ -162,6 +165,18 @@ function groupPerformanceByGame(results: PerformanceResult[]): PerformanceGroup[
     groupMap.set(result.game, group);
   });
   return [...groupMap.values()];
+}
+
+function performanceEvidenceLabel(results: PerformanceResult[]) {
+  const types = new Set(results.map((result) => result.evidenceType));
+  if (types.has('MEASURED') && types.size === 1) return '실측 데이터';
+  if (types.has('DERIVED')) return '추정·보정 포함';
+  if (types.has('SOURCE_REPORTED')) return '출처 보고값';
+  return '근거 확인 필요';
+}
+
+function evidenceSummaryLabel(type: NonNullable<Quote['performanceEvidence']>['evidenceType']) {
+  return { MEASURED: '실측 데이터', SOURCE_REPORTED: '출처 보고값', DERIVED: '추정·보정 포함', NONE: '근거 확인 필요' }[type];
 }
 
 export function QuoteCompatibilityPanel({ quote, compact = false }: { quote: Quote; compact?: boolean }) {

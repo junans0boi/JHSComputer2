@@ -30,6 +30,7 @@ export async function loadQuotePerformance(quote: Quote): Promise<PerformanceRes
       body: JSON.stringify({
         parts: quote.parts.map((part) => ({ category: part.category, name: part.name })),
         games: quote.input.games,
+        resolution: quote.input.resolution,
         limit: 180,
       }),
     });
@@ -43,7 +44,7 @@ export async function loadQuotePerformance(quote: Quote): Promise<PerformanceRes
 
 export async function withDbPerformance(quote: Quote): Promise<Quote> {
   const performance = await loadQuotePerformance(quote);
-  return { ...quote, performance };
+  return { ...quote, performance: performance.length ? performance : quote.performance };
 }
 
 function normalizePerformanceResult(result: PerformanceResult): PerformanceResult {
@@ -52,7 +53,9 @@ function normalizePerformanceResult(result: PerformanceResult): PerformanceResul
     resolution: normalizeResolution(result.resolution),
     fpsMin: Number(result.fpsMin) || 0,
     fpsMax: Number(result.fpsMax) || 0,
-    isEstimated: false,
+    isEstimated: result.isEstimated ?? true,
+    evidenceType: result.evidenceType ?? 'NONE',
+    confidence: result.confidence ?? 'LOW',
   };
 }
 

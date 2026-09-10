@@ -1,45 +1,44 @@
-import { Controller, Get, Param, Query, Post, Body, Headers, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Public } from '../auth';
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
+import { JwtAuthGuard, Public } from '../auth';
+import { CreateQuoteDto, DeliveryDto, SaveQuoteSnapshotDto } from './dto/quote.dto';
 import { QuotePreviewDto } from './dto/quote-preview.dto';
 import { QuotePreviewService } from './quote-preview.service';
 import { QuotesService } from './quotes.service';
+
+type AuthenticatedRequest = Request & { user: { sub: string; role: string } };
 
 @Controller('quotes')
 export class QuotesController {
   constructor(
     private readonly quotesService: QuotesService,
-    private readonly jwtService: JwtService,
     private readonly quotePreviewService: QuotePreviewService,
   ) {}
 
-  private getUserIdFromAuth(auth: string): string {
-    const token = auth?.replace('Bearer ', '');
-    if (!token) throw new UnauthorizedException();
-    try {
-      const payload = this.jwtService.verify(token) as { sub: string };
-      return payload.sub;
-    } catch {
-      throw new UnauthorizedException();
-    }
-  }
-
   @Get()
+  @UseGuards(JwtAuthGuard)
   async getQuotes(
-    @Query('userId') userId?: string,
+    @Req() request: AuthenticatedRequest,
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '20',
   ) {
     return this.quotesService.getQuotes({
-      userId: userId ? parseInt(userId, 10) : undefined,
+      userId: request.user.sub,
       page: parseInt(page, 10),
       limit: parseInt(limit, 10),
     });
   }
 
   @Get('templates')
+  @Public()
   async getTemplates() {
     return this.quotesService.getTemplates();
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  async createQuote(@Req() request: AuthenticatedRequest, @Body() data: CreateQuoteDto) {
+    return this.quotesService.createQuote(request.user.sub, data);
   }
 
   @Post('preview')
@@ -48,39 +47,31 @@ export class QuotesController {
     return this.quotePreviewService.preview(data.profile);
   }
 
-  @Post('estimate')
-  async estimateQuote(@Body() data: any) {
-    return this.quotesService.estimateQuote(data);
-  }
-
-  @Post()
-  async createQuote(@Body() data: any) {
-    return this.quotesService.createQuote(data);
-  }
-
   @Post('save')
-  async saveMyQuote(@Headers('authorization') auth: string, @Body() snapshot: any) {
-    const userId = this.getUserIdFromAuth(auth);
-    return this.quotesService.saveQuoteSnapshot(userId, snapshot);
+  @UseGuards(JwtAuthGuard)
+  async saveMyQuote(@Req() request: AuthenticatedRequest, @Body() snapshot: SaveQuoteSnapshotDto) {
+    return this.quotesService.saveQuoteSnapshot(request.user.sub, snapshot);
   }
 
   @Get('my')
+  @UseGuards(JwtAuthGuard)
   async getMyQuotes(
-    @Headers('authorization') auth: string,
+    @Req() request: AuthenticatedRequest,
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '20',
   ) {
-    const userId = this.getUserIdFromAuth(auth);
-    return this.quotesService.getMyQuotes(userId, parseInt(page), parseInt(limit));
+    return this.quotesService.getMyQuotes(request.user.sub, parseInt(page, 10), parseInt(limit, 10));
   }
 
   @Get(':id')
-  async getQuoteDetail(@Param('id') id: string) {
-    return this.quotesService.getQuoteDetail(parseInt(id, 10));
+  @UseGuards(JwtAuthGuard)
+  async getQuoteDetail(@Req() request: AuthenticatedRequest, @Param('id') id: string) {
+    return this.quotesService.getQuoteDetail(parseInt(id, 10), request.user.sub, request.user.role);
   }
 
   @Post(':id/order')
-  async convertToOrder(@Param('id') id: string, @Body() data: any) {
-    return this.quotesService.convertToOrder(parseInt(id, 10), data);
+  @UseGuards(JwtAuthGuard)
+  async convertToOrder(@Req() request: AuthenticatedRequest, @Param('id') id: string, @Body() data: DeliveryDto) {
+    return this.quotesService.convertToOrder(parseInt(id, 10), data, request.user.sub, request.user.role);
   }
 }

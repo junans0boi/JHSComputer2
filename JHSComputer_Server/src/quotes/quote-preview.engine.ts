@@ -1,6 +1,6 @@
 import { validateQuoteProfile, type QuoteProfileV2 } from './quote-profile';
 
-export const QUOTE_PREVIEW_RULESET_VERSION = 'quote-preview-v1' as const;
+export const QUOTE_PREVIEW_RULESET_VERSION = 'quote-preview-v2' as const;
 
 export type QuotePreviewStrategy = 'BALANCED' | 'PERFORMANCE' | 'VALUE_UPGRADE';
 
@@ -17,31 +17,43 @@ export type CatalogOffer = {
   stockStatus: string;
   priceCheckedAt: Date | string | null;
   isDefault: boolean;
+  reviewCount?: number | null;
+  rating?: number | null;
+  summarySpecText?: string | null;
+  displaySpecText?: string;
+  detailImages?: string[];
 };
 
 export type CatalogPart = {
   partId: string;
   category: string;
   canonicalName: string;
+  manufacturer?: string | null;
+  popularityScore?: number | null;
+  specStatus?: string | null;
+  isAdminApproved?: boolean;
   spec: CatalogSpec;
   offers: CatalogOffer[];
 };
 
 export type CatalogSpec = {
-  cpu?: { socket: string | null; tdpW: number | null; coreCount: number | null; threadCount: number | null; boostClockGhz: number | null };
-  gpu?: { memoryGb: number | null; recommendedPsuW: number | null; powerConsumptionW: number | null; lengthMm: number | null };
-  mainboard?: { socket: string | null; memoryType: string | null; formFactor: string | null };
-  ram?: { memoryType: string | null; capacityGb: number | null };
-  storage?: { capacityGb: number | null };
-  psu?: { ratedWattage: number | null };
-  case?: { supportedBoardForms: string[] | null; maxGpuLengthMm: number | null; maxCoolerHeightMm: number | null };
-  cooler?: { supportedSockets: string[] | null; heightMm: number | null };
+  cpu?: { socket: string | null; tdpW: number | null; coreCount: number | null; threadCount: number | null; baseClockGhz?: number | null; boostClockGhz: number | null };
+  gpu?: { chipsetMaker?: string | null; chipsetName?: string | null; memoryType?: string | null; memoryGb: number | null; interfaceText?: string | null; recommendedPsuW: number | null; powerConsumptionW: number | null; lengthMm: number | null };
+  mainboard?: { socket: string | null; memoryType: string | null; formFactor: string | null; chipset?: string | null; memorySlotCount?: number | null; maxMemoryGb?: number | null; m2SlotCount?: number | null; sataPortCount?: number | null; pcieX16SlotCount?: number | null; wifiBuiltin?: boolean | null };
+  ram?: { memoryType: string | null; capacityGb: number | null; moduleCount?: number | null; speedMhz?: number | null; profileType?: string | null };
+  storage?: { storageType?: string | null; formFactor?: string | null; interfaceText?: string | null; capacityGb: number | null; seqReadMbps?: number | null; seqWriteMbps?: number | null };
+  psu?: { formFactor?: string | null; ratedWattage: number | null; certification?: string | null; modularType?: string | null; pcie5Ready?: boolean | null };
+  case?: { caseType?: string | null; supportedBoardForms: string[] | null; maxGpuLengthMm: number | null; maxCoolerHeightMm: number | null; fanCount?: number | null };
+  cooler?: { supportedSockets: string[] | null; heightMm: number | null; coolerType?: string | null; fanSizeMm?: number | null; tdpRatingW?: number | null };
 };
 
 export type QuoteCandidatePart = CatalogOffer & {
   partId: string;
   category: string;
   partName: string;
+  manufacturer?: string | null;
+  trustScore: number;
+  trustLabel: 'VERIFIED_MANUFACTURER' | 'ADMIN_APPROVED' | 'POPULAR' | 'SPEC_VERIFIED' | 'UNVERIFIED';
 };
 
 export type PerformanceEvidenceType = 'MEASURED' | 'SOURCE_REPORTED' | 'DERIVED' | 'NONE';
@@ -131,6 +143,7 @@ type WorkloadDemand = {
   minGpuMemoryGb: number;
   minRamGb: number;
   minStorageGb: number;
+  primaryWorkload?: QuoteProfileV2['workloadProfile']['workloads'][number]['type'];
 };
 
 type PlanScores = {
@@ -140,10 +153,53 @@ type PlanScores = {
   upgradeabilityScore: number;
   preferenceScore: number;
   workloadFitScore: number;
+  trustScore: number;
 };
 
 const requiredCategories = ['CPU', 'MAINBOARD', 'RAM', 'GPU', 'SSD', 'PSU', 'CASE', 'CPU_COOLER'] as const;
 const strategyOrder: QuotePreviewStrategy[] = ['BALANCED', 'PERFORMANCE', 'VALUE_UPGRADE'];
+const trustRequiredCategories = new Set(['CPU', 'GPU', 'MAINBOARD', 'RAM', 'SSD', 'PSU', 'CASE', 'CPU_COOLER']);
+
+const coreManufacturers: Record<string, string[]> = {
+  CPU: ['AMD', 'INTEL'],
+  GPU: ['NVIDIA', 'AMD', 'INTEL'],
+};
+
+const establishedManufacturers: Record<string, string[]> = {
+  CPU: ['AMD', 'INTEL'],
+  GPU: ['MSI', 'ASUS', 'GIGABYTE', 'ASROCK', 'ZOTAC', 'GALAX', 'GAINWARD', 'SAPPHIRE', 'XFX', 'POWERCOLOR', 'PNY', 'PALIT', 'INNO3D', 'COLORFUL', 'MANLI', 'EMTEK'],
+  MAINBOARD: ['ASUS', 'MSI', 'GIGABYTE', 'ASROCK', 'BIOSTAR', 'COLORFUL', 'SUPERMICRO', 'NZXT'],
+  RAM: ['SAMSUNG', 'SK HYNIX', 'SKHYNIX', 'MICRON', 'CRUCIAL', 'G.SKILL', 'GSKILL', 'KINGSTON', 'CORSAIR', 'TEAM GROUP', 'TEAMGROUP', 'ADATA', 'PATRIOT', 'APACER', 'KLEVV', 'ESSENCORE'],
+  SSD: ['SAMSUNG', 'WESTERN DIGITAL', 'WESTERNDIGITAL', 'WD', 'CRUCIAL', 'SOLIDIGM', 'SK HYNIX', 'SKHYNIX', 'KIOXIA', 'KINGSTON', 'SEAGATE', 'LEXAR', 'SANDISK', 'TRANSCEND', 'PATRIOT', 'TEAM GROUP', 'TEAMGROUP', 'ADATA', 'KLEVV', 'MICRON', 'ESSENCORE'],
+  PSU: ['SEASONIC', 'CORSAIR', 'SUPER FLOWER', 'SUPERFLOWER', 'FSP', 'BE QUIET', 'BEQUIET', 'ANTEC', 'EVGA', 'COOLER MASTER', 'COOLERMASTER', 'SILVERSTONE', 'THERMALTAKE', 'DEEPCOOL', 'MICRONICS', 'ENERMAX', 'MSI', '3RSYS', 'ABKO'],
+  CASE: ['ASUS', 'MSI', 'GIGABYTE', 'ASROCK', 'CORSAIR', 'NZXT', 'FRACTAL DESIGN', 'LIAN LI', 'LIAN-LI', 'MONTECH', 'DARKFLASH', 'BRAVOTEC', 'DAVEN', '3RSYS', 'ABKO', '마이크로닉스', 'PHANTEKS'],
+  CPU_COOLER: ['NOCTUA', 'ARCTIC', 'THERMALRIGHT', 'DEEPCOOL', 'COOLER MASTER', 'COOLERMASTER', 'CORSAIR', 'BE QUIET', 'BEQUIET', '3RSYS', 'JONSBO', 'PCCOOLER', 'JUSHAARK', 'JIUSHARK', '잘만', '마이크로닉스'],
+};
+
+const popularityReviewThreshold: Record<string, number> = {
+  CPU: 100,
+  GPU: 100,
+  MAINBOARD: 100,
+  RAM: 100,
+  SSD: 100,
+  PSU: 200,
+  CASE: 50,
+  CPU_COOLER: 50,
+};
+
+const candidateLimitByCategory: Record<string, number> = {
+  CPU: 48,
+  GPU: 64,
+  MAINBOARD: 72,
+  RAM: 72,
+  SSD: 48,
+  PSU: 64,
+  CASE: 72,
+  CPU_COOLER: 64,
+};
+
+const selectedOfferCache = new WeakMap<CatalogPart, CatalogOffer | undefined>();
+const trustScoreCache = new WeakMap<CatalogPart, number>();
 
 type Plan = {
   parts: CatalogPart[];
@@ -164,11 +220,19 @@ export function generateQuotePreview(profile: QuoteProfileV2, catalog: CatalogPa
       `판매 가능한 ${missingCategories.join(', ')} 상품이 없습니다.`,
     ], ['누락 카테고리의 활성 판매 단위를 추가합니다.']);
   }
+  if (isAiDominant(profile) && !grouped.get('GPU')!.some((part) => isCudaGpu(part) && isGpuSpecUsable(part))) {
+    return reviewRequired(
+      ['AI 추론에 사용할 CUDA 호환 GPU가 판매 카탈로그에 없습니다.'],
+      ['CUDA 호환 NVIDIA GPU를 추가하거나 AI 가속기 조건을 명시적으로 완화합니다.'],
+    );
+  }
+  const trustMissingCategories = requiredCategories.filter((category) => grouped.get(category)?.length && !trustEligibleParts(grouped.get(category)!, category).length);
 
   const candidates: QuoteCandidate[] = [];
   const usedFingerprints = new Set<string>();
   for (const strategy of strategyOrder) {
-    const plan = findPlan(profile, grouped, strategy, usedFingerprints);
+    const plan = findPlan(profile, grouped, strategy, usedFingerprints)
+      ?? findPlan(profile, grouped, strategy, usedFingerprints, strategy, 2);
     if (!plan) continue;
     const candidate = toCandidate(profile, strategy, plan, candidates.length + 1);
     candidates.push(candidate);
@@ -180,10 +244,13 @@ export function generateQuotePreview(profile: QuoteProfileV2, catalog: CatalogPa
       ...profile,
       budgetProfile: { ...profile.budgetProfile, maximumWon: Number.MAX_SAFE_INTEGER },
     };
-    const feasiblePlan = findPlan(unconstrained, grouped, 'VALUE_UPGRADE', new Set<string>(), 'CHEAPEST');
+    const feasiblePlan = findPlan(unconstrained, grouped, 'VALUE_UPGRADE', new Set<string>(), 'CHEAPEST', 2);
     const requiredMinimumWon = feasiblePlan?.totalWon;
     return reviewRequired(
-      ['활성 판매 단위만으로 예산 상한과 호환성 조건을 동시에 만족하는 조합이 없습니다.'],
+      [
+        ...(trustMissingCategories.length ? [`${trustMissingCategories.join(', ')} 카테고리에 검증 제조사 또는 충분한 판매 후기·평점 근거가 있는 상품이 없습니다.`] : []),
+        '활성 판매 단위만으로 예산 상한과 호환성 조건을 동시에 만족하는 조합이 없습니다.',
+      ],
       ['최대 예산을 높이거나 workload 비중·저장장치 요구를 완화합니다.'],
       requiredMinimumWon === undefined ? undefined : { requiredMinimumWon, shortfallWon: Math.max(0, requiredMinimumWon - profile.budgetProfile.maximumWon) },
     );
@@ -203,16 +270,20 @@ function findPlan(
   strategy: QuotePreviewStrategy,
   usedFingerprints: Set<string>,
   sortStrategy: QuotePreviewStrategy | 'CHEAPEST' = strategy,
+  limitFactor = 1,
 ): Plan | undefined {
   const demand = deriveWorkloadDemand(profile);
-  const cpus = ordered(grouped.get('CPU')!, strategy, 'CPU');
-  const gpus = ordered(grouped.get('GPU')!, strategy, 'GPU');
-  const boards = ordered(grouped.get('MAINBOARD')!, strategy, 'MAINBOARD');
-  const rams = ordered(grouped.get('RAM')!, strategy, 'RAM');
-  const storages = ordered(grouped.get('SSD')!, strategy, 'SSD');
-  const psus = ordered(grouped.get('PSU')!, strategy, 'PSU');
-  const cases = ordered(grouped.get('CASE')!, strategy, 'CASE');
-  const coolers = ordered(grouped.get('CPU_COOLER')!, strategy, 'CPU_COOLER');
+  const cpus = shortlist(ordered(trustEligibleParts(grouped.get('CPU')!, 'CPU'), strategy, 'CPU')
+    .filter((part) => (part.spec.cpu?.coreCount ?? 0) >= demand.minCpuCores && (part.spec.cpu?.threadCount ?? 0) >= demand.minCpuThreads), 'CPU', limitFactor);
+  const gpus = shortlist(preferredGpuCandidates(ordered(trustEligibleParts(grouped.get('GPU')!, 'GPU'), strategy, 'GPU'), profile)
+    .filter((part) => (part.spec.gpu?.memoryGb ?? 0) >= demand.minGpuMemoryGb), 'GPU', limitFactor);
+  const boards = shortlist(ordered(trustEligibleParts(grouped.get('MAINBOARD')!, 'MAINBOARD'), strategy, 'MAINBOARD'), 'MAINBOARD', limitFactor);
+  const rams = shortlist(ordered(trustEligibleParts(grouped.get('RAM')!, 'RAM'), strategy, 'RAM')
+    .filter((part) => meetsRamDemand(part, demand)), 'RAM', limitFactor);
+  const storages = shortlist(ordered(trustEligibleParts(grouped.get('SSD')!, 'SSD'), strategy, 'SSD'), 'SSD', limitFactor);
+  const psus = shortlist(ordered(trustEligibleParts(grouped.get('PSU')!, 'PSU'), strategy, 'PSU').filter(isPsuCatalogPart), 'PSU', limitFactor);
+  const cases = shortlist(ordered(trustEligibleParts(grouped.get('CASE')!, 'CASE'), strategy, 'CASE'), 'CASE', limitFactor);
+  const coolers = shortlist(ordered(trustEligibleParts(grouped.get('CPU_COOLER')!, 'CPU_COOLER'), strategy, 'CPU_COOLER'), 'CPU_COOLER', limitFactor);
   const boardRamBySocket = boardRamOptionsBySocket(boards, rams, demand);
   const priceOrderedPsus = [...psus].sort(comparePartPrice);
   const priceOrderedStorages = [...storages].sort(comparePartPrice);
@@ -276,7 +347,10 @@ function boardRamOptionsBySocket(boards: CatalogPart[], rams: CatalogPart[], dem
     options.push({ board, ram });
     result.set(socket, options);
   }
-  for (const options of result.values()) options.sort((left, right) => partPrice(left.board) + partPrice(left.ram) - partPrice(right.board) - partPrice(right.ram));
+  for (const options of result.values()) options.sort((left, right) => comparePartBundles(
+    [left.board, left.ram],
+    [right.board, right.ram],
+  ));
   return result;
 }
 
@@ -290,11 +364,13 @@ function chooseCheapestBoardCase(
 ) {
   let best: { board: CatalogPart; ram: CatalogPart; pcCase: CatalogPart; cooler: CatalogPart } | undefined;
   for (const option of boardRamOptions) {
+    if (!isBoardThermallySuitable(option.board, cpu)) continue;
     const caseCooler = chooseCaseCooler(cases, coolers, cpu, gpu, option.board, cache);
     if (!caseCooler) continue;
-    const totalPrice = partPrice(option.board) + partPrice(option.ram) + partPrice(caseCooler.pcCase) + partPrice(caseCooler.cooler);
-    const bestPrice = best ? partPrice(best.board) + partPrice(best.ram) + partPrice(best.pcCase) + partPrice(best.cooler) : Number.MAX_SAFE_INTEGER;
-    if (totalPrice < bestPrice) best = { ...option, ...caseCooler };
+    if (!best || comparePartBundles(
+      [option.board, option.ram, caseCooler.pcCase, caseCooler.cooler],
+      [best.board, best.ram, best.pcCase, best.cooler],
+    ) < 0) best = { ...option, ...caseCooler };
   }
   return best;
 }
@@ -308,17 +384,17 @@ function chooseCaseCooler(
   cache: Map<string, { pcCase: CatalogPart; cooler: CatalogPart } | null>,
 ) {
   const formFactor = board.spec.mainboard?.formFactor ?? '';
-  const key = `${cpu.spec.cpu?.socket ?? ''}:${gpu.spec.gpu?.lengthMm ?? ''}:${formFactor}`;
+  const key = `${cpu.partId}:${gpu.partId}:${board.partId}:${cpu.spec.cpu?.socket ?? ''}:${gpu.spec.gpu?.lengthMm ?? ''}:${gpu.spec.gpu?.powerConsumptionW ?? ''}:${cpu.spec.cpu?.coreCount ?? ''}:${formFactor}`;
   if (cache.has(key)) return cache.get(key) ?? undefined;
   let best: { pcCase: CatalogPart; cooler: CatalogPart } | undefined;
   const priceOrderedCoolers = [...coolers].sort(comparePartPrice);
   for (const pcCase of cases) {
-    if (!isCaseCompatible(pcCase, board, gpu)) {
+    if (!isCaseCompatible(pcCase, board, gpu) || !isCaseAirflowSuitable(pcCase, gpu)) {
       continue;
     }
-    const cooler = priceOrderedCoolers.find((candidate) => isCoolerCompatible(candidate, cpu, pcCase));
+    const cooler = priceOrderedCoolers.find((candidate) => isCoolerCompatible(candidate, cpu, pcCase) && isCoolerThermallySuitable(candidate, cpu));
     if (!cooler) continue;
-    if (!best || partPrice(pcCase) + partPrice(cooler) < partPrice(best.pcCase) + partPrice(best.cooler)) {
+    if (!best || comparePartBundles([pcCase, cooler], [best.pcCase, best.cooler]) < 0) {
       best = { pcCase, cooler };
     }
   }
@@ -327,11 +403,29 @@ function chooseCaseCooler(
 }
 
 function comparePartPrice(left: CatalogPart, right: CatalogPart) {
-  return partPrice(left) - partPrice(right) || qualityScore([right]) - qualityScore([left]);
+  const priceDiff = partPrice(left) - partPrice(right);
+  const priceTolerance = Math.max(25_000, Math.min(partPrice(left), partPrice(right)) * 0.15);
+  if (Math.abs(priceDiff) > priceTolerance) return priceDiff;
+  return trustScore(right) - trustScore(left) || priceDiff || qualityScore([right]) - qualityScore([left]);
+}
+
+function comparePartBundles(left: CatalogPart[], right: CatalogPart[]) {
+  const leftPrice = left.reduce((sum, part) => sum + partPrice(part), 0);
+  const rightPrice = right.reduce((sum, part) => sum + partPrice(part), 0);
+  const priceDiff = leftPrice - rightPrice;
+  const priceTolerance = Math.max(50_000, Math.min(leftPrice, rightPrice) * 0.12);
+  if (Math.abs(priceDiff) > priceTolerance) return priceDiff;
+  return right.reduce((sum, part) => sum + trustScore(part), 0)
+    - left.reduce((sum, part) => sum + trustScore(part), 0)
+    || priceDiff;
 }
 
 function partPrice(part: CatalogPart) {
   return selectOffer(part)?.priceWon ?? Number.MAX_SAFE_INTEGER;
+}
+
+function shortlist(parts: CatalogPart[], category: string, limitFactor = 1) {
+  return parts.slice(0, (candidateLimitByCategory[category] ?? 100) * Math.max(1, limitFactor));
 }
 
 function groupCatalog(catalog: CatalogPart[]) {
@@ -345,35 +439,137 @@ function groupCatalog(catalog: CatalogPart[]) {
   return grouped;
 }
 
+function trustEligibleParts(parts: CatalogPart[], category: string) {
+  if (!trustRequiredCategories.has(category)) return parts;
+  return parts.filter((part) => isTrustEligible(part, category))
+    .filter((part) => category !== 'GPU' || isGpuSpecUsable(part));
+}
+
+function hasTrustMetadata(part: CatalogPart) {
+  return part.manufacturer != null
+    || part.popularityScore != null
+    || part.specStatus != null
+    || part.isAdminApproved !== undefined
+    || part.offers.some((offer) => offer.reviewCount != null || offer.rating != null);
+}
+
+function isTrustEligible(part: CatalogPart, category: string) {
+  if (!hasTrustMetadata(part)) return false;
+  const tier = manufacturerTrustTier(part, category);
+  return tier > 0 || hasPopularityEvidence(part, category) || part.isAdminApproved === true;
+}
+
+function manufacturerTrustTier(part: CatalogPart, category: string) {
+  const manufacturer = normalizeManufacturer(part.manufacturer);
+  if (!manufacturer) return 0;
+  if ((coreManufacturers[category] ?? []).some((candidate) => manufacturer === normalizeManufacturer(candidate))) return 2;
+  if ((establishedManufacturers[category] ?? []).some((candidate) => manufacturer === normalizeManufacturer(candidate))) return 1;
+  return 0;
+}
+
+function normalizeManufacturer(value: string | null | undefined) {
+  return String(value ?? '').toUpperCase().replace(/[\s._-]+/g, '');
+}
+
+function bestReviewCount(part: CatalogPart) {
+  return Number(selectOffer(part)?.reviewCount ?? 0) || 0;
+}
+
+function bestRating(part: CatalogPart) {
+  const rating = Number(selectOffer(part)?.rating);
+  return Number.isFinite(rating) && rating > 0 ? rating : 0;
+}
+
+function hasPopularityEvidence(part: CatalogPart, category: string) {
+  const reviewThreshold = popularityReviewThreshold[category] ?? 100;
+  const reviewCount = bestReviewCount(part);
+  const rating = bestRating(part);
+  const popularitySignal = Math.min(1, Math.log10((Number(part.popularityScore ?? 0) || 0) + 1) / 5);
+  return (reviewCount >= reviewThreshold && rating >= 4.5) || popularitySignal >= 0.65;
+}
+
+function isVerifiedSpec(part: CatalogPart) {
+  return Boolean(part.specStatus && !['UNVERIFIED', 'FAILED', 'UNKNOWN'].includes(String(part.specStatus).toUpperCase()));
+}
+
+function trustScore(part: CatalogPart) {
+  const cached = trustScoreCache.get(part);
+  if (cached !== undefined) return cached;
+  const tier = manufacturerTrustTier(part, part.category);
+  const reviewSignal = Math.min(1, Math.log10(bestReviewCount(part) + 1) / 4.5);
+  const popularitySignal = Math.min(1, Math.log10((Number(part.popularityScore ?? 0) || 0) + 1) / 5);
+  const rating = bestRating(part);
+  const ratingSignal = rating > 0 ? Math.min(1, rating / 5) : 0;
+  const manufacturerScore = tier >= 2 ? 55 : tier === 1 ? 45 : 10;
+  const verificationScore = (part.isAdminApproved ? 5 : 0) + (isVerifiedSpec(part) ? 5 : 0);
+  const score = Math.round(Math.min(100, manufacturerScore + reviewSignal * 20 + popularitySignal * 10 + ratingSignal * 10 + verificationScore));
+  trustScoreCache.set(part, score);
+  return score;
+}
+
+function trustLabel(part: CatalogPart): QuoteCandidatePart['trustLabel'] {
+  if (manufacturerTrustTier(part, part.category) > 0) return 'VERIFIED_MANUFACTURER';
+  if (part.isAdminApproved === true) return 'ADMIN_APPROVED';
+  if (hasPopularityEvidence(part, part.category)) return 'POPULAR';
+  return isVerifiedSpec(part) ? 'SPEC_VERIFIED' : 'UNVERIFIED';
+}
+
+function trustSummary(parts: CatalogPart[]) {
+  const verifiedCount = parts.filter((part) => trustLabel(part) === 'VERIFIED_MANUFACTURER').length;
+  const approvedCount = parts.filter((part) => trustLabel(part) === 'ADMIN_APPROVED').length;
+  const popularCount = parts.filter((part) => trustLabel(part) === 'POPULAR').length;
+  const specVerifiedCount = parts.filter((part) => trustLabel(part) === 'SPEC_VERIFIED').length;
+  return `검증 제조사 ${verifiedCount}개, 관리자 승인 ${approvedCount}개, 인기 근거 ${popularCount}개, 검증 스펙 ${specVerifiedCount}개를 우선했습니다.`;
+}
+
+function preferredGpuCandidates(parts: CatalogPart[], profile: QuoteProfileV2) {
+  if (!isAiDominant(profile)) return parts;
+  const cudaCandidates = parts.filter(isCudaGpu);
+  return cudaCandidates.length ? cudaCandidates : [];
+}
+
 function ordered(parts: CatalogPart[], strategy: QuotePreviewStrategy, _category: string) {
   return [...parts].sort((left, right) => {
     const leftOffer = selectOffer(left);
     const rightOffer = selectOffer(right);
     if (!leftOffer || !rightOffer) return 0;
     const qualityDiff = qualityScore([left]) - qualityScore([right]);
-    if (strategy === 'PERFORMANCE') return qualityDiff || rightOffer.priceWon - leftOffer.priceWon;
-    if (strategy === 'VALUE_UPGRADE') return (leftOffer.priceWon - qualityScore([left]) * 100) - (rightOffer.priceWon - qualityScore([right]) * 100);
-    return Math.abs(leftOffer.priceWon - 300_000) - Math.abs(rightOffer.priceWon - 300_000) || qualityDiff;
+    const trustDiff = trustScore(left) - trustScore(right);
+    if (strategy === 'PERFORMANCE') return (qualityDiff + trustDiff * 2) || rightOffer.priceWon - leftOffer.priceWon;
+    if (strategy === 'VALUE_UPGRADE') return (leftOffer.priceWon - qualityScore([left]) * 100 - trustScore(left) * 300)
+      - (rightOffer.priceWon - qualityScore([right]) * 100 - trustScore(right) * 300);
+    return (Math.abs(leftOffer.priceWon - 300_000) - trustScore(left) * 500)
+      - (Math.abs(rightOffer.priceWon - 300_000) - trustScore(right) * 500)
+      || qualityDiff;
   });
 }
 
 function comparePlans(left: Plan, right: Plan, strategy: QuotePreviewStrategy | 'CHEAPEST', targetWon: number) {
   if (strategy === 'CHEAPEST') return left.totalWon - right.totalWon;
-  if (strategy === 'PERFORMANCE') return right.performanceScore - left.performanceScore || right.workloadFitScore - left.workloadFitScore || left.totalWon - right.totalWon;
+  if (strategy === 'PERFORMANCE') return right.performanceScore - left.performanceScore
+    || right.workloadFitScore - left.workloadFitScore
+    || right.trustScore - left.trustScore
+    || left.totalWon - right.totalWon;
   if (strategy === 'VALUE_UPGRADE') {
-    return (right.valueScore + right.upgradeabilityScore) - (left.valueScore + left.upgradeabilityScore)
+    return (right.valueScore + right.upgradeabilityScore + right.trustScore * 0.5)
+      - (left.valueScore + left.upgradeabilityScore + left.trustScore * 0.5)
       || right.workloadFitScore - left.workloadFitScore
+      || right.trustScore - left.trustScore
       || left.totalWon - right.totalWon;
   }
   const leftTargetPenalty = Math.abs(left.totalWon - targetWon) / Math.max(1, targetWon);
   const rightTargetPenalty = Math.abs(right.totalWon - targetWon) / Math.max(1, targetWon);
   return (leftTargetPenalty - left.preferenceScore / 400) - (rightTargetPenalty - right.preferenceScore / 400)
     || right.preferenceScore - left.preferenceScore
+    || right.trustScore - left.trustScore
     || right.workloadFitScore - left.workloadFitScore;
 }
 
 function selectOffer(part: CatalogPart): CatalogOffer | undefined {
-  return [...part.offers].sort((left, right) => Number(right.isDefault) - Number(left.isDefault) || left.priceWon - right.priceWon)[0];
+  if (selectedOfferCache.has(part)) return selectedOfferCache.get(part);
+  const selected = [...part.offers].sort((left, right) => Number(right.isDefault) - Number(left.isDefault) || left.priceWon - right.priceWon)[0];
+  selectedOfferCache.set(part, selected);
+  return selected;
 }
 
 function isSocketCompatible(cpu: CatalogPart, board: CatalogPart) {
@@ -449,6 +645,7 @@ function deriveWorkloadDemand(profile: QuoteProfileV2): WorkloadDemand {
     minGpuMemoryGb: Math.ceil(demand.minGpuMemoryGb),
     minRamGb: Math.ceil(demand.minRamGb),
     minStorageGb: Math.ceil(demand.minStorageGb),
+    primaryWorkload: [...profile.workloadProfile.workloads].sort((left, right) => right.weight - left.weight)[0]?.type ?? 'OFFICE',
   };
 }
 
@@ -542,7 +739,7 @@ function parseQuantizationBits(value: string) {
 function meetsProcessorDemand(cpu: CatalogPart, gpu: CatalogPart, demand: WorkloadDemand) {
   const cpuSpec = cpu.spec.cpu;
   const gpuSpec = gpu.spec.gpu;
-  return Boolean(cpuSpec && gpuSpec
+  return Boolean(cpuSpec && gpuSpec && isGpuSpecUsable(gpu)
     && (cpuSpec.coreCount ?? 0) >= demand.minCpuCores
     && (cpuSpec.threadCount ?? 0) >= demand.minCpuThreads
     && (gpuSpec.memoryGb ?? 0) >= demand.minGpuMemoryGb);
@@ -557,23 +754,27 @@ function workloadFitScoreFor(parts: CatalogPart[], demand: WorkloadDemand) {
   const gpu = parts.find((part) => part.spec.gpu)?.spec.gpu;
   const ram = parts.find((part) => part.spec.ram)?.spec.ram;
   const storage = parts.filter((part) => part.spec.storage).reduce((sum, part) => sum + (part.spec.storage?.capacityGb ?? 0), 0);
-  const ratio = (value: number, minimum: number) => minimum <= 0 ? 1 : Math.min(1.5, value / minimum);
-  const score = [
+  const cap = demand.primaryWorkload === 'AI' ? 2.5 : 1.5;
+  const ratio = (value: number, minimum: number) => minimum <= 0 ? 1 : Math.min(cap, value / minimum);
+  const values = [
     ratio(cpu?.coreCount ?? 0, demand.minCpuCores),
     ratio(cpu?.threadCount ?? 0, demand.minCpuThreads),
     ratio(gpu?.memoryGb ?? 0, demand.minGpuMemoryGb),
     ratio(ram?.capacityGb ?? 0, demand.minRamGb),
     ratio(storage, demand.minStorageGb),
-  ].reduce((sum, value) => sum + value, 0) / 5;
-  return Math.round(Math.min(100, score / 1.5 * 100));
+  ];
+  const weights = demand.primaryWorkload === 'AI' ? [0.15, 0.1, 0.5, 0.2, 0.05] : [0.2, 0.2, 0.2, 0.2, 0.2];
+  const score = values.reduce((sum, value, index) => sum + value * weights[index], 0);
+  return Math.round(Math.min(100, score / cap * 100));
 }
 
 function scorePlan(parts: CatalogPart[], subtotalWon: number, totalWon: number, profile: QuoteProfileV2, demand: WorkloadDemand, workloadFitScore: number): PlanScores {
   const quality = Math.min(100, qualityScore(parts) / 5);
+  const trust = parts.reduce((sum, part) => sum + trustScore(part), 0) / Math.max(1, parts.length);
   const value = Math.min(100, qualityScore(parts) / Math.max(1, totalWon) * 100_000);
   const aesthetics = aestheticScore(parts);
   const upgradeability = upgradeabilityScore(parts);
-  const performance = Math.min(100, workloadFitScore * 0.65 + quality * 0.35);
+  const performance = Math.min(100, workloadFitScore * 0.6 + quality * 0.25 + trust * 0.15);
   const preference = (
     performance * profile.preferenceProfile.performance
     + value * profile.preferenceProfile.value
@@ -585,8 +786,9 @@ function scorePlan(parts: CatalogPart[], subtotalWon: number, totalWon: number, 
     valueScore: value,
     aestheticsScore: aesthetics,
     upgradeabilityScore: upgradeability,
-    preferenceScore: preference + workloadFitScore * 0.2 + subtotalWon / Math.max(1, totalWon) * 5 + demand.minGpuMemoryGb * 0.01,
+    preferenceScore: preference + workloadFitScore * 0.2 + trust * 0.25 + subtotalWon / Math.max(1, totalWon) * 5 + demand.minGpuMemoryGb * 0.01,
     workloadFitScore,
+    trustScore: trust,
   };
 }
 
@@ -629,10 +831,66 @@ function totalFees(profile: QuoteProfileV2) {
   return { assemblyFee, shippingFee, windowsFee, totalWon: assemblyFee + shippingFee + windowsFee };
 }
 
+function isAiDominant(profile: QuoteProfileV2) {
+  const primary = [...profile.workloadProfile.workloads].sort((left, right) => right.weight - left.weight)[0];
+  return primary?.type === 'AI' && primary.weight >= 50;
+}
+
+function catalogPartText(part: CatalogPart) {
+  return `${part.canonicalName} ${part.offers.map((offer) => `${offer.productName} ${offer.offerName}`).join(' ')}`;
+}
+
+function isCudaGpu(part: CatalogPart) {
+  const chipsetMaker = String(part.spec.gpu?.chipsetMaker ?? '').toUpperCase();
+  const text = catalogPartText(part);
+  const hasRadeonText = /(?:RADEON|라데온|\bRX\s*\d)/i.test(text);
+  const hasNvidiaText = /(?:NVIDIA|GEFORCE|지포스|RTX|GTX|QUADRO|TESLA)/i.test(text);
+  if (chipsetMaker) {
+    if (/(?:AMD|ATI|INTEL)/.test(chipsetMaker)) return false;
+    if (/NVIDIA/.test(chipsetMaker)) return !hasRadeonText;
+  }
+  return hasNvidiaText && !hasRadeonText;
+}
+
+function isGpuSpecUsable(part: CatalogPart) {
+  const gpu = part.spec.gpu;
+  return Boolean(gpu
+    && (gpu.memoryGb ?? 0) > 0
+    && (gpu.memoryGb ?? 0) <= 96
+    && (gpu.recommendedPsuW ?? 0) >= 400
+    && (gpu.lengthMm ?? 0) > 0);
+}
+
+function isPsuCatalogPart(part: CatalogPart) {
+  const psu = part.spec.psu;
+  if (!psu?.ratedWattage || psu.ratedWattage < 400) return false;
+  if (/(?:케이블|커넥터|변환|젠더|연장|브라켓)/i.test(catalogPartText(part))) return false;
+  if (hasTrustMetadata(part) && !/(?:80\s*PLUS|80PLUS)/i.test(String(psu.certification ?? ''))) return false;
+  return true;
+}
+
+function isBoardThermallySuitable(board: CatalogPart, cpu: CatalogPart) {
+  const coreCount = cpu.spec.cpu?.coreCount ?? 0;
+  const chipset = String(board.spec.mainboard?.chipset ?? '').toUpperCase();
+  if (coreCount >= 12 && /(?:A320|A520|A620|H410|H510|H610)/.test(chipset)) return false;
+  return true;
+}
+
+function isCaseAirflowSuitable(pcCase: CatalogPart, gpu: CatalogPart) {
+  const power = gpu.spec.gpu?.powerConsumptionW ?? 0;
+  return power < 250 || (pcCase.spec.case?.fanCount ?? 0) >= 2;
+}
+
+function isCoolerThermallySuitable(cooler: CatalogPart, cpu: CatalogPart) {
+  const coreCount = cpu.spec.cpu?.coreCount ?? 0;
+  const height = cooler.spec.cooler?.heightMm ?? 0;
+  return coreCount < 12 || height >= 120 || String(cooler.spec.cooler?.coolerType).toUpperCase().includes('LIQUID');
+}
+
 function qualityScore(parts: CatalogPart[]) {
   return parts.reduce((score, part) => {
     if (part.spec.cpu) return score + (part.spec.cpu.coreCount ?? 0) * 10 + (part.spec.cpu.threadCount ?? 0) * 3 + (part.spec.cpu.boostClockGhz ?? 0) * 10;
-    if (part.spec.gpu) return score + (part.spec.gpu.memoryGb ?? 0) * 12 + (part.spec.gpu.powerConsumptionW ?? 0) / 10;
+    if (part.spec.gpu) return score + Math.min(96, part.spec.gpu.memoryGb ?? 0) * 12 + (part.spec.gpu.powerConsumptionW ?? 0) / 10;
     if (part.spec.ram) return score + (part.spec.ram.capacityGb ?? 0) * 2;
     if (part.spec.storage) return score + (part.spec.storage.capacityGb ?? 0) / 100;
     if (part.spec.psu) return score + (part.spec.psu.ratedWattage ?? 0) / 100;
@@ -652,22 +910,115 @@ function toCandidate(profile: QuoteProfileV2, strategy: QuotePreviewStrategy, pl
     id: `CANDIDATE-${index}`,
     strategy,
     status: 'READY',
-    parts: plan.parts.map((part, partIndex) => ({ ...plan.offers[partIndex], partId: part.partId, category: part.category, partName: part.canonicalName })),
+    parts: plan.parts.map((part, partIndex) => ({
+      ...plan.offers[partIndex],
+      partId: part.partId,
+      category: part.category,
+      partName: part.canonicalName,
+      manufacturer: part.manufacturer ?? null,
+      displaySpecText: displaySpecText(part, plan.offers[partIndex]),
+      detailImages: plan.offers[partIndex].detailImages ?? [],
+      trustScore: trustScore(part),
+      trustLabel: trustLabel(part),
+    })),
     subtotalWon: plan.subtotalWon,
     assemblyFeeWon: fees.assemblyFee,
     shippingFeeWon: fees.shippingFee,
     windowsFeeWon: fees.windowsFee,
     totalWon: plan.totalWon,
     priceCheckedAt,
-    selectionReasons: strategy === 'PERFORMANCE'
-      ? ['CPU·GPU 품질 점수와 메모리 용량을 우선했습니다.']
-      : strategy === 'VALUE_UPGRADE'
-        ? ['현재 가격 대비 성능과 향후 업그레이드 여지를 우선했습니다.']
-        : ['목표 예산과 호환성·성능의 균형을 우선했습니다.'],
+    selectionReasons: [
+      ...(isAiDominant(profile) ? ['AI 추론은 CUDA 호환 NVIDIA GPU와 VRAM 여유를 우선했습니다.'] : []),
+      trustSummary(plan.parts),
+      strategy === 'PERFORMANCE'
+        ? 'CPU·GPU 품질 점수와 메모리 여유를 우선했습니다.'
+        : strategy === 'VALUE_UPGRADE'
+          ? '현재 가격 대비 성능과 향후 업그레이드 여지를 우선했습니다.'
+          : '목표 예산과 호환성·성능의 균형을 우선했습니다.',
+    ],
     unmetConditions: [],
     compatibility: plan.compatibility,
     performanceEvidence: emptyPerformanceEvidence('exact CPU/GPU 성능 근거는 benchmark DB에 exact combo가 있을 때만 연결합니다.'),
   };
+}
+
+function formatCatalogSpec(part: CatalogPart) {
+  const spec = part.spec;
+  if (spec.cpu) return compactSpec([
+    value(spec.cpu.coreCount, '코어'),
+    value(spec.cpu.threadCount, '스레드'),
+    value(spec.cpu.baseClockGhz, 'GHz 기본 클럭'),
+    value(spec.cpu.boostClockGhz, 'GHz 최대 클럭'),
+    spec.cpu.socket,
+    value(spec.cpu.tdpW, 'W TDP'),
+  ]);
+  if (spec.gpu) return compactSpec([
+    spec.gpu.chipsetName,
+    value(spec.gpu.memoryGb, 'GB'),
+    spec.gpu.memoryType,
+    spec.gpu.interfaceText,
+    value(spec.gpu.recommendedPsuW, 'W 권장 파워'),
+    value(spec.gpu.lengthMm, 'mm'),
+  ]);
+  if (spec.mainboard) return compactSpec([
+    spec.mainboard.socket,
+    spec.mainboard.chipset,
+    spec.mainboard.formFactor,
+    spec.mainboard.memoryType,
+    value(spec.mainboard.maxMemoryGb, 'GB 최대 메모리'),
+    value(spec.mainboard.m2SlotCount, '개 M.2'),
+    spec.mainboard.wifiBuiltin ? 'Wi-Fi 내장' : undefined,
+  ]);
+  if (spec.ram) return compactSpec([
+    value(spec.ram.capacityGb, 'GB'),
+    spec.ram.memoryType,
+    value(spec.ram.speedMhz, 'MHz'),
+    value(spec.ram.moduleCount, '개 모듈'),
+    spec.ram.profileType,
+  ]);
+  if (spec.storage) return compactSpec([
+    value(spec.storage.capacityGb, 'GB'),
+    spec.storage.storageType,
+    spec.storage.formFactor,
+    spec.storage.interfaceText,
+    value(spec.storage.seqReadMbps, 'MB/s 읽기'),
+    value(spec.storage.seqWriteMbps, 'MB/s 쓰기'),
+  ]);
+  if (spec.psu) return compactSpec([
+    value(spec.psu.ratedWattage, 'W 정격'),
+    spec.psu.certification,
+    spec.psu.formFactor,
+    spec.psu.modularType,
+    spec.psu.pcie5Ready ? 'PCIe 5 대응' : undefined,
+  ]);
+  if (spec.case) return compactSpec([
+    spec.case.caseType,
+    spec.case.supportedBoardForms?.join('/'),
+    value(spec.case.maxGpuLengthMm, 'mm GPU 허용'),
+    value(spec.case.maxCoolerHeightMm, 'mm 쿨러 허용'),
+    value(spec.case.fanCount, '개 기본 팬'),
+  ]);
+  if (spec.cooler) return compactSpec([
+    spec.cooler.coolerType,
+    spec.cooler.supportedSockets?.join('/'),
+    value(spec.cooler.heightMm, 'mm 높이'),
+    value(spec.cooler.fanSizeMm, 'mm 팬'),
+    value(spec.cooler.tdpRatingW, 'W 대응'),
+  ]);
+  return '상세 스펙 확인 필요';
+}
+
+function displaySpecText(part: CatalogPart, offer: CatalogOffer) {
+  const structured = formatCatalogSpec(part);
+  return structured !== '상세 스펙 확인 필요' ? structured : offer.summarySpecText?.trim() || structured;
+}
+
+function compactSpec(values: Array<string | number | null | undefined>) {
+  return values.filter((value): value is string | number => value !== null && value !== undefined && String(value).trim() !== '').join(' / ');
+}
+
+function value(number: number | null | undefined, suffix: string) {
+  return number === null || number === undefined ? undefined : `${number}${suffix}`;
 }
 
 function reviewRequired(reasons: string[], relaxations: string[], estimate?: { requiredMinimumWon: number; shortfallWon: number }): QuotePreviewResult {

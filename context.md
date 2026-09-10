@@ -281,6 +281,8 @@ PRICE_APPROVAL_REQUIRED → ADMIN_REVIEW → WAITING_DEPOSIT → DEPOSIT_CONFIRM
 
 운영체제, 현재 프로젝트, 보관 자료, 연간 증가량, 중복 보관 필요를 분리해 표현하는 저장 용량 요구다. 단일 SSD 용량 선택과 구분한다.
 
+고객용 조건부 자동 견적 설문에서는 이 내부 수요를 직접 입력시키지 않는다. 사용자는 `필요한 SSD 용량`(500GB·1TB·2TB·4TB)만 선택하고, 세부 수요와 중복 보관은 기본값으로 처리한다. 세부 `StorageDemand`는 서버 후보 생성에 필요한 내부 표현으로 유지한다.
+
 ### 견적 후보 (QuoteCandidate)
 
 같은 사용 프로필에서 서로 다른 의사결정을 보여주는 완성된 견적 하나다. 자동 견적은 균형형·성능 우선·가성비/확장형 후보를 최대 3개까지 제시하고, 조건을 만족하는 후보가 없으면 `REVIEW_REQUIRED`를 반환한다.
@@ -288,6 +290,32 @@ PRICE_APPROVAL_REQUIRED → ADMIN_REVIEW → WAITING_DEPOSIT → DEPOSIT_CONFIRM
 ### 성능 근거 (PerformanceEvidence)
 
 성능 숫자의 출처와 신뢰 수준이다. `MEASURED`, `SOURCE_REPORTED`, `DERIVED`, `NONE`을 구분하며, 근거 없는 수치를 실측으로 표시하지 않는다.
+
+### 공개 카탈로그 승인 게이트 (PublicCatalogApprovalGate)
+
+크롤러가 적재한 표준 부품을 공개 카탈로그·자동 견적에 노출할지 결정하는 운영 정책이다. 기본값은 관리자 승인 부품만 공개하지만, 운영자가 `PUBLIC_PART_APPROVAL_REQUIRED=false`를 명시한 환경에서는 활성 상태이며 현재 가격·재고가 있는 판매 단위를 공개한다. 부품 목록과 자동 견적은 같은 게이트 의미를 사용해야 한다.
+
+### 후보 자격 게이트 (CandidateEligibilityGate)
+
+판매 중이라는 사실만으로 자동 견적 후보가 될 수는 없다. 부품 역할에 맞는 실물 스펙이 있고, 케이블·변환 젠더·튜닝 액세서리처럼 조립 부품이 아닌 상품을 제외하며, CPU·GPU·메인보드·쿨러·파워·케이스 사이의 전력·냉각·물리 호환 조건을 만족해야 후보가 된다.
+
+### AI 추론 가속기 호환성 (AIInferenceAcceleratorCompatibility)
+
+AI 추론 workload의 후보 품질을 판단하는 기준이다. 모델 크기와 양자화로 계산한 VRAM/RAM 최소량을 넘기는 것만으로 충분하지 않으며, CUDA 생태계를 사용하는 NVIDIA GPU가 판매 목록에 있으면 AMD·기타 GPU를 같은 성능 후보로 자동 채택하지 않는다. NVIDIA 후보가 없을 때는 이를 숨기지 않고 검토 필요 상태나 명시적 완화 사유로 설명한다.
+
+### 제조사·인기 신뢰 신호 (ManufacturerPopularityEvidence)
+
+자동 견적 후보의 신뢰도를 판단하는 카테고리별 제조사 tier, 선택된 판매 상품의 후기 수·평점, 로그 스케일의 `POPULARITY_SCORE`, 스펙 파싱/검증 상태, 관리자 승인 신호의 조합이다. 모든 자동 선택 부품은 검증 제조사·인기 근거·관리자 승인 중 하나 이상의 근거가 있어야 하며, 스펙 파싱 상태만으로는 자동 추천을 허용하지 않는다. 신뢰 메타데이터 자체가 없으면 임의로 통과시키지 않고 검토 필요로 돌린다. 신뢰 신호는 `VERIFIED_MANUFACTURER`, `ADMIN_APPROVED`, `POPULAR`, `SPEC_VERIFIED`, `UNVERIFIED` 라벨과 제조사·후기·평점으로 후보 상세에 공개한다.
+
+### 공개 견적 미리보기와 인증 경계 (PublicQuotePreviewBoundary)
+
+조건부 자동 견적 설문과 서버 검증 후보 비교는 비로그인 사용자에게도 공개한다. 비로그인 사용자의 선택 후보·장바구니는 현재 브라우저에 임시 저장하며, 로그인하면 서버 견적으로 저장하고 다른 기기에서 이어볼 수 있다. 주문 접수와 서버 저장은 인증 사용자만 수행할 수 있고, 로그인·회원가입 후에는 원래 주문 경로로 돌아가야 한다. AI 단독 workload처럼 게임 선택이 필요 없는 설문은 게임 목록 장애와 분리해 제출할 수 있지만, 게임 workload는 게임 목록을 확인할 수 없거나 선택 게임이 없으면 제출하지 않는다.
+
+### 공개 데이터 표현 경계 (PublicDataPresentationBoundary)
+
+벤치마크·추천 견적의 내부 원천 레코드와 고객용 표현을 분리한다. `COMBO_KEY`, 수집 출처, 원본 상품명, 성능 근거 메타데이터는 검수·재현을 위해 내부에 보존한다. 고객 화면에는 JHS 정규화 규칙으로 만든 `PublicComboName`과 JHS가 직접 작성한 제목·요약·설명을 사용한다. 이는 외부 데이터를 JHS 자체 측정이라고 속이는 의미가 아니며, `MEASURED`, `SOURCE_REPORTED`, `DERIVED`, `NONE` 근거 분류와 필요한 provenance는 계속 표시한다.
+
+수집 조합 수(`totalComboCount`)와 FPS 근거 보유 조합 수(`fpsComboCount`)는 다른 지표다. FPS가 없는 수집 조합을 화면에서 제외해 전체 수집 규모를 하나로 오해하게 만들지 않으며, 해당 조합에는 성능 수치를 임의로 생성하지 않고 데이터 준비 상태를 표시한다.
 
 ### 즉시 해야 할 것
 1. 빌드·타입체크 상태 확인 (몇 달 만에 재개이므로 의존성 상태 점검)

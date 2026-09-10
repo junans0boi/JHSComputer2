@@ -22,7 +22,7 @@ test('converts a server candidate into the legacy quote shape without losing evi
     parts: [{
       offerId: 'offer-1', externalProductId: 'product-1', productName: 'GPU', productUrl: 'https://example.test/gpu', imageUrl: null,
       offerName: 'GPU', priceWon: 300_000, publicPriceWon: 320_000, stockStatus: 'AVAILABLE', priceCheckedAt: '2026-09-08T00:00:00.000Z',
-      isDefault: true, partId: 'part-1', category: 'GPU', partName: 'GPU',
+      isDefault: true, partId: 'part-1', category: 'GPU', partName: 'GPU', displaySpecText: '12GB / PCIe 4.0', detailImages: ['https://example.test/detail.jpg'],
     }],
     subtotalWon: 300_000,
     assemblyFeeWon: 50_000,
@@ -50,8 +50,16 @@ test('converts a server candidate into the legacy quote shape without losing evi
   assert.equal(quote.parts[0]?.productNo, 'product-1');
   assert.equal(quote.parts[0]?.offerId, 'offer-1');
   assert.equal(quote.parts[0]?.offerName, 'GPU');
+  assert.equal(quote.parts[0]?.specSummary, '12GB / PCIe 4.0');
+  assert.deepEqual(quote.parts[0]?.detailImages, ['https://example.test/detail.jpg']);
   assert.equal(quote.performance[0]?.evidenceType, 'MEASURED');
   assert.equal(quote.performance[0]?.sampleCount, 3);
   assert.equal(quote.performance.length, 1);
+  assert.deepEqual(quote.performanceEvidence, {
+    evidenceType: 'MEASURED',
+    confidence: 'MEDIUM',
+    sampleCount: 3,
+    note: '원본 FPS 집계값입니다.',
+  });
   assert.match(quote.compatibility[0] ?? '', /^통과:/);
 });

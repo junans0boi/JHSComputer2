@@ -110,19 +110,23 @@ export class QuotePreviewService {
       .select([
         'part.id',
         'part.canonicalName',
+        'part.manufacturer',
+        'part.popularityScore',
+        'part.specStatus',
+        'part.isAdminApproved',
         'category.id',
         'category.code',
-        'cpuSpec.id', 'cpuSpec.socket', 'cpuSpec.tdpW', 'cpuSpec.pbpW', 'cpuSpec.coreCount', 'cpuSpec.threadCount', 'cpuSpec.boostClockGhz',
-        'gpuSpec.id', 'gpuSpec.memoryGb', 'gpuSpec.recommendedPsuW', 'gpuSpec.powerConsumptionW', 'gpuSpec.lengthMm',
-        'mainboardSpec.id', 'mainboardSpec.socket', 'mainboardSpec.memoryType', 'mainboardSpec.formFactor',
-        'ramSpec.id', 'ramSpec.memoryType', 'ramSpec.capacityGb',
-        'storageSpec.id', 'storageSpec.capacityGb',
-        'psuSpec.id', 'psuSpec.ratedWattage',
-        'caseSpec.id', 'caseSpec.supportedBoardFormsJson', 'caseSpec.maxGpuLengthMm', 'caseSpec.maxCoolerHeightMm',
-        'coolerSpec.id', 'coolerSpec.supportedSocketsJson', 'coolerSpec.heightMm',
+        'cpuSpec.id', 'cpuSpec.socket', 'cpuSpec.tdpW', 'cpuSpec.pbpW', 'cpuSpec.coreCount', 'cpuSpec.threadCount', 'cpuSpec.baseClockGhz', 'cpuSpec.boostClockGhz',
+        'gpuSpec.id', 'gpuSpec.chipsetMaker', 'gpuSpec.chipsetName', 'gpuSpec.memoryType', 'gpuSpec.memoryGb', 'gpuSpec.interfaceText', 'gpuSpec.recommendedPsuW', 'gpuSpec.powerConsumptionW', 'gpuSpec.lengthMm',
+        'mainboardSpec.id', 'mainboardSpec.socket', 'mainboardSpec.memoryType', 'mainboardSpec.formFactor', 'mainboardSpec.chipset', 'mainboardSpec.memorySlotCount', 'mainboardSpec.maxMemoryGb', 'mainboardSpec.m2SlotCount', 'mainboardSpec.sataPortCount', 'mainboardSpec.pcieX16SlotCount', 'mainboardSpec.wifiBuiltin',
+        'ramSpec.id', 'ramSpec.memoryType', 'ramSpec.capacityGb', 'ramSpec.moduleCount', 'ramSpec.speedMhz', 'ramSpec.profileType',
+        'storageSpec.id', 'storageSpec.storageType', 'storageSpec.formFactor', 'storageSpec.interfaceText', 'storageSpec.capacityGb', 'storageSpec.seqReadMbps', 'storageSpec.seqWriteMbps',
+        'psuSpec.id', 'psuSpec.formFactor', 'psuSpec.ratedWattage', 'psuSpec.certification', 'psuSpec.modularType', 'psuSpec.pcie5Ready',
+        'caseSpec.id', 'caseSpec.caseType', 'caseSpec.supportedBoardFormsJson', 'caseSpec.maxGpuLengthMm', 'caseSpec.maxCoolerHeightMm', 'caseSpec.fanCount',
+        'coolerSpec.id', 'coolerSpec.supportedSocketsJson', 'coolerSpec.heightMm', 'coolerSpec.coolerType', 'coolerSpec.fanSizeMm', 'coolerSpec.tdpRatingW',
         'supplierOffers.id', 'supplierOffers.offerName', 'supplierOffers.isActive', 'supplierOffers.isDefault',
         'supplierOffers.currentPublicPrice', 'supplierOffers.currentBenefitPrice', 'supplierOffers.currentStockStatus', 'supplierOffers.currentPriceDt',
-        'supplierProduct.id', 'supplierProduct.externalProductId', 'supplierProduct.productName', 'supplierProduct.productUrl', 'supplierProduct.imageUrl', 'supplierProduct.isActive',
+        'supplierProduct.id', 'supplierProduct.externalProductId', 'supplierProduct.productName', 'supplierProduct.productUrl', 'supplierProduct.imageUrl', 'supplierProduct.summarySpecText', 'supplierProduct.rawSpecJson', 'supplierProduct.reviewCount', 'supplierProduct.rating', 'supplierProduct.isActive',
         'supplier.id', 'supplier.supplierCode', 'supplier.supplierName', 'supplier.status',
       ])
       .leftJoinAndSelect('part.category', 'category', 'category.IS_ACTIVE = :categoryActive', { categoryActive: 'Y' })
@@ -178,6 +182,8 @@ export class QuotePreviewService {
           productName: offer.product!.productName,
           productUrl: offer.product!.productUrl,
           imageUrl: offer.product!.imageUrl,
+          summarySpecText: offer.product!.summarySpecText,
+          detailImages: extractDetailImages(offer.product!.rawSpecJson),
           offerName: offer.offerName,
           supplierCode: offer.product?.supplier?.supplierCode,
           priceWon,
@@ -185,6 +191,8 @@ export class QuotePreviewService {
           stockStatus: String(offer.currentStockStatus),
           priceCheckedAt: offer.currentPriceDt,
           isDefault: offer.isDefault,
+          reviewCount: offer.product?.reviewCount ?? null,
+          rating: toNumber(offer.product?.rating),
         };
       })
       .filter((offer) => offer.priceWon > 0);
@@ -194,14 +202,19 @@ export class QuotePreviewService {
       partId: String(part.id),
       category,
       canonicalName: part.canonicalName,
+      manufacturer: part.manufacturer,
+      popularityScore: toNumber(part.popularityScore),
+      specStatus: part.specStatus,
+      isAdminApproved: part.isAdminApproved,
       spec: toCatalogSpec(part, category),
       offers,
     }];
   }
 
   private publicApprovalRequired() {
-    return this.config.get<string>('PUBLIC_PART_APPROVAL_REQUIRED') === 'true'
-      || this.config.get<string>('NODE_ENV') === 'production';
+    const configured = this.config.get<string>('PUBLIC_PART_APPROVAL_REQUIRED');
+    if (configured === 'false') return false;
+    return configured === 'true' || this.config.get<string>('NODE_ENV') === 'production';
   }
 }
 
@@ -241,11 +254,16 @@ function toCatalogSpec(part: Part, category: string): CatalogSpec {
         tdpW: part.cpuSpec.tdpW ?? part.cpuSpec.pbpW,
         coreCount: part.cpuSpec.coreCount,
         threadCount: part.cpuSpec.threadCount,
+        baseClockGhz: toNumber(part.cpuSpec.baseClockGhz),
         boostClockGhz: toNumber(part.cpuSpec.boostClockGhz),
       } : undefined };
     case 'GPU':
       return { gpu: part.gpuSpec ? {
+        chipsetMaker: part.gpuSpec.chipsetMaker,
+        chipsetName: part.gpuSpec.chipsetName,
+        memoryType: part.gpuSpec.memoryType,
         memoryGb: part.gpuSpec.memoryGb,
+        interfaceText: part.gpuSpec.interfaceText,
         recommendedPsuW: part.gpuSpec.recommendedPsuW,
         powerConsumptionW: part.gpuSpec.powerConsumptionW,
         lengthMm: toNumber(part.gpuSpec.lengthMm),
@@ -255,23 +273,35 @@ function toCatalogSpec(part: Part, category: string): CatalogSpec {
         socket: part.mainboardSpec.socket,
         memoryType: part.mainboardSpec.memoryType,
         formFactor: part.mainboardSpec.formFactor,
+        chipset: part.mainboardSpec.chipset,
+        memorySlotCount: part.mainboardSpec.memorySlotCount,
+        maxMemoryGb: part.mainboardSpec.maxMemoryGb,
+        m2SlotCount: part.mainboardSpec.m2SlotCount,
+        sataPortCount: part.mainboardSpec.sataPortCount,
+        pcieX16SlotCount: part.mainboardSpec.pcieX16SlotCount,
+        wifiBuiltin: part.mainboardSpec.wifiBuiltin,
       } : undefined };
     case 'RAM':
-      return { ram: part.ramSpec ? { memoryType: part.ramSpec.memoryType, capacityGb: part.ramSpec.capacityGb } : undefined };
+      return { ram: part.ramSpec ? { memoryType: part.ramSpec.memoryType, capacityGb: part.ramSpec.capacityGb, moduleCount: part.ramSpec.moduleCount, speedMhz: part.ramSpec.speedMhz, profileType: part.ramSpec.profileType } : undefined };
     case 'SSD':
-      return { storage: part.storageSpec ? { capacityGb: part.storageSpec.capacityGb } : undefined };
+      return { storage: part.storageSpec ? { storageType: part.storageSpec.storageType, formFactor: part.storageSpec.formFactor, interfaceText: part.storageSpec.interfaceText, capacityGb: part.storageSpec.capacityGb, seqReadMbps: part.storageSpec.seqReadMbps, seqWriteMbps: part.storageSpec.seqWriteMbps } : undefined };
     case 'PSU':
-      return { psu: part.psuSpec ? { ratedWattage: part.psuSpec.ratedWattage } : undefined };
+      return { psu: part.psuSpec ? { formFactor: part.psuSpec.formFactor, ratedWattage: part.psuSpec.ratedWattage, certification: part.psuSpec.certification, modularType: part.psuSpec.modularType, pcie5Ready: part.psuSpec.pcie5Ready } : undefined };
     case 'CASE':
       return { case: part.caseSpec ? {
+        caseType: part.caseSpec.caseType,
         supportedBoardForms: toStringArray(part.caseSpec.supportedBoardFormsJson),
         maxGpuLengthMm: toNumber(part.caseSpec.maxGpuLengthMm),
         maxCoolerHeightMm: toNumber(part.caseSpec.maxCoolerHeightMm),
+        fanCount: part.caseSpec.fanCount,
       } : undefined };
     case 'CPU_COOLER':
       return { cooler: part.coolerSpec ? {
         supportedSockets: toStringArray(part.coolerSpec.supportedSocketsJson),
         heightMm: toNumber(part.coolerSpec.heightMm),
+        coolerType: part.coolerSpec.coolerType,
+        fanSizeMm: part.coolerSpec.fanSizeMm,
+        tdpRatingW: part.coolerSpec.tdpRatingW,
       } : undefined };
     default:
       return {};
@@ -282,6 +312,20 @@ function toNumber(value: number | string | null | undefined) {
   if (value === null || value === undefined) return null;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : null;
+}
+
+function extractDetailImages(raw: Record<string, unknown> | null | undefined) {
+  const direct = raw?.detailImages;
+  if (Array.isArray(direct)) return direct.filter((value): value is string => typeof value === 'string').slice(0, 20);
+  const sample = raw?.detailSample;
+  if (sample && typeof sample === 'object') {
+    const parsed = (sample as Record<string, unknown>).parsed;
+    if (parsed && typeof parsed === 'object') {
+      const images = (parsed as Record<string, unknown>).detailImages;
+      if (Array.isArray(images)) return images.filter((value): value is string => typeof value === 'string').slice(0, 20);
+    }
+  }
+  return [];
 }
 
 function toStringArray(value: unknown): string[] | null {

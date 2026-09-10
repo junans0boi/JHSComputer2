@@ -10,14 +10,14 @@ export class GameRequirement {
   })
   id!: string;
 
-  @Column({ name: 'GAME_ID', type: 'bigint' })
-  gameId!: string;
+  @Column({ name: 'BENCHMARK_GAME_ID', type: 'bigint' })
+  benchmarkGameId!: string;
 
   @ManyToOne(() => Game, (game) => game.requirements, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn({ name: 'GAME_ID' })
+  @JoinColumn({ name: 'BENCHMARK_GAME_ID' })
   game!: Game;
 
   @Column({ name: 'RESOLUTION', type: 'varchar', length: 30 })

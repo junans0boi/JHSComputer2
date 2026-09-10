@@ -37,6 +37,10 @@ export default function QuotePage() {
   const [serverSaved, setServerSaved] = useState(false);
   const [replaceQuotePart, setReplaceQuotePart] = useState<QuotePart | null>(null);
   const [gameOptions, setGameOptions] = useState<string[]>([]);
+  const [gameLoading, setGameLoading] = useState(true);
+  const [gameError, setGameError] = useState<string | null>(null);
+  const [gameLoadAttempt, setGameLoadAttempt] = useState(0);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [surveyProfile, setSurveyProfile] = useState<QuoteProfileV2>(() => createSurveyProfile(defaultInput));
   const [serverPreview, setServerPreview] = useState<QuotePreviewResponse>();
   const [selectedCandidateId, setSelectedCandidateId] = useState<string>();
@@ -45,12 +49,16 @@ export default function QuotePage() {
   const surveyProfileRef = useRef(surveyProfile);
 
   const { manualSelection, manualQuantities, setCatalog, setManualSelection, setManualQuantities } = useBuilderStore();
+  const hasActiveGamingWorkload = surveyProfile.workloadProfile.workloads.some(
+    (workload) => workload.type === 'GAMING' && Number(workload.weight) > 0,
+  );
 
   useEffect(() => {
     surveyProfileRef.current = surveyProfile;
   }, [surveyProfile]);
 
   useEffect(() => {
+    setIsAuthenticated(Boolean(getSession()?.accessToken));
     const params = new URLSearchParams(window.location.search);
     const modeParam = params.get('mode');
     if (modeParam === 'manual') {
@@ -82,18 +90,39 @@ export default function QuotePage() {
   }, []);
 
   useEffect(() => {
-    void loadServerCatalog()
-      .then((items) => {
-        if (items.length) setCatalog(items);
-      })
-      .catch(() => {});
-  }, [setCatalog]);
+    if (mode !== 'MANUAL') return;
+    void loadServerCatalog({
+      onCategoryLoaded: (category, items) => {
+        const current = useBuilderStore.getState().catalog;
+        setCatalog([...current.filter((part) => part.category !== category), ...items]);
+      },
+      onCategoryError: () => undefined,
+    })
+    .then(() => undefined)
+    .catch(() => {
+      // Manual builder can still show an empty state when the catalog is unavailable.
+    });
+  }, [mode, setCatalog]);
 
   useEffect(() => {
+    let cancelled = false;
+    if (!hasActiveGamingWorkload) {
+      setGameOptions([]);
+      setGameError(null);
+      setGameLoading(false);
+      return () => { cancelled = true; };
+    }
     const loadGames = async () => {
+      setGameLoading(true);
+      setGameError(null);
       const names = await loadBenchmarkGameNames();
+      if (cancelled) return;
       setGameOptions(names);
-      if (!names.length) return;
+      if (!names.length) {
+        setGameError('게임 목록을 불러오지 못했습니다.');
+        setGameLoading(false);
+        return;
+      }
       setInput((current) => {
         const selectedDbGames = current.games.filter((game) => names.includes(game));
         return selectedDbGames.length ? { ...current, games: selectedDbGames.slice(0, 3) } : { ...current, games: names.slice(0, 3) };
@@ -106,9 +135,11 @@ export default function QuotePage() {
             : workload),
         },
       }));
+      setGameLoading(false);
     };
     void loadGames();
-  }, []);
+    return () => { cancelled = true; };
+  }, [gameLoadAttempt, hasActiveGamingWorkload]);
 
   const hasCompatibilityFail = quote?.compatibility.some((item) => item.startsWith('실패:')) ?? false;
 
@@ -161,14 +192,21 @@ export default function QuotePage() {
           compatibility: nextQuote.compatibility,
         }),
       });
-      if (!response.ok) return nextQuote;
+      if (!response.ok) {
+        setPreviewError('서버 견적 저장에 실패했습니다. 로그인 상태와 서버 연결을 확인해주세요.');
+        return nextQuote;
+      }
       const body = await response.json() as { quoteId?: string | number };
-      if (!body.quoteId) return nextQuote;
+      if (!body.quoteId) {
+        setPreviewError('서버가 견적 번호를 반환하지 않았습니다.');
+        return nextQuote;
+      }
       const persisted = { ...nextQuote, serverQuoteId: String(body.quoteId) };
       saveQuote(persisted);
       setServerSaved(true);
       return persisted;
     } catch {
+      setPreviewError('서버 견적 저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
       return nextQuote;
     }
   };
@@ -199,7 +237,7 @@ export default function QuotePage() {
     setSelectedCandidateId(candidate.id);
     const persistedQuote = await persistQuoteToServer(hydratedQuote, candidate);
     setQuote(persistedQuote);
-    setCartMessage('선택한 서버 후보를 로컬 견적에 저장했습니다.');
+    setCartMessage(getSession()?.accessToken ? '선택한 후보를 서버 견적으로 저장했습니다.' : '선택한 후보를 이 브라우저에 임시 저장했습니다. 로그인하면 서버에도 저장됩니다.');
   };
 
   const handleBuildManualQuote = async () => {
@@ -242,7 +280,7 @@ export default function QuotePage() {
     addQuoteToCart(persistedQuote);
     await syncCartQuoteToServer(persistedQuote).catch(() => false);
     setQuote(persistedQuote);
-    setCartMessage('장바구니에 견적을 담았습니다.');
+    setCartMessage(isAuthenticated ? '장바구니에 견적을 담았습니다.' : '장바구니에 이 브라우저 기준으로 저장했습니다. 로그인하면 다른 기기에서도 확인할 수 있습니다.');
   };
 
   return (
@@ -325,9 +363,9 @@ export default function QuotePage() {
             ) : (
               <LinkButton
                 className="h-14 shadow-soft"
-                href="/order"
+                href={isAuthenticated ? '/order' : '/login?next=%2Forder'}
               >
-                바로 주문하기
+                {isAuthenticated ? '바로 주문하기' : '로그인 후 주문하기'}
                 <ChevronRight size={18} />
               </LinkButton>
             )}
@@ -346,7 +384,7 @@ export default function QuotePage() {
           <button className="mx-auto text-sm font-black text-brand hover:underline" onClick={() => setShowResult(false)} type="button">← 설문으로 돌아가기</button>
         </section>
       ) : mode === 'AUTO' ? (
-        <QuoteSurveyPanel error={previewError} gameOptions={gameOptions} loading={previewLoading} onChange={(nextProfile) => { surveyProfileRef.current = nextProfile; setSurveyProfile(nextProfile); }} onSubmit={handleGenerateAuto} profile={surveyProfile} />
+        <QuoteSurveyPanel error={previewError} gameError={gameError} gameLoading={gameLoading} gameOptions={gameOptions} isAuthenticated={isAuthenticated} loading={previewLoading} onChange={(nextProfile) => { surveyProfileRef.current = nextProfile; setSurveyProfile(nextProfile); }} onRetryGames={() => setGameLoadAttempt((attempt) => attempt + 1)} onSubmit={handleGenerateAuto} profile={surveyProfile} />
       ) : (
         <section className="grid min-w-0 gap-5 lg:grid-cols-[360px_minmax(0,1fr)] xl:grid-cols-[420px_minmax(0,1fr)] items-start">
           <div className="lg:sticky lg:top-[120px] flex flex-col gap-4">
@@ -390,7 +428,8 @@ function quoteToManualSelection(quote: Quote): ManualSelection {
       price: Math.round(part.price / (part.quantity ?? 1)),
       imageUrl: part.imageUrl ?? '',
       detailUrl: part.detailUrl ?? '',
-      spec: part.memo ?? '',
+      detailImages: part.detailImages ?? [],
+      spec: part.specSummary ?? part.memo ?? '',
       reviewCount: 0,
       reviewRate: 0,
       badges: [],
@@ -475,7 +514,15 @@ function mergeAiInputIntoProfile(profile: QuoteProfileV2, input: QuoteInput, cha
     const type = { 게임: 'GAMING', 방송: 'STREAMING', 영상편집: 'VIDEO_EDITING', 사무: 'OFFICE', AI: 'AI' }[changes.purpose] as QuoteProfileV2['workloadProfile']['workloads'][number]['type'];
     const dominant = [...next.workloadProfile.workloads].sort((left, right) => right.weight - left.weight)[0];
     if (dominant) {
-      next = { ...next, workloadProfile: { workloads: next.workloadProfile.workloads.map((workload) => workload.type === dominant.type ? { ...workload, type, details: workload.type === type ? workload.details : defaultWorkloadDetails(type) } : workload) } };
+      const existingTarget = next.workloadProfile.workloads.find((workload) => workload !== dominant && workload.type === type);
+      const workloads = existingTarget
+        ? next.workloadProfile.workloads
+          .filter((workload) => workload !== dominant && workload !== existingTarget)
+          .concat({ ...existingTarget, weight: dominant.weight + existingTarget.weight })
+        : next.workloadProfile.workloads.map((workload) => workload === dominant
+          ? { ...workload, type, details: workload.type === type ? workload.details : defaultWorkloadDetails(type) }
+          : workload);
+      next = { ...next, workloadProfile: { workloads } };
     }
   }
   if (changes.budget !== undefined) {

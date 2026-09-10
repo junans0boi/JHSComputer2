@@ -158,6 +158,75 @@ test('skips a cheaper board when its form factor cannot fit the case', () => {
   assert.equal(result.candidates[0].parts.find((part) => part.category === 'MAINBOARD')?.externalProductId, 'board-feasible-product-1');
 });
 
+test('AI candidates reject accessory PSUs, weak platform parts, and non-CUDA GPUs', () => {
+  const aiProfile: QuoteProfileV2 = {
+    ...profile,
+    workloadProfile: {
+      workloads: [{ type: 'AI', weight: 100, details: { mode: 'INFERENCE', modelSize: '13B', quantization: 'Q4' } }],
+    },
+    budgetProfile: { minimumWon: 1_000_000, targetWon: 2_000_000, maximumWon: 3_000_000, includes: ['PARTS', 'ASSEMBLY', 'SHIPPING'] },
+    preferenceProfile: { preset: 'PERFORMANCE', performance: 45, value: 15, aesthetics: 10, upgradeability: 30 },
+  };
+  const catalog = [
+    part('ai-cpu', 'CPU', 'Ryzen 9 9950X', { cpu: { socket: 'AM5', tdpW: 170, coreCount: 16, threadCount: 32, boostClockGhz: 5.7 } }, [450_000]),
+    part('ai-board-bad', 'MAINBOARD', 'A620 entry board', { mainboard: { socket: 'AM5', memoryType: 'DDR5', formFactor: 'M-ATX' } }, [50_000]),
+    part('ai-board-good', 'MAINBOARD', 'B650 creator board', { mainboard: { socket: 'AM5', memoryType: 'DDR5', formFactor: 'ATX' } }, [180_000]),
+    part('ai-ram', 'RAM', 'DDR5 64GB kit', { ram: { memoryType: 'DDR5', capacityGb: 64 } }, [150_000]),
+    part('ai-gpu-amd', 'GPU', 'AMD Radeon RX 7900 16GB', { gpu: { chipsetMaker: 'NVIDIA', memoryGb: 16, recommendedPsuW: 750, powerConsumptionW: 300, lengthMm: 320 } }, [700_000]),
+    part('ai-gpu-nvidia', 'GPU', 'NVIDIA RTX 4080 16GB', { gpu: { memoryGb: 16, recommendedPsuW: 750, powerConsumptionW: 320, lengthMm: 320 } }, [1_000_000]),
+    part('ai-ssd', 'SSD', 'NVMe SSD 1TB', { storage: { capacityGb: 1024 } }, [100_000]),
+    part('ai-psu-cable', 'PSU', '600W 12VHPWR 전원 케이블', { psu: { ratedWattage: 600 } }, [10_000]),
+    part('ai-psu-good', 'PSU', '850W 80PLUS GOLD 파워', { psu: { ratedWattage: 850, certification: '80PLUS GOLD' } }, [100_000]),
+    part('ai-case-bad', 'CASE', 'ATX 미니 케이스', { case: { supportedBoardForms: ['M-ATX', 'ATX'], maxGpuLengthMm: 400, maxCoolerHeightMm: 170, fanCount: 1 } }, [10_000]),
+    part('ai-case-good', 'CASE', 'ATX airflow case', { case: { supportedBoardForms: ['ATX'], maxGpuLengthMm: 400, maxCoolerHeightMm: 170, fanCount: 3 } }, [80_000]),
+    part('ai-cooler-bad', 'CPU_COOLER', '45mm 알루미늄 CPU 쿨러', { cooler: { supportedSockets: ['AM5'], heightMm: 45 } }, [5_000]),
+    part('ai-cooler-good', 'CPU_COOLER', '155mm 듀얼타워 CPU 쿨러', { cooler: { supportedSockets: ['AM5'], heightMm: 155 } }, [80_000]),
+  ];
+
+  const result = generateQuotePreview(aiProfile, catalog);
+
+  assert.equal(result.status, 'READY');
+  assert.ok(result.candidates.length >= 1);
+  for (const candidate of result.candidates) {
+    const selectedIds = candidate.parts.map((part) => part.partId);
+    assert.ok(selectedIds.includes('ai-board-good'));
+    assert.ok(selectedIds.includes('ai-gpu-nvidia'));
+    assert.ok(selectedIds.includes('ai-psu-good'));
+    assert.ok(selectedIds.includes('ai-case-good'));
+    assert.ok(selectedIds.includes('ai-cooler-good'));
+    assert.equal(selectedIds.includes('ai-board-bad'), false);
+    assert.equal(selectedIds.includes('ai-gpu-amd'), false);
+    assert.equal(selectedIds.includes('ai-psu-cable'), false);
+    assert.equal(selectedIds.includes('ai-cooler-bad'), false);
+  }
+});
+
+test('does not let an unverified low-price core part outrank a trusted popular product', () => {
+  const catalog = fixtureCatalog().map((part) => {
+    if (part.category !== 'GPU') return part;
+    const trusted = part.partId !== 'gpu-1';
+    return {
+      ...part,
+      manufacturer: trusted ? 'MSI' : 'UNKNOWN OEM',
+      popularityScore: trusted ? 900 : 0,
+      specStatus: trusted ? 'PARSED_FROM_CRAWL' : 'UNVERIFIED',
+      isAdminApproved: trusted,
+      offers: part.offers.map((offer) => ({
+        ...offer,
+        reviewCount: trusted ? 900 : 0,
+        rating: trusted ? 4.9 : null,
+      })),
+    };
+  });
+
+  const result = generateQuotePreview(profile, catalog);
+
+  assert.equal(result.status, 'READY');
+  assert.ok(result.candidates.every((candidate) => candidate.parts.find((part) => part.category === 'GPU')?.partId !== 'gpu-1'));
+  assert.ok(result.candidates.every((candidate) => candidate.parts.find((part) => part.category === 'GPU')?.trustLabel === 'VERIFIED_MANUFACTURER'));
+  assert.ok(result.candidates[0].selectionReasons.some((reason) => /검증 제조사/.test(reason)));
+});
+
 function fixtureCatalog(): CatalogPart[] {
   return [
     part('cpu-1', 'CPU', 'CPU Basic', { cpu: { socket: 'AM5', tdpW: 65, coreCount: 6, threadCount: 12, boostClockGhz: 4.5 } }, [100_000, 150_000, 200_000]),
@@ -171,8 +240,8 @@ function fixtureCatalog(): CatalogPart[] {
     part('gpu-3', 'GPU', 'GPU 16GB', { gpu: { memoryGb: 16, recommendedPsuW: 750, powerConsumptionW: 300, lengthMm: 320 } }, [700_000]),
     part('ssd-1', 'SSD', 'SSD 1TB', { storage: { capacityGb: 1024 } }, [100_000]),
     part('ssd-2', 'SSD', 'SSD 2TB', { storage: { capacityGb: 2048 } }, [180_000]),
-    part('psu-1', 'PSU', 'PSU 750W', { psu: { ratedWattage: 750 } }, [120_000]),
-    part('psu-2', 'PSU', 'PSU 850W', { psu: { ratedWattage: 850 } }, [180_000]),
+    part('psu-1', 'PSU', 'PSU 750W', { psu: { ratedWattage: 750, certification: '80PLUS GOLD' } }, [120_000]),
+    part('psu-2', 'PSU', 'PSU 850W', { psu: { ratedWattage: 850, certification: '80PLUS GOLD' } }, [180_000]),
     part('case-1', 'CASE', 'Case ATX', { case: { supportedBoardForms: ['ATX'], maxGpuLengthMm: 400, maxCoolerHeightMm: 170 } }, [100_000]),
     part('cooler-1', 'CPU_COOLER', 'Cooler AM5', { cooler: { supportedSockets: ['AM5'], heightMm: 160 } }, [80_000]),
   ];
@@ -183,6 +252,10 @@ function part(partId: string, category: string, canonicalName: string, spec: Cat
     partId,
     category,
     canonicalName,
+    manufacturer: 'TEST',
+    popularityScore: 0,
+    specStatus: 'PARSED_FROM_CRAWL',
+    isAdminApproved: true,
     spec,
     offers: prices.map((priceWon, index) => offer(`${partId}-offer-${index + 1}`, `${partId}-product-${index + 1}`, priceWon)),
   };
